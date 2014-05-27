@@ -1,0 +1,158 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ssi</groupId>
+	<artifactId>ssi-regulatorio</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<packaging>pom</packaging>
+
+	<name>ssi-regulatorio</name>
+	<description>Projeto pai dos modulos do Regulatorio</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<log4j-version>1.2.17</log4j-version>
+		<javaee-web-api-version>7.0</javaee-web-api-version>
+		<javaee-api-version>7.0</javaee-api-version>
+		<ssi-kernel-version>1.0-SNAPSHOT</ssi-kernel-version>
+		<junit-version>4.11</junit-version>
+		<commons-lang-version>2.6</commons-lang-version>
+		<jsf-api-version>2.1.27</jsf-api-version>
+		<richfaces-version>4.3.4.Final</richfaces-version>
+		<ssi-kernel>1.0-SNAPSHOT</ssi-kernel>
+		<omnifaces-version>1.7</omnifaces-version>
+	</properties>
+
+	<modules>
+		<module>regulatorio-service</module>
+		<module>regulatorio-commom</module>
+		<module>regulatorio-web</module>
+		<module>regulatorio-ear</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>ssi</groupId>
+				<artifactId>core</artifactId>
+				<version>${ssi-kernel}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>ssi</groupId>
+				<artifactId>entity</artifactId>
+				<version>${ssi-kernel}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>ssi</groupId>
+				<artifactId>faces</artifactId>
+				<version>${ssi-kernel}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>ssi</groupId>
+				<artifactId>messaging</artifactId>
+				<version>${ssi-kernel}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>ssi</groupId>
+				<artifactId>service</artifactId>
+				<version>${ssi-kernel}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>ssi</groupId>
+				<artifactId>state-machine</artifactId>
+				<version>${ssi-kernel}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax</groupId>
+				<artifactId>javaee-api</artifactId>
+				<version>${javaee-api-version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit-version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>${commons-lang-version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>javax</groupId>
+				<artifactId>javaee-api</artifactId>
+				<version>${javaee-api-version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>com.sun.faces</groupId>
+				<artifactId>jsf-api</artifactId>
+				<version>${jsf-api-version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>com.sun.faces</groupId>
+				<artifactId>jsf-impl</artifactId>
+				<version>${jsf-api-version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.richfaces.ui</groupId>
+				<artifactId>richfaces-components-api</artifactId>
+				<version>${richfaces-version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.richfaces.ui</groupId>
+				<artifactId>richfaces-components-ui</artifactId>
+				<version>${richfaces-version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.richfaces.core</groupId>
+				<artifactId>richfaces-core-api</artifactId>
+				<version>${richfaces-version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.richfaces.core</groupId>
+				<artifactId>richfaces-core-impl</artifactId>
+				<version>${richfaces-version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.omnifaces</groupId>
+				<artifactId>omnifaces</artifactId>
+				<version>${omnifaces-version}</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+	<build>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+</project>

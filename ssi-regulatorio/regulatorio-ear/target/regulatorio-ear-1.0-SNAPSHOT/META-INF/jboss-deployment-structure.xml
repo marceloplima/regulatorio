@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+	<deployment> 
+		<dependencies> 
+			<module name="com.richfaces" /> 
+		</dependencies>
+	</deployment>
+
+	<sub-deployment name="regulatorio-web.war">
+		<dependencies>
+			<module name="com.richfaces">
+				<imports>
+					<include path="**"/>
+				</imports>
+			</module>
+			<module name="org.apache.commons.lang">
+				<imports>
+					<include path="**"/>
+				</imports>
+			</module>
+		</dependencies>
+	</sub-deployment>
+	
+</jboss-deployment-structure>
