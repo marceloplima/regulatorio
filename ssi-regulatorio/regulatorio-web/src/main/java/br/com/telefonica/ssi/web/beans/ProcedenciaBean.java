@@ -7,7 +7,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.view.ViewScoped;
+import javax.faces.bean.ViewScoped;
 
 import br.com.telefonica.ssi.faces.bean.AbstractManagedBean;
 import br.com.telefonica.ssi.regulatorio.commom.domain.CategoriaRegulatorio;
@@ -76,6 +76,7 @@ public class ProcedenciaBean extends AbstractManagedBean {
 
 	public void salvar(){
 		procedenciaService.save(procedenciaSelecionada);
+		recuperarProcedencias();
 		fecharTelaProcedencia();
 	}
 

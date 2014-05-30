@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
-import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Areas;
 
 @Entity
 @Table(name="TipoDemanda",schema="regulatorio")

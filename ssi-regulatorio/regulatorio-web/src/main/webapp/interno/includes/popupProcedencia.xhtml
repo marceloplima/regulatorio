@@ -54,5 +54,29 @@
 			</h:panelGroup>		
 		
 	</rich:popupPanel>
+	
+		<!-- ############## POPUP DE CONFIRMAÇÃO DE DESATIVAÇÃO ################ -->
+			
+		<rich:popupPanel id="popupconfirmadesativacao" domElementAttachment="form" modal="true" width="300" height="100" zindex="2" show="#{procedenciaBean.mostrarModalConfirmacaoDesativacao}" showWhenRendered="#{procedenciaBean.mostrarModalConfirmacaoDesativacao}">
+	
+			<h:panelGroup layout="block" class="area-input-50">
+				<h:panelGroup  class="label-campo"><h:outputText value="#{msg['confirmar.desativarProcedencia']}" /></h:panelGroup>	
+				<h:commandButton value="Sim">
+					<f:ajax 
+						event="click"
+						render="@form :formprocedencialistagem:panelprocedencias" 
+						listener="#{procedenciaBean.desativar()}"/>
+				</h:commandButton>
+				
+				<h:commandButton value="Não">
+					<f:ajax 
+						render="@form" 
+						event="click"
+						listener="#{procedenciaBean.fecharTelaConfirmacaoDaDesativacao()}"/>
+				</h:commandButton>	
+			</h:panelGroup>	
+	
+		</rich:popupPanel>		
+	
 </h:form>
 </html>

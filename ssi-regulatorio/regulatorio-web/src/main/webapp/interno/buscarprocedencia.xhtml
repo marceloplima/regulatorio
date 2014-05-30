@@ -27,14 +27,14 @@
 			        <rich:dataTable keepSaved="true" id="listaprocedencias" value="#{procedenciaBean.procedencias}" var="procedencia">
 			        	<f:facet name="header">
 							<rich:columnGroup>								
-								<rich:column style="text-align:left;">
-									<h:outputText value="Procedencia" />
+								<rich:column style="text-align:left;">								
+									<h:outputText value="#{msg['label.listagem.procedencia']}" />
 								</rich:column>
 								<rich:column style="text-align:left;">
-									<h:outputText value="Categoria" />
+									<h:outputText value="#{msg['label.listagem.categoria']}" />
 								</rich:column>
 								<rich:column style="text-align:left;">
-									<h:outputText value="Ativo" />
+									<h:outputText value="#{msg['label.listagem.ativo']}" />
 								</rich:column>
 							</rich:columnGroup>
 						</f:facet>
@@ -64,9 +64,7 @@
 	                                  action="#{procedenciaBean.mostrarTelaConfirmacaoDaDesativacao(procedencia)}"
 	                                  render=":formprocedencia:popupconfirmadesativacao"/>	                                  
 						</rich:column>
-						<f:facet name="footer">
-			            	<rich:dataScroller id="scrollermodfuncbottom"/>
-			            </f:facet>
+
 			        </rich:dataTable>
 			        
 			        <h:panelGroup layout="block" class="clear"/>	

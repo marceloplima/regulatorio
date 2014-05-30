@@ -39,7 +39,7 @@ public class TipoDemandaBean extends AbstractManagedBean {
 	}
 
 	private void recuperarTiposDemandas(){
-		tiposDemandas = tipoDemandaService.findAll("descricao");
+		tiposDemandas = tipoDemandaService.findAll("descTipoDemanda");
 	}
 
 	public void visualizarTipoDemanda(TipoDemanda tipoDemanda){
@@ -51,16 +51,17 @@ public class TipoDemandaBean extends AbstractManagedBean {
 	public void desativar(){
 		tipoDemandaSelecionada.setAtivo(false);
 		salvar();
-		//fecharTelaConfirmacaoDaDesativacao();
+		fecharTelaConfirmacaoDaDesativacao();
 	}
 
-	public void fecharTelaProcedencia(){
+	public void fecharTelaTipoDemanda(){
 		mostrarTelaTipoDemanda = false;
 	}
 
 	public void salvar(){
 		tipoDemandaService.save(tipoDemandaSelecionada);
-		fecharTelaProcedencia();
+		recuperarTiposDemandas();
+		fecharTelaTipoDemanda();
 	}
 
 	public void mostrarTelaConfirmacaoDaDesativacao(TipoDemanda tipoDemanda){
@@ -69,7 +70,7 @@ public class TipoDemandaBean extends AbstractManagedBean {
 	}
 
 	public void fecharTelaConfirmacaoDaDesativacao(){
-		//mostrarModalConfirmacaoDesativacao = false;
+		mostrarModalConfirmacaoDesativacao = false;
 	}
 
 	/*Getter e Setter*/
@@ -94,25 +95,45 @@ public class TipoDemandaBean extends AbstractManagedBean {
 		this.mostrarTelaConfirmacaoTipoDemanda = mostrarTelaConfirmacaoProcedencia;
 	}
 
-	/*
-	public void setProcedencias(List<Procedencia> procedencias) {
-		this.tiposDemandas = procedencias;
+	public TipoDemandaService getTipoDemandaService() {
+		return tipoDemandaService;
 	}
 
-	public Procedencia getProcedenciaSelecionada() {
+	public void setTipoDemandaService(TipoDemandaService tipoDemandaService) {
+		this.tipoDemandaService = tipoDemandaService;
+	}
+
+	public TipoDemanda getTipoDemandaSelecionada() {
 		return tipoDemandaSelecionada;
 	}
 
-	public void setProcedenciaSelecionada(Procedencia procedenciaSelecionada) {
-		this.tipoDemandaSelecionada = procedenciaSelecionada;
+	public void setTipoDemandaSelecionada(TipoDemanda tipoDemandaSelecionada) {
+		this.tipoDemandaSelecionada = tipoDemandaSelecionada;
 	}
 
-	public List<CategoriaRegulatorio> getCategorias() {
+	public List<TipoDemanda> getTiposDemandas() {
 		return tiposDemandas;
 	}
 
-	public void setCategorias(List<CategoriaRegulatorio> categorias) {
-		this.tiposDemandas = categorias;
+	public void setTiposDemandas(List<TipoDemanda> tiposDemandas) {
+		this.tiposDemandas = tiposDemandas;
+	}
+
+	public boolean isMostrarTelaTipoDemanda() {
+		return mostrarTelaTipoDemanda;
+	}
+
+	public void setMostrarTelaTipoDemanda(boolean mostrarTelaTipoDemanda) {
+		this.mostrarTelaTipoDemanda = mostrarTelaTipoDemanda;
+	}
+
+	public boolean isMostrarTelaConfirmacaoTipoDemanda() {
+		return mostrarTelaConfirmacaoTipoDemanda;
+	}
+
+	public void setMostrarTelaConfirmacaoTipoDemanda(
+			boolean mostrarTelaConfirmacaoTipoDemanda) {
+		this.mostrarTelaConfirmacaoTipoDemanda = mostrarTelaConfirmacaoTipoDemanda;
 	}
 
 	public boolean isMostrarModalConfirmacaoDesativacao() {
@@ -124,6 +145,6 @@ public class TipoDemandaBean extends AbstractManagedBean {
 		this.mostrarModalConfirmacaoDesativacao = mostrarModalConfirmacaoDesativacao;
 	}
 
-*/
+
 
 }

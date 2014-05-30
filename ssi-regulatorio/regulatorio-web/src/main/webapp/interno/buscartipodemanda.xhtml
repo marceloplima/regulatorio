@@ -14,9 +14,9 @@
 
 			<h:panelGroup layout="block" styleClass="alinhaBotao">
 				<h:commandButton value="Novo">
-					<f:ajax render=":formprocedencia:popupprocedencia" 
+					<f:ajax render=":formtipodemanda:popuptipodemanda" 
 							event="click"
-							listener="#{procedenciaBean.novaProcedencia()}"/>
+							listener="#{tipoDemandaBean.novaProcedencia()}"/>
 				</h:commandButton>   	        
 			</h:panelGroup>		
 
@@ -24,56 +24,46 @@
 			    <h:panelGroup layout="block" class="linha"/>
 			    
 			     <a4j:outputPanel id="panelprocedencias">
-			        <rich:dataTable keepSaved="true" id="listaprocedencias" value="#{procedenciaBean.procedencias}" var="procedencia">
+			        <rich:dataTable keepSaved="true" id="tiposdemandas" value="#{tipoDemandaBean.tiposDemandas}" var="tipodemanda">
 			        	<f:facet name="header">
 							<rich:columnGroup>								
 								<rich:column style="text-align:left;">
-									<h:outputText value="Procedencia" />
-								</rich:column>
+									<h:outputText value="#{msg['label.listagem.descricao']}" />
+								</rich:column>			
 								<rich:column style="text-align:left;">
-									<h:outputText value="Categoria" />
-								</rich:column>
-								<rich:column style="text-align:left;">
-									<h:outputText value="Ativo" />
+									<h:outputText value="#{msg['label.listagem.ativo']}" />
 								</rich:column>
 							</rich:columnGroup>
 						</f:facet>
 
 						<rich:column style="text-align:left;">
-							<h:outputText value="#{procedencia.descricao}"/>
+							<h:outputText value="#{tipodemanda.descTipoDemanda}"/>
 						</rich:column>
 						
 						<rich:column style="text-align:left;">
-							<h:outputText value="#{procedencia.categoria.descricao}"/>
-						</rich:column>
-						
-						<rich:column style="text-align:left;">
-							<h:outputText value="#{procedencia.ativo}">
+							<h:outputText value="#{tipodemanda.ativo}">
 								<f:converter converterId="ativosConv"/>
 							</h:outputText>
 						</rich:column>						
 						
 						<rich:column style="text-align:left;">
 	       							<a4j:commandButton
-	       							  image="${pageContext.request.contextPath}/imagens/busca_azul.png" id="idvisualizaprocedencia" value="Visualiza Procedência"
-	                                  action="#{procedenciaBean.visualizarProcedencia(procedencia)}"
-	                                  render=":formprocedencia:popupprocedencia"/>
+	       							  image="${pageContext.request.contextPath}/imagens/busca_azul.png" id="idvisualizatipodemanda" value="Visualiza Tipo Demanda"
+	                                  action="#{tipoDemandaBean.visualizarTipoDemanda(tipodemanda)}"
+	                                  render=":formtipodemanda:popuptipodemanda"/>
 	                                  
 	       							<a4j:commandButton
-	       							  image="${pageContext.request.contextPath}/imagens/remover_ok.png" id="iddesativaprocedencia" value="Desativar"
-	                                  action="#{procedenciaBean.mostrarTelaConfirmacaoDaDesativacao(procedencia)}"
-	                                  render=":formprocedencia:popupconfirmadesativacao"/>	                                  
+	       							  image="${pageContext.request.contextPath}/imagens/remover_ok.png" id="iddesativatipodemanda" value="Desativar"
+	                                  action="#{tipoDemandaBean.mostrarTelaConfirmacaoDaDesativacao(tipodemanda)}"
+	                                  render=":formtipodemanda:popupconfirmadesativacao"/>	                                  
 						</rich:column>
-						<f:facet name="footer">
-			            	<rich:dataScroller id="scrollermodfuncbottom"/>
-			            </f:facet>
 			        </rich:dataTable>
 			        
 			        <h:panelGroup layout="block" class="clear"/>	
 				</a4j:outputPanel>
 			</h:form>
 			
-			<ui:include src="/interno/includes/popupProcedencia.xhtml"/>
+			<ui:include src="/interno/includes/popupTipoDemanda.xhtml"/>
 			
   	</ui:define>
 </ui:composition>
