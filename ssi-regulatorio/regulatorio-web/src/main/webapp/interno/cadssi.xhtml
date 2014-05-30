@@ -357,7 +357,7 @@
 									value="#{classificacaoBean.documentoService.recuperaTodos()}"
 									var="doc" itemLabel="#{doc.descricao}" itemValue="#{doc}" />
 							</h:selectOneMenu>
-							<h:outputText value="#{classificacaoBean.demanda.documentoOrigem}" rendered="#{not permissoesMB.verificarCamposClassificacao()}" />
+							<h:outputText value="#{classificacaoBean.demanda.documentoOrigem.descricao}" rendered="#{not permissoesMB.verificarCamposClassificacao()}" />
 						</div>
 
 						<div class="area-input-25">
