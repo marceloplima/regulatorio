@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.ejb.Local;
 
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
+import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
 
 @Local
 public interface SendMailService extends Serializable{
@@ -21,4 +22,6 @@ public interface SendMailService extends Serializable{
 	public void notificaEncarregadosOperacionais(String strmensagem, String assunto,String ssi, DemandasRegulatorio demanda);
 
 	public void notificarResponsaveisTecnicos(String strmensagem, String assunto,String ssi, DemandasRegulatorio demanda);
+
+	public String getEmailPessoa(Pessoas p);
 }

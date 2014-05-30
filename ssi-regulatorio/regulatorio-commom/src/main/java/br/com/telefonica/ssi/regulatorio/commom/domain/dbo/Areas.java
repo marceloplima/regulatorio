@@ -22,7 +22,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 /** Classe da Estrutura organizacional da Empresa
- * 
+ *
  * @see Areas areapai
  * @see Areas areasfilho
  * @see Atividades areasatividades
@@ -35,7 +35,7 @@ import javax.persistence.Transient;
 public class Areas implements Serializable{
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -4469843121189223752L;
 
@@ -43,40 +43,40 @@ public class Areas implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="idarea")
 	private Long idarea;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="idareapai", referencedColumnName="idarea")
 	private Areas areapai;
-	
+
 	@OneToMany(mappedBy="areapai", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Areas> areasfilho;
-	
+
 	@Column(length=20, name="cnmsiglaarea")
 	private String cnmsiglaarea;
-	
+
 	@Column(name="cnmdescarea")
 	private String cnmdescarea;
-	
+
 	@Column(name="datacadastro", insertable=false, updatable=false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Calendar datacadastro;
-	
+
 	@ManyToMany(mappedBy="atividadesareas", cascade=CascadeType.ALL)
 	private List<Atividades> areasatividades;
-	
+
 	@ManyToMany(mappedBy = "pessoasareas", cascade=CascadeType.ALL)
 	private List<Pessoas> areaspessoas;
-	
+
 	@Column(name="flagativo")
 	private boolean flagativo;
-	
+
 	@Transient
 	private boolean checked;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="idpapelarea", referencedColumnName="idpapelarea")
 	private PapeisAreas papelarea;
-	
+
 	public Long getId() {
 		return idarea;
 	}
@@ -89,7 +89,7 @@ public class Areas implements Serializable{
 	public void setAreapai(Areas areapai) {
 		this.areapai = areapai;
 	}
-	
+
 	public List<Areas> getAreasfilho() {
 		return areasfilho;
 	}
@@ -120,14 +120,14 @@ public class Areas implements Serializable{
 	public void setAreasatividades(List<Atividades> areasatividades) {
 		this.areasatividades = areasatividades;
 	}
-	
+
 	public List<Pessoas> getAreaspessoas() {
 		return areaspessoas;
 	}
 	public void setAreaspessoas(List<Pessoas> areaspessoas) {
 		this.areaspessoas = areaspessoas;
 	}
-	
+
 	public boolean isChecked() {
 		return checked;
 	}
@@ -140,34 +140,34 @@ public class Areas implements Serializable{
 	public void setFlagativo(boolean flagativo) {
 		this.flagativo = flagativo;
 	}
-	
+
 	public Areas getByid(Long id){
 		Areas obj = new Areas();
 		obj.setId(id);
 		return obj;
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return this.idarea != null ? 
-		this.getClass().hashCode() + this.idarea.hashCode() : 
+		return this.idarea != null ?
+		this.getClass().hashCode() + this.idarea.hashCode() :
 		super.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		
+
 		Areas objint = (Areas)obj;
-		
+
 		if(this.getId() != null && objint.getId() != null){
 			if(this.getId().equals(objint.getId())){
 				objint = null;
 				return true;
 			}
 		}
-		
+
 		objint = null;
-		
+
 		return false;
 	}
 	public PapeisAreas getPapelarea() {
@@ -176,4 +176,12 @@ public class Areas implements Serializable{
 	public void setPapelarea(PapeisAreas papelarea) {
 		this.papelarea = papelarea;
 	}
+	public Long getIdarea() {
+		return idarea;
+	}
+	public void setIdarea(Long idarea) {
+		this.idarea = idarea;
+	}
+
+
 }

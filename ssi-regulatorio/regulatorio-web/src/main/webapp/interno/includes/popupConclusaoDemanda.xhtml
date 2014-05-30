@@ -11,19 +11,19 @@
 <h:form id="formanconclusao" method="post" enctype="multipart/form-data">
 	<f:loadBundle var="msg" basename="mensagens" />
 	<rich:popupPanel id="popupconclusao" domElementAttachment="form"
-		modal="true" width="500" height="340" zindex="2">
+		modal="true" width="500" height="400" zindex="2">
 		<f:facet name="header">
 			<h:outputText value="#{msg['header.concluir']}" />
 		</f:facet>
 		<div class="area-input-100">
 			<h:outputText value="#{msg['label.autor']}" styleClass="label-campo" />
-			<h:outputText value="#{classificacaoBean.logado.cnmnome}" />
+			<h:outputText value="#{classificacaoBean.logado.cnmnome}" styleClass="label-campo"/>
 
 			<div class="clear" />
 
 			<h:outputText value="#{msg['label.dataHora']}"
 				styleClass="label-campo" />
-			<h:outputText value="#{session.lastAccessedTime}">
+			<h:outputText value="#{session.lastAccessedTime}" styleClass="label-campo">
 				<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 			</h:outputText>
 

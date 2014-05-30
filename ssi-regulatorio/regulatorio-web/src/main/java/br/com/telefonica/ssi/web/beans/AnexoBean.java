@@ -14,7 +14,6 @@ import br.com.telefonica.ssi.regulatorio.commom.domain.AnexosRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.AnexoService;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.DemandaService;
-import br.com.telefonica.ssi.regulatorio.commom.interfaces.legado.DemandasServiceInt;
 import br.com.telefonica.ssi.web.utils.RecuperadorInstanciasBean;
 
 @Named

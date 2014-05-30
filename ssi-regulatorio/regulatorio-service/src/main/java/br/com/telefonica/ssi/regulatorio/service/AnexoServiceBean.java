@@ -49,8 +49,8 @@ public class AnexoServiceBean extends AbstractCrudServiceBean<AnexosRegulatorio,
 	}
 
 	@Override
-	public void incluir(AnexosRegulatorio anexo) {
-		getEntityManager().merge(anexo);
+	public AnexosRegulatorio incluir(AnexosRegulatorio anexo) {
+		return getEntityManager().merge(anexo);
 	}
 
 }

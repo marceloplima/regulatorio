@@ -1,0 +1,79 @@
+<ui:composition template="../template/padrao.xhtml" 
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:h="http://java.sun.com/jsf/html"
+  	xmlns:f="http://java.sun.com/jsf/core"
+  	xmlns:ui="http://java.sun.com/jsf/facelets"
+  	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  	xsi:schemaLocation="http://www.w3.org/1999/xhtml http://www.w3.org/2002/08/xhtml/xhtml1-transitional.xsd"
+ 	xmlns:a4j="http://richfaces.org/a4j"
+ 	xmlns:rich="http://richfaces.org/rich">
+
+	<ui:define name="conteudosistema">
+			
+       		<h:form id="formprocedencialistagem">
+
+			<h:panelGroup layout="block" styleClass="alinhaBotao">
+				<h:commandButton value="Novo">
+					<f:ajax render=":formprocedencia:popupprocedencia" 
+							event="click"
+							listener="#{procedenciaBean.novaProcedencia()}"/>
+				</h:commandButton>   	        
+			</h:panelGroup>		
+
+			    <h:panelGroup layout="block" class="clear"/>				    
+			    <h:panelGroup layout="block" class="linha"/>
+			    
+			     <a4j:outputPanel id="panelprocedencias">
+			        <rich:dataTable keepSaved="true" id="listaprocedencias" value="#{procedenciaBean.procedencias}" var="procedencia">
+			        	<f:facet name="header">
+							<rich:columnGroup>								
+								<rich:column style="text-align:left;">
+									<h:outputText value="Procedencia" />
+								</rich:column>
+								<rich:column style="text-align:left;">
+									<h:outputText value="Categoria" />
+								</rich:column>
+								<rich:column style="text-align:left;">
+									<h:outputText value="Ativo" />
+								</rich:column>
+							</rich:columnGroup>
+						</f:facet>
+
+						<rich:column style="text-align:left;">
+							<h:outputText value="#{procedencia.descricao}"/>
+						</rich:column>
+						
+						<rich:column style="text-align:left;">
+							<h:outputText value="#{procedencia.categoria.descricao}"/>
+						</rich:column>
+						
+						<rich:column style="text-align:left;">
+							<h:outputText value="#{procedencia.ativo}">
+								<f:converter converterId="ativosConv"/>
+							</h:outputText>
+						</rich:column>						
+						
+						<rich:column style="text-align:left;">
+	       							<a4j:commandButton
+	       							  image="${pageContext.request.contextPath}/imagens/busca_azul.png" id="idvisualizaprocedencia" value="Visualiza Procedência"
+	                                  action="#{procedenciaBean.visualizarProcedencia(procedencia)}"
+	                                  render=":formprocedencia:popupprocedencia"/>
+	                                  
+	       							<a4j:commandButton
+	       							  image="${pageContext.request.contextPath}/imagens/remover_ok.png" id="iddesativaprocedencia" value="Desativar"
+	                                  action="#{procedenciaBean.mostrarTelaConfirmacaoDaDesativacao(procedencia)}"
+	                                  render=":formprocedencia:popupconfirmadesativacao"/>	                                  
+						</rich:column>
+						<f:facet name="footer">
+			            	<rich:dataScroller id="scrollermodfuncbottom"/>
+			            </f:facet>
+			        </rich:dataTable>
+			        
+			        <h:panelGroup layout="block" class="clear"/>	
+				</a4j:outputPanel>
+			</h:form>
+			
+			<ui:include src="/interno/includes/popupProcedencia.xhtml"/>
+			
+  	</ui:define>
+</ui:composition>

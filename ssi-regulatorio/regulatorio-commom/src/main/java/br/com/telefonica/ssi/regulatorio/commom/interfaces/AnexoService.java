@@ -19,6 +19,6 @@ public interface AnexoService extends CrudService<AnexosRegulatorio, Integer>{
 
 	TipoAnexo recuperarTipoAnexo(Long idtipoanexo);
 
-	void incluir(AnexosRegulatorio anexo);
+	AnexosRegulatorio incluir(AnexosRegulatorio anexo);
 
 }

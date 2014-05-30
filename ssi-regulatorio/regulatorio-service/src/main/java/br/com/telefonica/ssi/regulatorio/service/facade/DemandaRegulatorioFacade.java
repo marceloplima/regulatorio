@@ -1,26 +1,28 @@
 package br.com.telefonica.ssi.regulatorio.service.facade;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import br.com.telefonica.ssi.regulatorio.commom.cdi.qualifiers.AlteracaoDemanda;
 import br.com.telefonica.ssi.regulatorio.commom.cdi.qualifiers.CriarDemanda;
-import br.com.telefonica.ssi.regulatorio.commom.domain.AreasRegionais;
 import br.com.telefonica.ssi.regulatorio.commom.domain.CategoriaRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.Procedencia;
 import br.com.telefonica.ssi.regulatorio.commom.domain.StatusRegulatorio;
-import br.com.telefonica.ssi.regulatorio.commom.domain.UF;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Areas;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Emails;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
@@ -261,5 +263,100 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 	public StatusRegulatorioService getStatusService() {
 		return statusService;
 	}
+
+	@Override
+	public List<DemandasRegulatorio> retornarPaginado(int firstRow, int numberOfRows,
+			Map<String, Object> filtros,
+			Pessoas pessoa) {
+		String jpaQuery = "Select d from DemandasRegulatorio d where (d.autor = :pessoa "
+				+ "OR d.encarregado = :pessoa OR d.solicitante = :pessoa) ";
+
+		// === OUTROS FILTROS ===
+
+		if(filtros.get("nomeSolicitante")!=null){
+			jpaQuery+=" and upper(d.solicitante.cnmnome) like '"+filtros.get("nomeSolicitante").toString().toUpperCase()+"%'";
+		}
+		if(filtros.get("numeroDemanda")!=null){
+			jpaQuery+=" and upper(d.numeroDemanda) like '"+filtros.get("numeroDemanda").toString().toUpperCase()+"%'";
+		}
+		if(filtros.get("status")!=null && !filtros.get("status").equals("")){
+			jpaQuery+=" and upper(d.status.descricao) = '"+filtros.get("status")+"'";
+		}
+		if(filtros.get("dataInicial")!=null && filtros.get("dataFinal")==null){
+			jpaQuery+=" and d.dataHoraDemanda >= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"));
+		}
+		if(filtros.get("dataInicial")==null && filtros.get("dataFinal")!=null){
+			jpaQuery+=" and d.dataHoraDemanda <= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
+		}
+		if(filtros.get("dataInicial")!=null && filtros.get("dataFinal")!=null){
+			jpaQuery+=" and d.dataHoraDemanda between "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"))+" and "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
+		}
+		// === FIM OUTROS FILTROS ===
+
+		jpaQuery+=" order by d.dataHoraDemanda desc";
+
+		TypedQuery<DemandasRegulatorio> q = em.createQuery(jpaQuery,DemandasRegulatorio.class);
+		q.setParameter("pessoa", pessoa);
+
+		if(firstRow>0 && numberOfRows>0){
+			q.setFirstResult(firstRow);
+			q.setMaxResults(numberOfRows);
+		}
+
+		try{
+			List<DemandasRegulatorio> result = q.getResultList();
+
+			return result;
+		}
+		catch(NoResultException nre){
+			return new ArrayList<DemandasRegulatorio>();
+		}
+	}
+
+	@Override
+	public int getRowCount(Map<String, Object> filtros, Pessoas pessoa) {
+		String jpaQuery = "Select count(d.id) from DemandasRegulatorio d where (d.autor = :pessoa OR "
+				+ "d.encarregado = :pessoa OR d.solicitante = :pessoa) ";
+
+		// === OUTROS FILTROS ===
+		if(filtros.get("nomeSolicitante")!=null){
+			jpaQuery+=" and upper(d.solicitante.cnmnome) like '"+filtros.get("nomeSolicitante").toString().toUpperCase()+"%'";
+		}
+		if(filtros.get("numeroDemanda")!=null){
+			jpaQuery+=" and upper(d.numeroDemanda) like '"+filtros.get("numeroDemanda").toString().toUpperCase()+"%'";
+		}
+		if(filtros.get("status")!=null && !filtros.get("status").equals("")){
+			jpaQuery+=" and upper(d.status.descricao) = '"+filtros.get("status").toString()+"'";
+		}
+		if(filtros.get("dataInicial")!=null && filtros.get("dataFinal")==null){
+			jpaQuery+=" and d.dataHoraDemanda >= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"));
+		}
+		if(filtros.get("dataInicial")==null && filtros.get("dataFinal")!=null){
+			jpaQuery+=" and d.dataHoraDemanda <= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
+		}
+		if(filtros.get("dataInicial")!=null && filtros.get("dataFinal")!=null){
+			jpaQuery+=" and d.dataHoraDemanda between "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"))+" and "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
+		}
+		// === FIM OUTROS FILTROS ===
+
+		TypedQuery<Long> q = em.createQuery(jpaQuery,Long.class);
+
+		q.setParameter("pessoa", pessoa);
+
+		try{
+			Long result = q.getSingleResult();
+
+			return result.intValue();
+		}
+		catch(NoResultException nre){
+			return 0;
+		}
+	}
+
+	@Override
+	public DemandasRegulatorio getRowData(Object rowKey) {
+		return em.find(DemandasRegulatorio.class, rowKey);
+	}
+
 
 }

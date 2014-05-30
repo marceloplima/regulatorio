@@ -33,7 +33,7 @@ public class DocumentoOrigemConverter implements Converter{
 		}
 		catch(Exception e){
 			System.out.println(">> Erro no DocumentoOrigemConverter getAsObject()<<");
-			return null;
+			obj =  null;
 		}
 
 		return obj;

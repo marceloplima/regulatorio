@@ -216,7 +216,8 @@ public class Mensageria implements SendMailService {
 		return modulo;
 	}
 
-	private String getEmailPessoa(Pessoas p){
+	@Override
+	public String getEmailPessoa(Pessoas p){
 		List<Emails> emails = p.getPessoaemails();
 
 		if(emails != null && emails.size()>0){

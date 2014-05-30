@@ -15,24 +15,24 @@ import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
 @Entity
 @Table(name="CategoriaRegulatorio",schema="regulatorio")
 public class CategoriaRegulatorio extends AbstractEntity<Integer>{
-	
+
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -1851331969707867416L;
-	
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="idCategoria")
 	private Integer id;
-	
+
 	@Column(name="cnDescCategoria")
 	private String descricao;
 
 	@OneToMany(targetEntity=Procedencia.class,mappedBy="categoria")
 	private List<Procedencia> procedencias;
-	
+
 	public Integer getId() {
 		return id;
 	}

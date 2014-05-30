@@ -17,7 +17,7 @@ import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
 public class MovimentoTecnico extends AbstractEntity<Integer>{
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -231747869863990038L;
 
@@ -25,11 +25,11 @@ public class MovimentoTecnico extends AbstractEntity<Integer>{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="idMovimentoTecnico")
 	private Integer idMovimento;
-	
+
 	@ManyToOne(targetEntity=Pessoas.class)
 	@JoinColumn(name="idpessoaEncarregado",referencedColumnName="idpessoa")
 	private Pessoas encarregado;
-	
+
 	@ManyToOne(targetEntity=Movimento.class)
 	@JoinColumn(name="idMovimento",referencedColumnName="idMovimento")
 	private Movimento movimento;

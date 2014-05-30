@@ -35,7 +35,7 @@ public class TipoRedeConverter implements Converter{
 		}
 		catch(Exception e){
 			System.out.println(">> Erro no TipoRedeConverter getAsObject()<<");
-			return null;
+			obj = null;
 		}
 
 		return obj;

@@ -14,9 +14,9 @@ import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
 @Entity
 @Table(name="MovimentoFollowUp",schema="regulatorio")
 public class MovimentoFollowUp extends AbstractEntity<Integer>{
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 5898500104750815470L;
 
@@ -24,7 +24,7 @@ public class MovimentoFollowUp extends AbstractEntity<Integer>{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="idFollowUp")
 	private Integer idMovimento;
-	
+
 	@ManyToOne(targetEntity=Movimento.class)
 	@JoinColumn(name="idMovimento",referencedColumnName="idMovimento")
 	private Movimento movimento;

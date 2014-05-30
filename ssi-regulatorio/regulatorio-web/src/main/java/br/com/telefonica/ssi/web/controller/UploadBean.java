@@ -10,10 +10,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import br.com.telefonica.ssi.faces.bean.AbstractManagedBean;
+import br.com.telefonica.ssi.regulatorio.commom.cdi.qualifiers.NovoAnexo;
 import br.com.telefonica.ssi.regulatorio.commom.domain.AnexosRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.TipoAnexo;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.AnexoService;
+import br.com.telefonica.ssi.regulatorio.commom.interfaces.facade.DemandaServiceFacade;
 import br.com.telefonica.ssi.web.beans.DemandasBean;
 import br.com.telefonica.ssi.web.utils.ParametrosSistema;
 import br.com.telefonica.ssi.web.utils.RecuperadorInstanciasBean;
@@ -34,6 +36,8 @@ public class UploadBean extends AbstractManagedBean{
 
 	private DemandasBean demandasmb = RecuperadorInstanciasBean
 			.recuperarInstanciaDemandasBean();
+	@EJB
+	private DemandaServiceFacade facadeDemanda;
 
 	private File file;
 	private ParametrosSistema parametrosistema = new ParametrosSistema();
@@ -41,7 +45,7 @@ public class UploadBean extends AbstractManagedBean{
 	private String tipoupload;
 	private String tabacionar;
 
-	@Inject
+	@Inject @NovoAnexo
 	private Event<DemandasRegulatorio> eventodemanda;
 
 	public void habilitaUpload(String tipoupload, String tabacionar) {
@@ -71,8 +75,6 @@ public class UploadBean extends AbstractManagedBean{
 		file.renameTo(newfile2);
 
 		incluirAnexo(novonome2, new TipoAnexo(), "NA");
-
-		eventodemanda.fire(demanda);
 
 	}
 

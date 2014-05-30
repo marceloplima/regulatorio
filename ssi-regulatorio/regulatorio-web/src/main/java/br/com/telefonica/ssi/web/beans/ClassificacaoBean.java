@@ -1,8 +1,11 @@
 package br.com.telefonica.ssi.web.beans;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -13,11 +16,14 @@ import javax.inject.Named;
 
 import br.com.telefonica.ssi.faces.bean.AbstractManagedBean;
 import br.com.telefonica.ssi.regulatorio.commom.cdi.qualifiers.NovaDemanda;
+import br.com.telefonica.ssi.regulatorio.commom.cdi.qualifiers.NovoAnexo;
 import br.com.telefonica.ssi.regulatorio.commom.domain.AreasRegionais;
 import br.com.telefonica.ssi.regulatorio.commom.domain.Complexidade;
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.Execucao;
 import br.com.telefonica.ssi.regulatorio.commom.domain.Movimento;
+import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoAcionamentoArea;
+import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoAnaliseOperacional;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoAnaliseTecnica;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoConclusao;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoFollowUp;
@@ -25,6 +31,7 @@ import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoRevisaoPrazo;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoTecnico;
 import br.com.telefonica.ssi.regulatorio.commom.domain.ResultadoAnalise;
 import br.com.telefonica.ssi.regulatorio.commom.domain.UF;
+import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Areas;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.AreaRegionalService;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.ComplexidadeService;
@@ -37,6 +44,7 @@ import br.com.telefonica.ssi.regulatorio.commom.interfaces.SendMailService;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.StatusRegulatorioService;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.TipoDemandaService;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.TipoRedeService;
+import br.com.telefonica.ssi.regulatorio.commom.interfaces.dbo.AreasInt;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.dbo.GruposModulosInt;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.dbo.PessoasInt;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.dbo.UfsInt;
@@ -54,6 +62,10 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	@EJB
 	private SendMailService mensageria;
 
+	private Integer idMovimento;
+
+	private MovimentoAnaliseOperacional analiseOperacional;
+
 	@EJB
 	private GruposModulosInt gruposModulosService;
 
@@ -67,11 +79,16 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	private Date novoPrazo;
 
+	private List<Areas> areasOperacionais;
+
 	private Complexidade complexidade;
 
 	private Execucao execucao;
 
 	private boolean valido;
+
+	@EJB
+	private AreasInt areasService;
 
 	@EJB
 	private ExecucaoService execucaoService;
@@ -97,6 +114,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	@EJB
 	private DemandaServiceFacade facadeDemanda;
+
 
 	/**
 	 *
@@ -158,10 +176,15 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	public void salvarDemanda(){
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 		if(demanda.getTipoDemanda() == null || demanda.getAreaRegional() == null || demanda.getTipoRede() == null){
-			index.setMsgpanel("Assunto, area regional, tipo de rede, documento de origem ou UF da demanda não informado! ");
+			List<String> messages = new ArrayList<String>();
+			messages.add("Assunto, area regional, tipo de rede, documento de origem ou UF da demanda não informado! ");
+			index.setMsgspanel(messages);
 			index.setPanelexibeerro(true);
+			return;
 		}
 		else{
+//			List<UF> teste = ufs;
+//			demanda.setUfs(ufs);
 			facadeDemanda.salvaDemanda(demanda);
 			logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Demanda salva, em "+demanda.getStatus().getDescricao());
 			index.setPanelexibesucesso(true);
@@ -173,8 +196,11 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	public void assumirDemanda(){
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 		if(demanda.getTipoDemanda() == null || demanda.getAreaRegional() == null || demanda.getTipoRede() == null ){
-			index.setMsgpanel("Assunto, area regional, tipo de rede, documento de origem ou UF da demanda não informado! ");
+			List<String> messages = new ArrayList<String>();
+			messages.add("Assunto, area regional, tipo de rede, documento de origem ou UF da demanda não informado! ");
+			index.setMsgspanel(messages);
 			index.setPanelexibeerro(true);
+			return;
 		}
 		else{
 			this.demanda.setEncarregado(RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado());
@@ -182,8 +208,9 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 			logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Demanda assumida por "+demanda.getEncarregado().getCnmnome()+" e enviada para "+demanda.getStatus().getDescricao());
 
-			index.setPanelexibesucesso(true);
 			index.setMsgpanel("Operacão realizada com sucesso!");
+			index.setPanelexibesucesso(true);
+
 			eventoDemanda.fire(demanda);
 			facadeDemanda.salvaDemanda(demanda);
 			mensageria.notificaSolicitante("Demanda assumida por "+demanda.getEncarregado().getCnmnome(), "Demanda sob nova responsabilidade.", demanda.getNumeroDemanda(), demanda);
@@ -191,10 +218,10 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	}
 
 	public void cancelarDemanda(){
+		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 		this.demanda.setStatus(facadeDemanda.getStatusService().findByName("CANCELADA"));
 		facadeDemanda.salvaDemanda(demanda);
 
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 		index.setMsgpanel("Demanda cancelada!");
 		index.setPanelexibesucesso(true);
 
@@ -220,6 +247,11 @@ public class ClassificacaoBean extends AbstractManagedBean{
 		this.ufs = demanda.getUfs();
 	}
 
+	public void listenerDemandaNovoAnexo(@Observes @NovoAnexo DemandasRegulatorio demanda){
+		this.demanda = facadeDemanda.recuperaDemanda(demanda.getId());
+		eventoDemanda.fire(demanda);
+		this.ufs = demanda.getUfs();
+	}
 
 	public AreasRegionais getAreaRegional() {
 		return areaRegional;
@@ -343,7 +375,6 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	public void realizarAnaliseTecnica(){
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-
 		Movimento movimento = new Movimento();
 		MovimentoAnaliseTecnica analiseTecnica = new MovimentoAnaliseTecnica();
 
@@ -483,6 +514,10 @@ public class ClassificacaoBean extends AbstractManagedBean{
 		return complexidadeService;
 	}
 
+	public List<Areas> getAreasOperacionais(){
+		return areasService.retornarAreasOperacao();
+	}
+
 	public void setComplexidadeService(ComplexidadeService complexidadeService) {
 		this.complexidadeService = complexidadeService;
 	}
@@ -513,7 +548,6 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	public void concluirDemanda(){
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-
 		Movimento movimento = new Movimento();
 		MovimentoConclusao conclusao = new MovimentoConclusao();
 
@@ -548,4 +582,163 @@ public class ClassificacaoBean extends AbstractManagedBean{
 		this.execucao = null;
 	}
 
+	public List<Areas> getAreaOperacional() {
+		return areasOperacionais;
+	}
+
+	public void setAreaOperacional(List<Areas> areasOperacionais) {
+		this.areasOperacionais = areasOperacionais;
+	}
+
+	public void acionarAreasOperacionais(){
+		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
+		Movimento movimento = new Movimento();
+		MovimentoAcionamentoArea acionamentoOperacional = new MovimentoAcionamentoArea();
+
+		if(areasOperacionais == null || areasOperacionais.size()<1){
+			List<String> messages = new ArrayList<String>();
+			messages.add("O campo áreas operacionais é obrigatório!");
+			index.setMsgspanel(messages);
+			index.setPanelexibeerro(true);
+			return;
+		}
+		else {
+			movimento.setAutor(getLogado());
+			movimento.setComentario(comentario);
+			movimento.setDataHora(new Date());
+			movimento.setDemanda(demanda);
+
+			movimentoService.salvaMovimento(movimento);
+
+			acionamentoOperacional.setMovimento(movimento);
+
+			Collection<Areas> areas = new ArrayList<Areas>();
+			for(Areas a:areasOperacionais){
+				Areas area = areasService.recuperarUnico(a);
+				areas.add(area);
+			}
+
+			acionamentoOperacional.setAreasOperacionais(areas);
+
+			movimentoService.salvaMovimentoAcionamentoArea(acionamentoOperacional);
+
+			demanda.setEncarregado(getLogado());
+			demanda.setStatus(statusService.findByName("ANÁLISE OPERACIONAL"));
+			facadeDemanda.salvaDemanda(demanda);
+
+			// --- NOTIFICAÇÔES ---
+			logger.salvarLog(demanda, getLogado(), "Áreas operacionais acionadas. Demanda enviada para "+demanda.getStatus().getDescricao());
+
+			for(Areas a:areas){
+				for(Pessoas p:a.getAreaspessoas()){
+					if(p.getCargo()!=null && p.getCargo().getCnmcargo().equalsIgnoreCase("gestor")){
+						Map<String, String> emails = new HashMap<String, String>();
+						emails.put(p.getCnmnome(), mensageria.getEmailPessoa(responsavel));
+						mensageria.enviarMensagem("Acionamento de área operacional para a demanda "
+								+ demanda.getNumeroDemanda(), "Acionamento de área operacional para a demanda "+demanda.getNumeroDemanda(),
+								emails, demanda.getNumeroDemanda());
+					}
+				}
+			}
+			this.areasOperacionais = null;
+			this.comentario=null;
+
+			eventoDemanda.fire(demanda);
+
+			index.setMsgpanel("Operação realizada com sucesso!");
+			index.setPanelexibesucesso(true);
+		}
+	}
+
+	public void realizarAnaliseOperacional(){
+		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
+
+		Movimento movimento = new Movimento();
+		MovimentoAnaliseOperacional analise = new MovimentoAnaliseOperacional();
+
+		if(comentario == null || comentario.equals("")){
+			List<String> mensagens = new ArrayList<String>();
+			mensagens.add("Campo comentário é obrigtório!");
+			index.setMsgspanel(mensagens);
+			index.setPanelexibeerro(true);
+			return;
+		}
+		if(getLogado().getArea()==null){
+			List<String> mensagens = new ArrayList<String>();
+			mensagens.add("Usuário não cadastrado em área operacional acionada nesta demanda!");
+			index.setMsgspanel(mensagens);
+			index.setPanelexibeerro(true);
+			return;
+		}
+		else{
+			movimento.setAutor(getLogado());
+			movimento.setDataHora(new Date());
+			movimento.setComentario(comentario);
+			movimento.setDemanda(demanda);
+
+			movimentoService.salvaMovimento(movimento);
+
+			analise.setMovimento(movimento);
+			analise.setAreaOperacional(getLogado().getArea());
+
+			movimentoService.salvaMovimentoAnaliseOperacional(analise);
+
+			// === Verificar se esta é a última área operacional acionada
+
+			List<MovimentoAcionamentoArea> movimentosAcionamentos = movimentoService.movimentosAcionamentosPorDemanda(demanda);
+			if(movimentosAcionamentos!=null && movimentosAcionamentos.size()>1){
+				List<Areas> areas = new ArrayList<Areas>(movimentosAcionamentos.get(0).getAreasOperacionais());
+				if(areas.contains(getLogado().getArea())){
+					List<MovimentoAnaliseOperacional> analises = movimentoService.analisesOperacionaisPorDemanda(demanda);
+					if(analises!=null){
+						if(analises.size()<1){
+							demanda.setStatus(statusService.findByName("ANÁLISE FINAL"));
+						}
+						else{
+							boolean areaFound = false;
+							for(MovimentoAnaliseOperacional m:analises){
+								if(m.getAreaOperacional().getId() == getLogado().getId()){
+									areaFound = true;
+								}
+							}
+							if(!areaFound){
+								demanda.setStatus(statusService.findByName("ANÁLISE FINAL"));
+							}
+						}
+					}
+				}
+			}
+			logger.salvarLog(demanda, getLogado(), "Nova análise operacional realizada.");
+			facadeDemanda.salvaDemanda(demanda);
+
+			mensageria.notificarResponsaveisTecnicos("Análise operacional da demanda "+demanda.getNumeroDemanda()+": \n "+comentario, "Análise operacional da demanda "+demanda.getNumeroDemanda(), demanda.getNumeroDemanda(), demanda);
+
+			index.setMsgpanel("Operação realizada com sucesso!");
+			index.setPanelexibesucesso(true);
+			this.comentario = null;
+			eventoDemanda.fire(demanda);
+		}
+	}
+
+	public String getIdMovimento() {
+		return idMovimento.toString();
+	}
+
+	public void setIdMovimento(String idMovimento) {
+		this.idMovimento = new Integer(idMovimento);
+	}
+
+	public MovimentoAnaliseOperacional getAnaliseOperacional() {
+		return analiseOperacional;
+	}
+
+	public void setAnaliseOperacional(MovimentoAnaliseOperacional analiseOperacional) {
+		this.analiseOperacional = analiseOperacional;
+	}
+
+	public void buscarAnaliseOperacional(){
+		if(getIdMovimento()!=null && !getIdMovimento().equals("")){
+			this.analiseOperacional = movimentoService.getAnaliseOperacionalPorId(new Integer(getIdMovimento()));
+		}
+	}
 }

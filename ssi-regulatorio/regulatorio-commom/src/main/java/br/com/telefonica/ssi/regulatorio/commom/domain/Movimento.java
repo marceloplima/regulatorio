@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
@@ -167,6 +168,32 @@ public class Movimento extends AbstractEntity<Integer>{
 		this.demanda = demanda;
 	}
 
-
+	@Transient
+	public String getTipo(){
+		if(getMovimentosAnaliseTecnica()!=null && getMovimentosAnaliseTecnica().size()>0){
+			return "ANÁLISE TÉCNICA";
+		}
+		if(getMovimentosArea()!=null && getMovimentosArea().size()>0){
+			return "ACIONAMENTO ÁREA OPERACIONAL";
+		}
+		if(getMovimentosAreaOperacional()!=null && getMovimentosAreaOperacional().size()>0){
+			return "ACIONAMENTO ÁREA OPERACIONAL";
+		}
+		if(getMovimentosConclusao()!=null && getMovimentosConclusao().size()>0){
+			return "CONCLUSÃO DA DEMANDA";
+		}
+		if(getMovimentosFollowUp()!=null && getMovimentosFollowUp().size()>0){
+			return "REGISTRO DE FOLLOW-UP";
+		}
+		if(getMovimentosRevisao()!=null && getMovimentosRevisao().size()>0){
+			return "REVISÃO DE PRAZO";
+		}
+		if(getMovimentosTecnico()!=null && getMovimentosTecnico().size()>0){
+			return "DEFINIÇÃO DE TÉCNICO";
+		}
+		else{
+			return "SALVAMENTO OU ENCAMINHAMENTO";
+		}
+	}
 
 }

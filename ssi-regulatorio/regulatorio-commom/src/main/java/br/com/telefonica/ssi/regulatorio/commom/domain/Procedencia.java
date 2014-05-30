@@ -16,7 +16,7 @@ import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
 public class Procedencia extends AbstractEntity<Integer>{
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -3208190775884969879L;
 
@@ -24,13 +24,21 @@ public class Procedencia extends AbstractEntity<Integer>{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="")
 	private Integer idProcedencia;
-	
+
 	@Column(name="cnmDescProcedencia")
 	private String descricao;
-	
+
 	@ManyToOne(targetEntity=CategoriaRegulatorio.class)
 	@JoinColumn(name="idCategoria")
 	private CategoriaRegulatorio categoria;
+
+	@Column(name="ativo")
+	private Boolean ativo;
+
+	public Procedencia() {
+		super();
+		categoria = new CategoriaRegulatorio();
+	}
 
 	public Integer getId() {
 		return idProcedencia;
@@ -53,6 +61,17 @@ public class Procedencia extends AbstractEntity<Integer>{
 	}
 
 	public void setCategoria(CategoriaRegulatorio categoria) {
+		System.out.println("SETEI CATEGORIA:" + categoria.getId());
 		this.categoria = categoria;
 	}
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
+
+
 }

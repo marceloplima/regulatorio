@@ -2,6 +2,7 @@ package br.com.telefonica.ssi.regulatorio.commom.interfaces.facade;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Local;
 
@@ -67,4 +68,10 @@ public interface DemandaServiceFacade extends Serializable{
 	public AreasInt getAreasService();
 
 	public StatusRegulatorioService getStatusService();
+
+	List<DemandasRegulatorio> retornarPaginado(int firstRow, int numberOfRows, Map<String, Object> filtros, Pessoas pessoa);
+
+	int getRowCount(Map<String, Object> filtros,Pessoas pessoa);
+
+	DemandasRegulatorio getRowData(Object rowKey);
 }

@@ -33,7 +33,7 @@ public class TipoDemandaConverter implements Converter{
 		}
 		catch(Exception e){
 			System.out.println("Exception em : TipoDemanda");
-			return null;
+			obj = null;
 		}
 		return obj;
 	}

@@ -16,29 +16,22 @@
 		<f:facet name="header">
 			<h:outputText value="#{msg['header.followup']}" />
 		</f:facet>
-		<!-- <f:facet name="controls">
-			<h:outputLink value="#"
-				onclick="#{rich:component('popupupload')}.hide(); return false;">
-				<img src="#{request.contextPath}/imagens/action_fechar.png"
-					title="fechar" />
-			</h:outputLink>
-		</f:facet> -->
 		<div class="area-input-100">
 			<h:outputText value="#{msg['label.autor']}" styleClass="label-campo" />
-			<h:outputText value="#{classificacaoBean.logado.cnmnome}" />
+			<h:outputText value="#{classificacaoBean.logado.cnmnome}" styleClass="label-campo"/>
 
 			<div class="clear" />
 
 			<h:outputText value="#{msg['label.dataHora']}"
 				styleClass="label-campo" />
-			<h:outputText value="#{session.lastAccessedTime}">
+			<h:outputText value="#{session.lastAccessedTime}" styleClass="label-campo">
 				<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 			</h:outputText>
 
 			<div class="clear" />
 
 			<div class="area-input-100">
-				<h:outputText value="#{msg['label.comentario']}" />
+				<h:outputText value="#{msg['label.comentario']}" styleClass="label-campo"/>
 				<h:inputTextarea styleClass="input-form-textarea" rows="20"
 					value="#{classificacaoBean.comentario}" required="true"
 					requiredMessage="#{msg['campo.questao.obrigatorio']}"

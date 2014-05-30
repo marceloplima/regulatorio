@@ -1,0 +1,50 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/1999/xhtml http://www.w3.org/2002/08/xhtml/xhtml1-transitional.xsd"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:hh="http://balusc.net/jsf/html">
+
+<h:form id="formveranalise" method="post"
+	enctype="multipart/form-data">
+	<f:loadBundle var="msg" basename="mensagens" />
+	<rich:popupPanel id="popupveranalise"
+		domElementAttachment="form" modal="true" width="500" height="270"
+		zindex="2" >
+		<f:facet name="header">
+			<h:outputText value="#{msg['header.analise.operacional']}" />
+		</f:facet>
+		<div class="area-input-100">
+			<h:outputText value="#{msg['label.autor']}" styleClass="label-campo" />
+			<h:outputText value="#{classificacaoBean.analiseOperacional.movimento.autor.cnmnome}" styleClass="label-campo"/>
+
+			<div class="clear" />
+
+			<h:outputText value="#{msg['label.dataHora']}"
+				styleClass="label-campo" />
+			<h:outputText value="#{classificacaoBean.analiseOperacional.movimento.dataHora}" styleClass="label-campo">
+				<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+			</h:outputText>
+
+			<div class="clear"/>
+
+			<h:outputText value="#{msg['label.comentario']}"
+				styleClass="label-campo" />
+			<h:inputTextarea styleClass="input-form-textarea" rows="20"
+				value="#{classificacaoBean.analiseOperacional.movimento.comentario}" 
+				id="comentarioanalise" readonly="true"/>
+		</div>
+
+		<div class="clear" />
+
+		<div class="alinhaBotao">
+			<h:commandButton
+				onclick="#{rich:component('popupveranalise')}.hide(event); return false;"
+				value="#{msg['botao.fechar']}" />
+		</div>
+	</rich:popupPanel>
+</h:form>
+</html>

@@ -2,6 +2,7 @@ package br.com.telefonica.ssi.regulatorio.commom.domain;
 
 import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,24 +17,33 @@ import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
 @Entity
 @Table(name="StatusRegulatorio",schema="regulatorio")
 public class StatusRegulatorio extends AbstractEntity<Integer>{
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -2800140808722248785L;
+
+	public static final int ID_RASCUNHO = 26;
+	public static final int ID_ANALISE_PRELIMINAR = 27;
+	public static final int ID_REVISAO_PRAZO = 28;
+	public static final int ID_PENDENTE_DADOS = 29;
+	public static final int ID_CANCELADA = 30;
+	public static final int ID_CONCLUIDA = 31;
+	public static final int ID_PENDENTE_ESCALRECIMENTO = 32;
+	public static final int ID_ANALISE_TECNICA = 33;
+	public static final int ID_ATENDIMENTO = 34;
+	public static final int ID_ANALISE_OPERACIONAL = 35;
+	public static final int ID_ANALISE_FINAL = 36;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="idStatus")
 	private Integer idStatus;
-	
+
 	@Column(name="cnmDescStatus")
 	private String descricao;
-	
+
 	@OneToMany(targetEntity=StatusRegulatorio.class)
 	@JoinColumn(name="idStatusAnteriores")
 	private Collection<StatusRegulatorio> statusAnteriores;
-	
+
 	@OneToMany(targetEntity=StatusRegulatorio.class)
 	@JoinColumn(name="idStatusSucessores")
 	private Collection<StatusRegulatorio> statusPosteriores;

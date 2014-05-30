@@ -16,20 +16,20 @@ import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
 @Entity
 @Table(name="MovimentoRevisaoPrazo",schema="regulatorio")
 public class MovimentoRevisaoPrazo extends AbstractEntity<Integer>{
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1035279056199141831L;
-	
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="idMovimentoRevisao")
 	private Integer idMovimento;
-	
+
 	@Column(name="dtPrazoProposto")
 	private Date prazo;
-	
+
 	@ManyToOne(targetEntity=Movimento.class)
 	@JoinColumn(name="idMovimento",referencedColumnName="idMovimento")
 	private Movimento movimento;

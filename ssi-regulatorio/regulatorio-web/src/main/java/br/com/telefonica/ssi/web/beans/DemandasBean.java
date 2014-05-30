@@ -1,7 +1,9 @@
 
 package br.com.telefonica.ssi.web.beans;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -19,9 +21,11 @@ import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.Procedencia;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Areas;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Emails;
+import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.GruposModulos;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.LogService;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.SendMailService;
+import br.com.telefonica.ssi.regulatorio.commom.interfaces.dbo.GruposModulosInt;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.facade.DemandaServiceFacade;
 import br.com.telefonica.ssi.web.controller.IndexMB;
 import br.com.telefonica.ssi.web.utils.RecuperadorInstanciasBean;
@@ -39,6 +43,9 @@ public class DemandasBean extends AbstractManagedBean {
 	private SendMailService sendMail;
 
 	private DemandasRegulatorio demanda;
+
+	@EJB
+	private GruposModulosInt grupoModuloService;
 
 	private String novoEmail;
 
@@ -77,10 +84,25 @@ public class DemandasBean extends AbstractManagedBean {
 	public void salvarComoRascunho(){
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 
-		if(demanda.getPrazo().before(Calendar.getInstance().getTime())){
-			index.setMsgpanel("Prazo anterior à data atual!");
+		List<String> mensagens = new ArrayList<String>();
 
+		if(demanda.getPrazo()==null){
+			mensagens.add("Prazo não informado!");
+			index.setMsgspanel(mensagens);
 			index.setPanelexibeerro(true);
+			return;
+		}
+		if(demanda.getPrazo().before(Calendar.getInstance().getTime())){
+			mensagens.add("Prazo anterior à data atual!");
+			index.setMsgspanel(mensagens);
+			index.setPanelexibeerro(true);
+			return;
+		}
+		if(demanda.getQuestao()==null||demanda.getQuestao().equals("")){
+			mensagens.add("Questão não informada!");
+			index.setMsgspanel(mensagens);
+			index.setPanelexibeerro(true);
+			return;
 		}
 		else{
 			facadeDemanda.salvarComoRascunho(demanda);
@@ -96,11 +118,47 @@ public class DemandasBean extends AbstractManagedBean {
 	public void encaminhar(){
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 
-		if(demanda.getPrazo().before(Calendar.getInstance().getTime())){
-			index.setMsgpanel("Prazo anterior à data atual!");
+		if(demanda.getPrazo() == null || demanda.getPrazo().before(Calendar.getInstance().getTime()) ||
+				demanda.getQuestao()==null || demanda.getQuestao().equals("")){
+			List<String> messages = new ArrayList<String>();
+			if(demanda.getPrazo() == null || demanda.getQuestao() == null){
+				messages.add("Os campos prazo, e questão são obrigatórios!");
+			}
+			else if(demanda.getPrazo().before(Calendar.getInstance().getTime())){
+				messages.add("Prazo anterior à data atual!");
+			}
+			else if(demanda.getQuestao()==null || demanda.getQuestao().equals("")){
+				messages.add("Campo questão não preenchido!");
+			}
+			index.setMsgspanel(messages);
 			index.setPanelexibeerro(true);
 		}
 		else{
+			GruposModulos gmodulos = grupoModuloService.recuperarPorNome(demanda.getCategoria().getDescricao());
+
+			Pessoas responsavel = null;
+
+			List<Pessoas> pessoas = gmodulos.getGruposmodulospessoas();
+
+			Iterator<Pessoas> it = pessoas.iterator();
+
+			while(it.hasNext()){
+				Pessoas p = it.next();
+				if(p.getCargo().getCnmcargo().equalsIgnoreCase("gestor")){
+					responsavel = p;
+					break;
+				}
+			}
+
+//			if(responsavel == null){
+//				List<String> messages = new ArrayList<String>();
+//				messages.add("Esta categoria não possui um responsável cadastrado!");
+//				index.setMsgspanel(messages);
+//				index.setPanelexibeerro(true);
+//				return;
+//			}
+			demanda.setEncarregado(responsavel);
+
 			this.demanda = facadeDemanda.encaminhar(demanda);
 			index.setMsgpanel("Demanda encaminhada!");
 			index.setPanelexibesucesso(true);

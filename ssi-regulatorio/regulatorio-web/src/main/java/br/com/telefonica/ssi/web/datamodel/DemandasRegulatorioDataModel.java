@@ -1,4 +1,25 @@
 package br.com.telefonica.ssi.web.datamodel;
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc. and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 
 import java.util.List;
 import java.util.Map;
@@ -13,124 +34,114 @@ import org.richfaces.model.Arrangeable;
 import org.richfaces.model.ArrangeableState;
 
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
-import br.com.telefonica.ssi.regulatorio.commom.interfaces.DemandaService;
+import br.com.telefonica.ssi.regulatorio.commom.domain.Movimento;
+import br.com.telefonica.ssi.regulatorio.commom.interfaces.facade.DemandaServiceFacade;
+import br.com.telefonica.ssi.web.utils.RecuperadorInstanciasBean;
 
 
-//TODO:Generalizar este componente DataModel e colocar no framework. Esta parte pode ser gneralizada.
-public class DemandasRegulatorioDataModel extends ExtendedDataModel<DemandasRegulatorio>
-		implements java.io.Serializable, Arrangeable {
+public class DemandasRegulatorioDataModel extends ExtendedDataModel<DemandasRegulatorio> implements java.io.Serializable, Arrangeable {
 
-	/**
+    /**
 	 *
 	 */
 	private static final long serialVersionUID = -5114954703031219608L;
 
-	private DemandaService demandaService;
+
+	private DemandaServiceFacade demandFacade;
 
 	private Object rowKey;
-	private ArrangeableState arrangeableState;
-	private Map<String, Object> filtros;
+    private ArrangeableState arrangeableState;
+    private Map<String,Object> filtros;
 
-	public DemandasRegulatorioDataModel(DemandaService demandaint,
-			Map<String, Object> filtros) {
-		super();
+    public DemandasRegulatorioDataModel(DemandaServiceFacade demandaFacade, Map<String,Object>filtros,DemandasRegulatorio demanda) {
+        super();
 
-		this.demandaService = demandaint;
-		this.filtros = filtros;
-	}
+        this.demandFacade = demandaFacade;
+        this.filtros = filtros;
+    }
 
-	public void arrange(FacesContext context, ArrangeableState state) {
-		arrangeableState = state;
-	}
 
-	@Override
-	public void setRowKey(Object key) {
-		rowKey = key;
-	}
 
-	@Override
-	public Object getRowKey() {
-		return rowKey;
-	}
+    public void arrange(FacesContext context, ArrangeableState state) {
+        arrangeableState = state;
+    }
 
-	protected ArrangeableState getArrangeableState() {
-		return arrangeableState;
-	}
+    @Override
+    public void setRowKey(Object key) {
+        rowKey = key;
+    }
 
-	@Override
-	public void walk(FacesContext context, DataVisitor visitor, Range range,
-			Object argument) {
-		int firstRow = ((SequenceRange) range).getFirstRow();
-		int numberOfRows = ((SequenceRange) range).getRows();
+    @Override
+    public Object getRowKey() {
+        return rowKey;
+    }
 
-		List<DemandasRegulatorio> data = demandaService.retornarPaginado(
-				firstRow, numberOfRows, filtros);
+    protected ArrangeableState getArrangeableState() {
+        return arrangeableState;
+    }
 
-		for (DemandasRegulatorio t : data) {
-			visitor.process(context, getId(t), argument);
-		}
-	}
+    @Override
+    public void walk(FacesContext context, DataVisitor visitor, Range range, Object argument) {
+    	int firstRow = ((SequenceRange)range).getFirstRow();
+		int numberOfRows = ((SequenceRange)range).getRows();
 
-	@Override
-	public boolean isRowAvailable() {
-		return rowKey != null;
-	}
+		List<DemandasRegulatorio>data = demandFacade.retornarPaginado(firstRow, numberOfRows, filtros,RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado());
 
-	@Override
-	public int getRowCount() {
-		return demandaService.getRowCount(filtros);
-	}
+        for (DemandasRegulatorio t : data) {
+            visitor.process(context, getId(t), argument);
+        }
+    }
 
-	@Override
-	public DemandasRegulatorio getRowData() {
+    @Override
+    public boolean isRowAvailable() {
+        return rowKey != null;
+    }
 
-		@SuppressWarnings("unchecked")
-		List<DemandasRegulatorio> eventoschecked = (List<DemandasRegulatorio>) FacesContext
-				.getCurrentInstance().getExternalContext().getSessionMap()
-				.get("demandaschecked");
+    @Override
+    public int getRowCount() {
+    	return demandFacade.getRowCount(filtros,RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado());
+    }
 
-		if (eventoschecked != null) {
-			DemandasRegulatorio e = demandaService.getRowData(rowKey);
-			if (eventoschecked.contains(e)) {
-				// e.setChecked(true);
-			}
-			return e;
-		} else {
-			return demandaService.getRowData(rowKey);
-		}
-	}
+    @Override
+    public DemandasRegulatorio getRowData() {
+    	return demandFacade.getRowData(rowKey);
+    }
 
-	@Override
-	public int getRowIndex() {
-		return -1;
-	}
+    @Override
+    public int getRowIndex() {
+        return -1;
+    }
+
+    @Override
+    public void setRowIndex(int rowIndex) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getWrappedData() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setWrappedData(Object data) {
+        throw new UnsupportedOperationException();
+    }
 
 	public Integer getId(Object obj) {
-		DemandasRegulatorio d = (DemandasRegulatorio) obj;
+		DemandasRegulatorio d = (DemandasRegulatorio)obj;
 		return d.getId();
 	}
 
-	public Map<String, Object> getFiltros() {
+
+
+	public Map<String,Object> getFiltros() {
 		return filtros;
 	}
 
-	public void setFiltros(Map<String, Object> filtros) {
+
+
+	public void setFiltros(Map<String,Object> filtros) {
 		this.filtros = filtros;
-	}
-
-	@Override
-	public Object getWrappedData() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void setRowIndex(int arg0) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void setWrappedData(Object arg0) {
-		throw new UnsupportedOperationException();
 	}
 
 }

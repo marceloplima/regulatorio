@@ -33,7 +33,7 @@ public class AreaRegionalConverter implements Converter{
 		}
 		catch(Exception e){
 			System.out.println(">> Erro no AreasRegionais getAsObject()<<");
-			return null;
+			obj =  null;
 		}
 
 		return obj;

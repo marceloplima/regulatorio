@@ -10,11 +10,67 @@
 	xmlns:rich="http://richfaces.org/rich">
 
 	<ui:define name="conteudosistema">
+		<h:form id="formbuscardemandas">
+			<h:panelGroup layout="block" class="area-input-10">
+				<h:panelGroup class="label-campo">Número:</h:panelGroup>
+				<h:inputText id="cnmnumero" styleClass="input-form"
+					value="#{indexBean.numeroDemanda}" />
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" class="area-input-25">
+				<h:panelGroup class="label-campo">Status:</h:panelGroup>
+				<h:selectOneMenu id="buscastatus" value="#{indexBean.status}"
+					styleClass="select-form">
+					<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}"
+						noSelectionOption="true" />
+					<f:selectItems value="#{indexBean.statusRegulatorio}" var="status"
+						itemLabel="#{status.descricao}" itemValue="#{status.descricao}" />
+				</h:selectOneMenu>
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" id="pggrupomodulo" class="area-input-25">
+				<h:panelGroup class="label-campo">Solicitante:</h:panelGroup>
+				<h:inputText value="#{indexBean.nomeSolicitante}"
+					styleClass="input-form" id="nomesolicitante" />
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" class="area-input-10">
+				<h:panelGroup class="label-campo">Período:</h:panelGroup>
+				<rich:calendar styleClass="calendar-form" id="filtroinicioperiodo"
+					value="#{indexBean.dataInicial}" datePattern="dd/MM/yyyy"
+					locale="pt_BR" converter="dateToCalendarConverter"
+					enableManualInput="true"
+					oninputkeypress="javascript: mascara(this, data_mask);"
+					maxlength="10" />
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" class="area-input-10">
+				<h:panelGroup class="label-campo" />
+				<rich:calendar styleClass="calendar-form" id="filtrofimperiodo"
+					value="#{indexBean.dataFinal}" datePattern="dd/MM/yyyy"
+					locale="pt_BR" converter="dateToCalendarConverter"
+					enableManualInput="true"
+					oninputkeypress="javascript: mascara(this, data_mask);"
+					maxlength="10" />
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" class="area-input-10">
+				<h:panelGroup class="label-campo"></h:panelGroup>
+				<h:commandButton value="Buscar">
+					<a4j:ajax event="click" execute="@form"
+						listener="#{indexBean.buscar()}" render="demandasForm" />
+				</h:commandButton>
+			</h:panelGroup>
+
+			<h:panelGroup layout="block" class="clear" />
+			<h:panelGroup layout="block" class="linha" />
+		</h:form>
+
 
 		<rich:panel id="ssiinicial">
 			<h:form id="demandasForm">
-				<rich:dataTable keepSaved="true" rows="20" id="tabela"
-					value="#{indexBean.minhasDemandas}" var="demanda">
+				<rich:dataTable keepSaved="true" rows="5" id="tabela"
+					value="#{indexBean.dataModel}" var="demanda">
 					<f:facet name="header">
 						<rich:columnGroup>
 							<rich:column style="text-align:left;">
@@ -48,6 +104,12 @@
 					</f:facet>
 
 					<rich:column style="text-align:left;">
+						<h:graphicImage value="/imagens/vaiVencer.png"
+							rendered="#{demanda.venceEmDoisDias}" />
+						<h:graphicImage value="/imagens/venceHoje.png"
+							rendered="#{demanda.vencendoNoDia}" />
+						<h:graphicImage value="/imagens/vencido.png"
+							rendered="#{demanda.vencido}" />
 						<h:outputText value="#{demanda.numeroDemanda}" />
 						<h:outputText value="#{msg['label.semNumero']}"
 							rendered="#{demanda.numeroDemanda eq null}" />
@@ -82,9 +144,7 @@
 					</rich:column>
 
 					<rich:column style="text-align:right;">
-						<h:commandLink action="#{indexBean.consultaDemanda()}">
-							<f:setPropertyActionListener target="#{indexBean.idDemanda}"
-								value="#{demanda.id}" />
+						<h:commandLink action="#{indexBean.consultaDemanda(demanda.id)}">
 							<h:graphicImage value="imagens/busca_azul.png" />
 						</h:commandLink>
 					</rich:column>

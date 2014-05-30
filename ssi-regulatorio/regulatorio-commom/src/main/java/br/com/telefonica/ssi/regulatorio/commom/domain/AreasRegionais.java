@@ -2,10 +2,8 @@ package br.com.telefonica.ssi.regulatorio.commom.domain;
 
 import java.util.Collection;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,8 +31,9 @@ public class AreasRegionais extends AbstractEntity<Long> {
 	@Column(name = "cnmDescAreaRegional")
 	private String descricao;
 
-	@ManyToMany(targetEntity = UF.class,fetch=FetchType.EAGER,cascade=CascadeType.ALL)
-	@JoinTable(name = "regulatorio.UF_Areas", joinColumns = { @JoinColumn(name = "idAreaRegional", referencedColumnName = "idAreaRegional") }, inverseJoinColumns = { @JoinColumn(name = "iduf", referencedColumnName = "iduf") })
+	@ManyToMany(targetEntity = UF.class)
+	@JoinTable(name = "regulatorio.UF_Areas", joinColumns = { @JoinColumn(name = "idAreaRegional", referencedColumnName = "idAreaRegional") },
+		inverseJoinColumns = { @JoinColumn(name = "iduf", referencedColumnName = "iduf") })
 	private Collection<UF> ufs;
 
 	public Long getId() {

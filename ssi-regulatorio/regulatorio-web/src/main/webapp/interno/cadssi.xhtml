@@ -11,11 +11,8 @@
 	xmlns:hh="http://balusc.net/jsf/html">
 
 	<ui:define name="conteudosistema">
-
 		<h:form id="demandaform" method="post" enctype="multipart/form-data">
-
 			<h:panelGroup layout="block" styleClass="alinhaBotao">
-
 				<h:panelGroup layout="block" style="z-index:1"
 					styleClass="item-acoes">
 					<h:panelGroup styleClass="acoes">
@@ -28,50 +25,48 @@
 
 							<rich:menuItem mode="ajax" 
 								label="#{msg['botao.salvar']}"
-								execute="form tipoRede assuntoDemanda documentoOrigem areaRegional" 
+								execute=":demandaform tipoRede assuntoDemanda documentoOrigem areaRegional ufs" 
 								action="#{classificacaoBean.salvarDemanda}"
-								rendered="#{demandasBean.demanda.status.descricao eq 'ANÁLISE PRELIMINAR'}"
-								render="@form infoDemanda :panelexibesucesso :panelexibeerro" />
+								rendered="#{permissoesMB.verificarSalvar()}"
+								render="@all :panelexibesucesso :panelexibeerro" immediate="true"/>
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.salvar.rascunho']}"
 								action="#{demandasBean.salvarComoRascunho}"
 								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
 								render="@all :panelexibesucesso :panelexibeerro"
-								rendered="#{demandasBean.demanda.status.descricao eq 'RASCUNHO'}" />
+								rendered="#{permissoesMB.verificarEncaminhar()}" />
 
 							<rich:menuItem label="#{msg['botao.encaminhar']}" mode="ajax"
 								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
 								action="#{demandasBean.encaminhar}"
-								rendered="#{demandasBean.demanda.status.descricao eq 'RASCUNHO'}"
+								rendered="#{permissoesMB.verificarEncaminhar()}"
 								render="@form infoDemanda :panelexibesucesso :panelexibeerro" />
 
 							<rich:menuItem label="#{msg['botao.cancelar']}" mode="ajax"
 								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
 								action="#{classificacaoBean.cancelarDemanda()}"
-								rendered="#{demandasBean.demanda.status.descricao != 'RASCUNHO' and demandasBean.demanda.status.descricao != 'CONCLUÍDA' and demandasBean.demanda.status.descricao != 'CANCELADA'}"
+								rendered="#{permissoesMB.verificarCancelar()}"
 								render="@form infoDemanda :panelexibesucesso :panelexibeerro">
 								<rich:componentControl target="cancelarDemanda" operation="show"
 									event="click" />
-								<f:ajax render="demandaform" event="click" />
+								<f:ajax render="demandaform :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.assumir.demanda']}" 
-								action="#{classificacaoBean.assumirDemanda}" 
 								execute="@form"
-								rendered="#{demandasBean.demanda.status.descricao eq 'ANÁLISE PRELIMINAR'}"
+								rendered="#{permissoesMB.verificarPodeAssumirDemanda()}"
 								render="@form infoDemanda :panelexibesucesso :panelexibeerro">
 								<rich:componentControl target="assumirDemanda" operation="show"
 									event="click" />
-								<f:ajax render="demandaform" event="click" />
+								<f:ajax render="@form infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax" label="#{msg['botao.revisao.prazo']}"
 								execute=":demandaform:comentarioPrazo :demandaform:novoPrazo"
 								action="#{classificacaoBean.revisarPrazo}"
-								rendered="#{demandasBean.demanda.status.descricao == 'ANÁLISE PRELIMINAR' or demandasBean.demanda.status.descricao == 'ANÁLISE TÉCNICA' or
-									demandasBean.demanda.status.descricao == 'REVISÃO DE PRAZO'}">
+								rendered="#{permissoesMB.verificarRevisarPrazo()}">
 								render="@form infoDemanda :panelexibesucesso :panelexibeerro">
 								<rich:componentControl target="revisaoPrazo" operation="show"
 									event="click" />
@@ -79,62 +74,70 @@
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.definir.tecnico']}" execute="@form"
-								rendered="#{demandasBean.demanda.status.descricao == 'ANÁLISE PRELIMINAR'}">
+								rendered="#{permissoesMB.verificarCancelar()}">
 								<rich:componentControl target="popupdefinirtecnico" operation="show"
 									event="click" />
-								<f:ajax render="@form infoDemanda" event="click" />
+								<f:ajax render="@form infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.analise.tecnica']}" execute="@this"
-								rendered="#{demandasBean.demanda.status.descricao == 'ANÁLISE PRELIMINAR' or demandasBean.demanda.status.descricao == 'ANÁLISE TÉCNICA'}">
+								rendered="#{permissoesMB.verificarAnaliseTecnica()}">
 								<rich:componentControl target="popupanalisetecnica" operation="show" event="click" />
-								<f:ajax render="@form infoDemanda" event="click" />
+								<f:ajax render="@form infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax" label="#{msg['botao.followup']}"
 								execute="@form"
-								actionListener="#{demandasBean.salvarComoRascunho}"
-								rendered="#{demandasBean.demanda.status.descricao eq 'ANÁLISE PRELIMINAR'or demandasBean.demanda.status.descricao == 'ANÁLISE TÉCNICA'}">
+								rendered="#{permissoesMB.verificarFollowUp()}">
 								<rich:componentControl target="popupfollowup" operation="show"
 									event="click" />
-								<f:ajax render="@form demandaform" event="click" />
+								<f:ajax render="@form demandaform :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax" label="#{msg['botao.concluir.demanda']}"
 								execute="@form"
-								actionListener="#{demandasBean.salvarComoRascunho}"
-								rendered="#{demandasBean.demanda.status.descricao eq 'ANÁLISE PRELIMINAR'or demandasBean.demanda.status.descricao == 'ANÁLISE TÉCNICA'}">
+								rendered="#{permissoesMB.verificarConcluir()}">
 								<rich:componentControl target="popupconclusao" operation="show"
 									event="click" />
-								<f:ajax render="@form demandaform" event="click" />
+								<f:ajax render="@form demandaform :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
-
-							<rich:menuItem mode="ajax" label="#{msg['botao.atendimento']}"
-								execute="@form"
-								actionListener="#{demandasBean.salvarComoRascunho}"
-								rendered="false">
-								<f:ajax render="demandaform" event="click" />
-							</rich:menuItem>
-
-							<rich:menuItem mode="ajax" label="#{msg['botao.dados']}"
-								execute="@form"
-								actionListener="#{demandasBean.salvarComoRascunho}"
-								rendered="false">
-								<f:ajax render="demandaform" event="click" />
-							</rich:menuItem>
-
-							<rich:menuItem mode="ajax"
-								label="#{msg['botao.esclarecimentos']}" execute="@form"
-								actionListener="false" rendered="false">
-								<f:ajax render="demandaform" event="click" />
-							</rich:menuItem>
+							
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.areas.operacionaos']}" execute="@form"
+								rendered="#{permissoesMB.verificarAcionarAreasOperacionais()}">
+								<rich:componentControl target="popupacionamentooperacional" operation="show"
+									event="click" />
+								<f:ajax render="@form infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
+							</rich:menuItem>
+							
+							<rich:menuItem mode="ajax" label="#{msg['botao.atendimento']}"
+								execute="@form"
 								actionListener="#{demandasBean.salvarComoRascunho}"
-								rendered="false">
+								rendered="#{permissoesMB.verificarEmAtendimento()}">
 								<f:ajax render="demandaform" event="click" />
+							</rich:menuItem>
+							
+							<rich:menuItem mode="ajax" label="#{msg['botao.dados']}"
+								execute="@form"
+								actionListener="#{demandasBean.salvarComoRascunho}"
+								rendered="#{permissoesMB.verificarNecessidadeDados()}">
+								<f:ajax render="demandaform" event="click" />
+							</rich:menuItem>
+							
+							<rich:menuItem mode="ajax"
+								label="#{msg['botao.esclarecimentos']}" execute="@form"
+								actionListener="false" rendered="#{permissoesMB.verificarNecessidadeEsclarecimento()}">
+								<f:ajax render="demandaform" event="click" />
+							</rich:menuItem>
+							
+							<rich:menuItem mode="ajax"
+								label="#{msg['botao.analise.operacional']}" execute="@form"
+								rendered="#{permissoesMB.verificarAnaliseOperacional()}">
+								<rich:componentControl target="popupanaliseoperacional" operation="show"
+									event="click" />
+								<f:ajax render="@form infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 						</rich:dropDownMenu>
@@ -161,6 +164,12 @@
 					<h:outputText class="label-campo" value="#{msg['label.status']}" />
 					<h:outputText styleClass="label-campo destaque" disabled="true"
 						value="#{demandasBean.demanda.status.descricao}" />
+				</div>
+				
+				<div class="area-input-30">
+					<h:graphicImage value="/imagens/vaiVencer.png" rendered="#{demandasBean.demanda.venceEmDoisDias}" style="margin-top:-32px;"/>
+					<h:graphicImage value="/imagens/venceHoje.png" rendered="#{demandasBean.demanda.vencendoNoDia}" style="margin-top:-32px;"/>
+					<h:graphicImage value="/imagens/vencido.png" rendered="#{demandasBean.demanda.vencido}" style="margin-top:-32px;"/>
 				</div>
 			</h:panelGroup>
 
@@ -194,12 +203,9 @@
 								datePattern="dd/MM/yyyy" locale="pt_BR" popup="true"
 								enableManualInput="true"
 								oninputkeypress="javascript: mascara(this, data_mask);"
-								maxlength="10" required="true"
-								requiredMessage="#{msg['campo.prazo.obrigatorio']}"
+								maxlength="10" 
 								value="#{demandasBean.demanda.prazo}"
 								rendered="#{demandasBean.demanda.novaDemanda}" id="prazoDemanda" />
-							<h:message for="prazoDemanda"
-								style="font-weight:bold;color:#ff0000;" />
 
 							<h:outputText styleClass="label-campo destaque"
 								value="#{demandasBean.demanda.prazo}"
@@ -285,12 +291,9 @@
 							<h:outputLabel value="#{msg['label.questao']}"
 								styleClass="label-campo" />
 							<h:inputTextarea styleClass="input-form-textarea" rows="20"
-								value="#{demandasBean.demanda.questao}" required="true"
-								requiredMessage="#{msg['campo.questao.obrigatorio']}"
+								value="#{demandasBean.demanda.questao}" 
 								id="questaoDemanda"
 								disabled="#{!demandasBean.demanda.novaDemanda}" />
-							<h:message for="questaoDemanda"
-								style="font-weight:bold;color:#ff0000;" />
 						</div>
 
 						<h:panelGroup layout="block" class="area-input-50">
@@ -329,8 +332,8 @@
 						<div class="area-input-25">
 							<h:outputLabel value="#{msg['label.assunto']}"
 								styleClass="label-campo" />
-							<h:selectOneMenu value="#{classificacaoBean.demanda.tipoDemanda}" disabled="#{classificacaoBean.demanda.status.descricao != 'ANÁLISE PRELIMINAR'}"
-								styleClass="select-form" required="true" requiredMessage="#{msg['campo.obrigatorio']}" id="assuntoDemanda" converter="#{tipoDemandaConverter}" immediate="true">
+							<h:selectOneMenu value="#{classificacaoBean.demanda.tipoDemanda}" rendered="#{permissoesMB.verificarCamposClassificacao()}"
+								styleClass="select-form" id="assuntoDemanda" converter="#{tipoDemandaConverter}" immediate="true">
 								<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}"
 									noSelectionOption="true" itemValue="#{null}" />
 								<f:selectItems
@@ -338,8 +341,7 @@
 									var="assunto" itemLabel="#{assunto.descricao}"
 									itemValue="#{assunto}" />
 							</h:selectOneMenu>
-							<h:message for="assuntoDemanda"
-								style="font-weight:bold;color:#ff0000;" />
+							<h:outputText value="#{classificacaoBean.demanda.tipoDemanda.descricao}" rendered="#{not permissoesMB.verificarCamposClassificacao()}" />
 						</div>
 
 
@@ -347,23 +349,22 @@
 							<h:outputLabel value="#{msg['label.tipo.documento']}"
 								styleClass="label-campo" />
 							<h:selectOneMenu
-								value="#{classificacaoBean.demanda.documentoOrigem}" disabled="#{classificacaoBean.demanda.status.descricao != 'ANÁLISE PRELIMINAR'}"
-								styleClass="select-form" required="true" requiredMessage="#{msg['campo.obrigatorio']}" immediate="true" id="documentoOrigem" converter="#{documentoOrigemConverter}">
+								value="#{classificacaoBean.demanda.documentoOrigem}" rendered="#{permissoesMB.verificarCamposClassificacao()}"
+								styleClass="select-form" id="documentoOrigem" converter="#{documentoOrigemConverter}">
 								<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}"
 									itemValue="#{null}" noSelectionOption="true" />
 								<f:selectItems
 									value="#{classificacaoBean.documentoService.recuperaTodos()}"
 									var="doc" itemLabel="#{doc.descricao}" itemValue="#{doc}" />
 							</h:selectOneMenu>
-							<h:message for="prazoDemanda"
-								style="font-weight:bold;color:#ff0000;" /> 
+							<h:outputText value="#{classificacaoBean.demanda.documentoOrigem}" rendered="#{not permissoesMB.verificarCamposClassificacao()}" />
 						</div>
 
 						<div class="area-input-25">
 							<h:outputLabel value="#{msg['label.tipo.rede']}"
 								styleClass="label-campo" />
-							<h:selectOneMenu value="#{classificacaoBean.demanda.tipoRede}" styleClass="select-form" disabled="#{classificacaoBean.demanda.status.descricao != 'ANÁLISE PRELIMINAR'}" 
-							immediate="true" requiredMessage="#{msg['campo.obrigatorio']}" id="tipoRede" converter="#{tipoRedeConverter}">
+							<h:selectOneMenu value="#{classificacaoBean.demanda.tipoRede}" styleClass="select-form" rendered="#{permissoesMB.verificarCamposClassificacao()}" 
+							id="tipoRede" converter="#{tipoRedeConverter}">
 								<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}"
 									itemValue="#{null}" noSelectionOption="true" />
 								<f:selectItems
@@ -371,16 +372,15 @@
 									var="tipoRede" itemLabel="#{tipoRede.descricao}"
 									itemValue="#{tipoRede}" />
 							</h:selectOneMenu>
-							<h:message for="prazoDemanda"
-								style="font-weight:bold;color:#ff0000;" />
+							<h:outputText value="#{classificacaoBean.demanda.tipoRede.descricao}" rendered="#{not permissoesMB.verificarCamposClassificacao()}" />							
 						</div>
 
 						<div class="area-input-25">
 							<h:outputLabel value="#{msg['label.areasregionais']}"
 								styleClass="label-campo" />
-							<h:selectOneMenu styleClass="select-form" required="true" disabled="#{classificacaoBean.demanda.status.descricao != 'ANÁLISE PRELIMINAR'}"
-								requiredMessage="#{msg['campo.obrigatorio']}" id="areaRegional" converter="#{areaRegionalConverter}" 
-								value="#{classificacaoBean.demanda.areaRegional}">
+							<h:selectOneMenu styleClass="select-form" rendered="#{permissoesMB.verificarCamposClassificacao()}"
+								id="areaRegional" 
+								value="#{classificacaoBean.demanda.areaRegional}" converter="#{areaRegionalConverter}">
 								<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}"
 									noSelectionOption="true" />
 								<f:selectItems
@@ -389,8 +389,7 @@
 									itemValue="#{regional}"/>
 								<a4j:ajax execute=":demandaform:areaRegional @this" render="ufs" immediate="true"/>
 							</h:selectOneMenu>
-							<h:message for="areaRegional"
-								style="font-weight:bold;color:#ff0000;" />
+							<h:outputText value="#{classificacaoBean.demanda.areaRegional.descricao}" rendered="#{not permissoesMB.verificarCamposClassificacao()}" />
 						</div>
 
 						<div class="clear" />
@@ -399,13 +398,10 @@
 							<h:outputLabel value="#{msg['label.ufs']}"
 								styleClass="label-campo" />
 							<h:selectManyCheckbox id="ufs" value="#{classificacaoBean.ufs}" styleClass="select-form" 
-							immediate="true"  disabled="#{classificacaoBean.demanda.status.descricao != 'ANÁLISE PRELIMINAR'}">
+							disabled="true" converter="#{unidadeFederacaoConverter}">
 								<f:selectItems value="#{classificacaoBean.demanda.areaRegional.ufs}"
 									var="r" itemLabel="#{r.descricao}" itemValue="#{r}" />
-									<a4j:ajax event="click" execute="@this"/>
 							</h:selectManyCheckbox>
-							<h:message for="ufs"
-								style="font-weight:bold;color:#ff0000;" />
 						</div>
 						<div class="clear" />
 
@@ -413,8 +409,8 @@
 
 					<!-- Operacional -->
 					<rich:tab header="#{msg['aba.operacional']}">
-						<rich:dataTable keepSaved="true" rows="20" id="tabelaOperacional"
-							value="" var="demanda">
+						<rich:dataTable keepSaved="true" rows="10" id="tabelaOperacional"
+							value="#{operacionalBean.analisesOperacionais}" var="analise">
 							<f:facet name="header">
 								<rich:columnGroup>
 									<rich:column style="text-align:left;">
@@ -436,36 +432,29 @@
 							</f:facet>
 
 							<rich:column style="text-align:left;">
-								<h:outputText value="" />
+								<h:outputText value="#{analise.movimento.dataHora}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+								</h:outputText>
 							</rich:column>
 
 							<rich:column style="text-align:left;">
-								<h:outputText value="" />
+								<h:outputText value="#{analise.movimento.autor.cnmnome}" />
 							</rich:column>
 
 							<rich:column style="text-align:left;">
-								<h:outputText value="" />
+								<h:outputText value="#{analise.movimento.demanda.status.descricao}"/>
 							</rich:column>
 
 							<rich:column style="text-align:left;">
-								<h:outputText value="" />
-							</rich:column>
-
-							<rich:column style="text-align:left;">
-								<h:outputText value="" />
-							</rich:column>
-
-							<rich:column style="text-align:left;">
-								<h:outputText value=""/>
-							</rich:column>
-
-							<rich:column style="text-align:left;">
-								<h:outputText value=""/>
+								<h:outputText value="#{analise.movimento.autor.cnmnome}"/>
 							</rich:column>
 
 							<rich:column style="text-align:right;">
-								<h:commandLink>
+								<h:commandLink action="#{classificacaoBean}" immediate="true">
+									<f:setPropertyActionListener target="#{operacionalBean.idMovimento}" value="#{analise.id}"/>
 									<h:graphicImage value="imagens/busca_azul.png" />
+									<rich:componentControl target="popupveranalise" operation="show"
+										event="click" />
 								</h:commandLink>
 							</rich:column>
 
@@ -479,7 +468,7 @@
 					<!-- Eventos -->
 					<rich:tab header="#{msg['aba.eventos']}">
 						<rich:dataTable keepSaved="true" rows="20" id="tabelaeventos"
-							value="" var="demanda">
+							value="#{movimentosBean.dataModel}" var="movimento">
 							<f:facet name="header">
 								<rich:columnGroup>
 									<rich:column style="text-align:left;">
@@ -497,15 +486,17 @@
 							</f:facet>
 
 							<rich:column style="text-align:left;">
-								<h:outputText value="" />
+								<h:outputText value="#{movimento.dataHora}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+								</h:outputText>
 							</rich:column>
 
 							<rich:column style="text-align:left;">
-								<h:outputText value="" />
+								<h:outputText value="#{movimento.tipo}" />
 							</rich:column>
 
 							<rich:column style="text-align:left;">
-								<h:outputText value="" />
+								<h:outputText value="#{movimento.autor.cnmnome}" />
 							</rich:column>
 
 							<f:facet name="footer">
@@ -634,26 +625,6 @@
 				</div>
 			</rich:popupPanel>
 			
-			<!-- POPUP ASSUMIR DEMANDA -->
-			<rich:popupPanel id="assumirDemanda" modal="true" height="90"
-				width="200" resizeable="false" domElementAttachment="form">
-				<div class="area-input-100">
-					<h:outputText value="#{msg['confirmar.assumirDemanda']}"
-						styleClass="label-campo" />
-				</div>
-				<div class="clear" />
-				<div class="alinhaBotao">
-					<h:commandButton action="#{classificacaoBean.assumirDemanda()}"
-						value="#{msg['botao.sim']}"
-						onclick="#{rich:component('assumirDemanda')}.hide(event);">
-						<f:ajax execute="@this"/>
-					</h:commandButton>
-					<h:commandButton
-						onclick="#{rich:component('assumirDemanda')}.hide(event); return false;"
-						value="#{msg['botao.nao']}" />
-				</div>
-			</rich:popupPanel>
-			
 			<!-- POPUP CANCELAR DEMANDA -->
 			<rich:popupPanel id="cancelarDemanda" modal="true" height="90"
 				width="200" resizeable="false" domElementAttachment="form">
@@ -675,19 +646,19 @@
 			</rich:popupPanel>
 			
 			<!-- POPUP REVISAO PRAZO -->
-			<rich:popupPanel id="revisaoPrazo" modal="true" width="450"
-				height="450" resizeable="false" domElementAttachment="form"
+			<rich:popupPanel id="revisaoPrazo" modal="true" minWidth="450"
+				minHeight="380" resizeable="false" domElementAttachment="form"
 				header="#{msg['header.revisao.prazo']}">
 				<div class="area-input-100">
 					<h:outputText value="#{msg['label.autor']}"
 						styleClass="label-campo" />
-					<h:outputText value="#{classificacaoBean.demanda.autor.cnmnome}"/>
+					<h:outputText value="#{classificacaoBean.demanda.autor.cnmnome}" styleClass="label-campo"/>
 
 					<div class="clear" />
 
 					<h:outputText value="#{msg['label.dataHora']}"
 						styleClass="label-campo" />
-					<h:outputText value="#{session.lastAccessedTime}">
+					<h:outputText value="#{session.lastAccessedTime}" styleClass="label-campo">
 						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 					</h:outputText>
 
@@ -695,7 +666,7 @@
 
 					<h:outputText value="#{msg['label.prazo.atual']}"
 						styleClass="label-campo" />
-					<h:outputText value="#{classificacaoBean.demanda.prazo}">
+					<h:outputText value="#{classificacaoBean.demanda.prazo}" styleClass="label-campo">
 						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>
 
@@ -722,7 +693,7 @@
 				<div class="clear" />
 				
 				<div class="area-input-100">
-					<h:outputText value="#{msg['label.comentario']}" />
+					<h:outputText value="#{msg['label.comentario']}" styleClass="label-campo"/>
 					<h:inputTextarea styleClass="input-form-textarea" rows="20"
 						value="#{classificacaoBean.comentario}" required="true"
 						requiredMessage="#{msg['campo.questao.obrigatorio']}"
@@ -744,7 +715,6 @@
 				</div>
 			</rich:popupPanel>
 			
-			
 			<!-- Confirmação de apagamento de anexo -->
 			<rich:popupPanel id="popupconfirmaapagaranexo" domElementAttachment="form" modal="true" width="300" height="100" zindex="2" show="#{anexosMB.exibeconfirmacaoapagar}" showWhenRendered="#{anexosMB.exibeconfirmacaoapagar}">
 			<h:panelGroup layout="block" class="area-input-50">
@@ -765,6 +735,10 @@
 			</h:panelGroup>	
 		</rich:popupPanel>
 		</h:form>
+		<ui:include src="includes/popupVisualizarAnaliseOperacional.xhtml"/>
+		<ui:include src="includes/popupAnaliseOperacional.xhtml"/>
+		<ui:include src="includes/popupAssumirDemanda.xhtml"/>
+		<ui:include src="includes/popupAcionamentoOperacional.xhtml" />
 		<ui:include src="includes/popupConclusaoDemanda.xhtml"/>
 		<ui:include src="includes/popupAnaliseTecnica.xhtml"/>
 		<ui:include src="includes/popupDefinirTecnico.xhtml"/>

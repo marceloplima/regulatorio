@@ -16,13 +16,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.joda.time.DateTime;
+import org.joda.time.Hours;
+
 import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Areas;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
 
 @Entity
-@Table(name="DemandasRegulatorio",schema="regulatorio")
-public class DemandasRegulatorio extends AbstractEntity<Integer>{
+@Table(name = "DemandasRegulatorio", schema = "regulatorio")
+public class DemandasRegulatorio extends AbstractEntity<Integer> {
 
 	/**
 	 *
@@ -30,77 +33,74 @@ public class DemandasRegulatorio extends AbstractEntity<Integer>{
 	private static final long serialVersionUID = -3573409715513091398L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="idDemanda")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "idDemanda")
 	private Integer id;
 
-	@Column(name="cnnumeroDemanda")
+	@Column(name = "cnnumeroDemanda")
 	private String numeroDemanda;
 
-	@ManyToOne(targetEntity=Pessoas.class)
-	@JoinColumn(name="idPessoaAutor",referencedColumnName="idpessoa")
+	@ManyToOne(targetEntity = Pessoas.class)
+	@JoinColumn(name = "idPessoaAutor", referencedColumnName = "idpessoa")
 	private Pessoas autor;
 
-	@ManyToOne(targetEntity=Pessoas.class)
-	@JoinColumn(name="idpessoaSolicitante",referencedColumnName="idpessoa")
+	@ManyToOne(targetEntity = Pessoas.class)
+	@JoinColumn(name = "idpessoaSolicitante", referencedColumnName = "idpessoa")
 	private Pessoas solicitante;
 
-	@ManyToOne(targetEntity=Areas.class)
-	@JoinColumn(name="idareaOrigem",referencedColumnName="idarea")
+	@ManyToOne(targetEntity = Areas.class)
+	@JoinColumn(name = "idareaOrigem", referencedColumnName = "idarea")
 	private Areas origem;
 
-	@Column(name="dataHoraDemanda")
+	@Column(name = "dataHoraDemanda")
 	private Date dataHoraDemanda;
 
-	@Column(name="cnmQuestao")
+	@Column(name = "cnmQuestao")
 	private String questao;
 
-	@Column(name="cnmObservacoes")
+	@Column(name = "cnmObservacoes")
 	private String observacoes;
 
-	@Column(name="prazo")
+	@Column(name = "prazo")
 	private Date prazo;
 
-	@ManyToOne(targetEntity=StatusRegulatorio.class)
-	@JoinColumn(name="idStatus",referencedColumnName="idStatus")
+	@ManyToOne(targetEntity = StatusRegulatorio.class)
+	@JoinColumn(name = "idStatus", referencedColumnName = "idStatus")
 	private StatusRegulatorio status;
 
-	@ManyToOne(targetEntity=CategoriaRegulatorio.class)
-	@JoinColumn(name="idCategoria",referencedColumnName="idCategoria")
+	@ManyToOne(targetEntity = CategoriaRegulatorio.class)
+	@JoinColumn(name = "idCategoria", referencedColumnName = "idCategoria")
 	private CategoriaRegulatorio categoria;
 
-	@ManyToOne(targetEntity=Procedencia.class)
-	@JoinColumn(name="idProcedencia",referencedColumnName="idProcedencia")
+	@ManyToOne(targetEntity = Procedencia.class)
+	@JoinColumn(name = "idProcedencia", referencedColumnName = "idProcedencia")
 	private Procedencia procedencia;
 
-	@ManyToOne(targetEntity=AreasRegionais.class)
-	@JoinColumn(name="idAreaRegional",referencedColumnName="idAreaRegional")
+	@ManyToOne(targetEntity = AreasRegionais.class)
+	@JoinColumn(name = "idAreaRegional", referencedColumnName = "idAreaRegional")
 	private AreasRegionais areaRegional;
 
-	@OneToMany(targetEntity=AnexosRegulatorio.class,mappedBy="demanda")
+	@OneToMany(targetEntity = AnexosRegulatorio.class, mappedBy = "demanda")
 	private Collection<AnexosRegulatorio> anexos;
 
-	@ManyToMany(targetEntity=UF.class)
-	@JoinTable(name="regulatorio.UF_Demandas",joinColumns={
-			@JoinColumn(name="idDemanda")
-	},
-	inverseJoinColumns={@JoinColumn(name="iduf")})
+	@ManyToMany(targetEntity = UF.class)
+	@JoinTable(name = "regulatorio.UF_Demandas", joinColumns = { @JoinColumn(name = "idDemanda") }, inverseJoinColumns = { @JoinColumn(name = "iduf") })
 	private List<UF> ufs;
 
-	@ManyToOne(targetEntity=TipoDemanda.class)
-	@JoinColumn(name="idTipoDemanda",referencedColumnName="idTipoDemanda")
+	@ManyToOne(targetEntity = TipoDemanda.class)
+	@JoinColumn(name = "idTipoDemanda", referencedColumnName = "idTipoDemanda")
 	private TipoDemanda tipoDemanda;
 
-	@ManyToOne(targetEntity=Pessoas.class)
-	@JoinColumn(name="idPessoaEncarregado",referencedColumnName="idpessoa")
+	@ManyToOne(targetEntity = Pessoas.class)
+	@JoinColumn(name = "idPessoaEncarregado", referencedColumnName = "idpessoa")
 	private Pessoas encarregado;
 
-	@ManyToOne(targetEntity=TipoRede.class)
-	@JoinColumn(name="idTipoRede",referencedColumnName="idTipoRede")
+	@ManyToOne(targetEntity = TipoRede.class)
+	@JoinColumn(name = "idTipoRede", referencedColumnName = "idTipoRede")
 	private TipoRede tipoRede;
 
-	@ManyToOne(targetEntity=DocumentoOrigem.class)
-	@JoinColumn(name="idDocumentoOrigem",referencedColumnName="idDocumentoOrigem")
+	@ManyToOne(targetEntity = DocumentoOrigem.class)
+	@JoinColumn(name = "idDocumentoOrigem", referencedColumnName = "idDocumentoOrigem")
 	private DocumentoOrigem documentoOrigem;
 
 	public Integer getId() {
@@ -231,11 +231,10 @@ public class DemandasRegulatorio extends AbstractEntity<Integer>{
 		this.documentoOrigem = documentoOrigem;
 	}
 
-	public boolean isNovaDemanda(){
-		if(this.numeroDemanda == null || this.numeroDemanda.equals("")){
+	public boolean isNovaDemanda() {
+		if (this.numeroDemanda == null || this.numeroDemanda.equals("")) {
 			return true;
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
@@ -262,10 +261,57 @@ public class DemandasRegulatorio extends AbstractEntity<Integer>{
 
 	public void setAreaRegional(AreasRegionais areaRegional) {
 		this.areaRegional = areaRegional;
-		if(areaRegional == null){
+		if (areaRegional == null) {
 			this.ufs = null;
 		}
 	}
 
+	public boolean isVencendoNoDia() {
+		/*if (prazo != null) {
+			String dateToday = new SimpleDateFormat("dd/MM/yyyy")
+					.format(new Date());
+			String datePrazo = new SimpleDateFormat("dd/MM/yyyy").format(prazo);
+
+			if (datePrazo.equals(dateToday)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}*/
+		return false;
+	}
+
+	public boolean isVencido() {
+		if (prazo != null) {
+			if (prazo.before(new Date())) {
+				return true;
+			} else {
+				return false;
+			}
+		} else
+			return false;
+	}
+
+	public boolean isVenceEmDoisDias() {
+		if (prazo != null) {
+			DateTime hoje = new DateTime();
+			DateTime prazo = new DateTime(this.prazo);
+
+			int horas = Hours.hoursBetween(hoje, prazo).getHours();
+
+			if (horas > 0) {
+				if (horas > 12 && horas < 48) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		} else
+			return false;
+	}
 
 }

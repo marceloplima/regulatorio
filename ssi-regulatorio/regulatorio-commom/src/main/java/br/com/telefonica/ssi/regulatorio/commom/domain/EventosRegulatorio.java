@@ -16,9 +16,9 @@ import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
 @Entity
 @Table(name="Eventos",schema="regulatorio")
 public class EventosRegulatorio extends AbstractEntity<Integer>{
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -2692529777738306800L;
 
@@ -26,25 +26,25 @@ public class EventosRegulatorio extends AbstractEntity<Integer>{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="idEvento")
 	private Integer idEvento;
-	
+
 	@Column(name="dataCadastro")
 	private Date dataCadastro;
-	
+
 	@Column(name="cnmComentario")
 	private String comentario;
-	
+
 	@ManyToOne(targetEntity=StatusRegulatorio.class)
 	@JoinColumn(name="idStatus",referencedColumnName="idStatus")
 	private StatusRegulatorio status;
-	
+
 	@ManyToOne(targetEntity=StatusRegulatorio.class)
 	@JoinColumn(name="idStatusAnteriores",referencedColumnName="idStatus")
 	private StatusRegulatorio statusAnterior;
-	
+
 	@ManyToOne(targetEntity=MovimentoRevisaoPrazo.class)
 	@JoinColumn(name="idMovimentoRevisao",referencedColumnName="idMovimentoRevisao")
 	private MovimentoRevisaoPrazo movimentoRevisao;
-	
+
 	@ManyToOne(targetEntity=MovimentoFollowUp.class)
 	@JoinColumn(name="idFollowUp",referencedColumnName="idFollowUp")
 	private MovimentoFollowUp followUp;

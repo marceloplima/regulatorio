@@ -1,11 +1,15 @@
 package br.com.telefonica.ssi.regulatorio.commom.domain;
 
+import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -30,9 +34,12 @@ public class MovimentoAcionamentoArea extends AbstractEntity<Integer>{
 	@JoinColumn(name="idMovimento",referencedColumnName="idMovimento")
 	private Movimento movimento;
 
-	@ManyToOne(targetEntity=Areas.class)
-	@JoinColumn(name="idAreaOperacional",referencedColumnName="idArea")
-	private Areas areaOperacional;
+	@ManyToMany(targetEntity=Areas.class)
+	@JoinTable(name="regulatorio.MovimentoAcionamentoArea_Areas",
+		joinColumns={@JoinColumn(name="idMovimentoAreaOperacional",referencedColumnName="idMovimentoAreaOperacional")},
+		inverseJoinColumns={@JoinColumn(name="idarea",referencedColumnName="idarea")}
+			)
+	private Collection<Areas> areasOperacionais;
 
 	public Integer getId() {
 		return idMovimento;
@@ -50,13 +57,11 @@ public class MovimentoAcionamentoArea extends AbstractEntity<Integer>{
 		this.movimento = movimento;
 	}
 
-	public Areas getAreaOperacional() {
-		return areaOperacional;
+	public Collection<Areas> getAreasOperacionais() {
+		return areasOperacionais;
 	}
 
-	public void setAreaOperacional(Areas areaOperacional) {
-		this.areaOperacional = areaOperacional;
+	public void setAreasOperacionais(Collection<Areas> areasOperacionais) {
+		this.areasOperacionais = areasOperacionais;
 	}
-
-
 }

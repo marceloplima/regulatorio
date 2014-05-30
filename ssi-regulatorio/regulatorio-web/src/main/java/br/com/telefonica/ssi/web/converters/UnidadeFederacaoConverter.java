@@ -1,14 +1,19 @@
 package br.com.telefonica.ssi.web.converters;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
+import javax.inject.Named;
 
 import br.com.telefonica.ssi.regulatorio.commom.domain.UF;
+import br.com.telefonica.ssi.regulatorio.commom.interfaces.UFService;
 
-@FacesConverter("ufedConverter")
+@Named
+@ApplicationScoped
 public class UnidadeFederacaoConverter implements Converter {
+
+	private UFService ufService;
 
 	@Override
 	public Object getAsObject(FacesContext arg0, UIComponent arg1, String valor) {
@@ -16,9 +21,7 @@ public class UnidadeFederacaoConverter implements Converter {
 		try {
 			if (valor != "" && !valor.equals("") && !valor.equals("null")) {
 
-				obj = new UF();
-
-				obj.setDescricao(valor);
+				obj = ufService.findByName(valor);
 
 				return obj;
 			}
@@ -26,7 +29,6 @@ public class UnidadeFederacaoConverter implements Converter {
 			obj = new UF();
 			obj.setId(null);
 			obj.setDescricao("");
-			;
 			System.out.println(">> Erro no UnidadeFederacaoConverter getAsObject()<<");
 		}
 
