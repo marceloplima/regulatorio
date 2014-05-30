@@ -1,0 +1,69 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/1999/xhtml http://www.w3.org/2002/08/xhtml/xhtml1-transitional.xsd"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:hh="http://balusc.net/jsf/html">
+	
+
+<h:form id="formtipodemanda">
+	<f:loadBundle var="msg" basename="mensagens" />
+	<rich:popupPanel id="popuptipodemanda" domElementAttachment="form" modal="true" width="500" height="340" zindex="2" show="#{tipoDemandaBean.mostrarTelaTipoDemanda}" showWhenRendered="#{tipoDemandaBean.mostrarTelaTipoDemanda}">		
+		<f:facet name="header">
+			<h:outputText value="#{msg['header.tipo']}" />
+		</f:facet>
+		<div class="area-input-100">
+			<h:panelGroup layout="block" class="clear"/>
+	        
+				<h:panelGroup layout="block" class="area-input-50" id="tipo">
+					<h:panelGroup  class="label-campo"><h:outputText value="#{msg['label.assunto']}" /></h:panelGroup>	
+					<h:inputText value="#{tipoDemandaBean.tipoDemandaSelecionada.descricao}" styleClass="input-form"/>
+				</h:panelGroup>
+								
+			<h:panelGroup layout="block" class="clear"/>
+	        		
+		</div>
+		
+			<h:panelGroup layout="block" styleClass="alinhaBotao">
+				<h:commandButton value="Salvar">
+					<f:ajax render="@form :formprocedencialistagem:panelprocedencias" 
+							event="click"
+							listener="#{tipoDemandaBean.salvar()}"
+							execute="tipo"/>
+				</h:commandButton>   
+				<h:commandButton value="Fechar">
+					<f:ajax render="@form" 
+							event="click"
+							listener="#{tipoDemandaBean.fecharTelaTipoDemanda()}"/>
+				</h:commandButton>	        
+			</h:panelGroup>		
+		
+	</rich:popupPanel>
+	
+		<!-- ############## POPUP DE CONFIRMAÇÃO DE DESATIVAÇÃO ################ -->
+			
+		<rich:popupPanel id="popupconfirmadesativacao" domElementAttachment="form" modal="true" width="300" height="100" zindex="2" show="#{tipoDemandaBean.mostrarModalConfirmacaoDesativacao}" showWhenRendered="#{tipoDemandaBean.mostrarModalConfirmacaoDesativacao}">
+	
+			<h:panelGroup layout="block" class="area-input-50">
+				<h:panelGroup  class="label-campo"><h:outputText value="#{msg['tipoDemandaBean.desativarTipoDemanda']}" /></h:panelGroup>	
+				<h:commandButton value="Sim">
+					<f:ajax 
+						event="click"
+						render="@form :formprocedencialistagem:panelprocedencias" 
+						listener="#{tipoDemandaBean.desativar()}"/>
+				</h:commandButton>
+				
+				<h:commandButton value="Não">
+					<f:ajax 
+						render="@form" 
+						event="click"
+						listener="#{tipoDemandaBean.fecharTelaConfirmacaoDaDesativacao()}"/>
+				</h:commandButton>	
+			</h:panelGroup>	
+	
+		</rich:popupPanel>		
+</h:form>
+</html>
