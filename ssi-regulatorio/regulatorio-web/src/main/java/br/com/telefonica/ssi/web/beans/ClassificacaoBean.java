@@ -13,6 +13,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.Transient;
 
 import br.com.telefonica.ssi.faces.bean.AbstractManagedBean;
 import br.com.telefonica.ssi.regulatorio.commom.cdi.qualifiers.NovaDemanda;
@@ -69,6 +70,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	@EJB
 	private GruposModulosInt gruposModulosService;
 
+	@Transient
 	private List<UF> ufs = new ArrayList<UF>();
 
 	private DemandasRegulatorio demanda;
@@ -205,6 +207,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 		else{
 			this.demanda.setEncarregado(RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado());
 			this.demanda.setStatus(facadeDemanda.getStatusService().findByName("ANÁLISE TÉCNICA"));
+			facadeDemanda.salvaDemanda(demanda);
 
 			logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Demanda assumida por "+demanda.getEncarregado().getCnmnome()+" e enviada para "+demanda.getStatus().getDescricao());
 
@@ -212,7 +215,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 			index.setPanelexibesucesso(true);
 
 			eventoDemanda.fire(demanda);
-			facadeDemanda.salvaDemanda(demanda);
+
 			mensageria.notificaSolicitante("Demanda assumida por "+demanda.getEncarregado().getCnmnome(), "Demanda sob nova responsabilidade.", demanda.getNumeroDemanda(), demanda);
 		}
 	}
@@ -244,13 +247,13 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	public void listenerDemanda(@Observes DemandasRegulatorio demanda){
 		this.demanda = demanda;
-		this.ufs = demanda.getUfs();
+		//this.ufs = demanda.getUfs();
 	}
 
 	public void listenerDemandaNovoAnexo(@Observes @NovoAnexo DemandasRegulatorio demanda){
 		this.demanda = facadeDemanda.recuperaDemanda(demanda.getId());
 		eventoDemanda.fire(demanda);
-		this.ufs = demanda.getUfs();
+		//this.ufs = demanda.getUfs();
 	}
 
 	public AreasRegionais getAreaRegional() {
