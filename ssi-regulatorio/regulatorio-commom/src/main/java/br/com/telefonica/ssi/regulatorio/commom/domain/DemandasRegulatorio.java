@@ -2,10 +2,10 @@ package br.com.telefonica.ssi.regulatorio.commom.domain;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -83,9 +83,11 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 	@OneToMany(targetEntity = AnexosRegulatorio.class, mappedBy = "demanda")
 	private Collection<AnexosRegulatorio> anexos;
 
-	@ManyToMany(targetEntity = UF.class)
-	@JoinTable(name = "regulatorio.UF_Demandas", joinColumns = { @JoinColumn(name = "idDemanda") }, inverseJoinColumns = { @JoinColumn(name = "iduf") })
-	private List<UF> ufs;
+	@ManyToMany(targetEntity = UF.class,fetch=FetchType.EAGER)
+	@JoinTable(name = "regulatorio.UF_Demandas",
+		joinColumns = { @JoinColumn(name = "idDemanda",referencedColumnName="idDemanda") },
+		inverseJoinColumns = { @JoinColumn(name = "iduf",referencedColumnName="iduf") })
+	private Collection<UF> ufs;
 
 	@ManyToOne(targetEntity = TipoDemanda.class)
 	@JoinColumn(name = "idTipoDemanda", referencedColumnName = "idTipoDemanda")
@@ -239,11 +241,11 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 		}
 	}
 
-	public List<UF> getUfs() {
+	public Collection<UF> getUfs() {
 		return ufs;
 	}
 
-	public void setUfs(List<UF> ufs) {
+	public void setUfs(Collection<UF> ufs) {
 		this.ufs = ufs;
 	}
 

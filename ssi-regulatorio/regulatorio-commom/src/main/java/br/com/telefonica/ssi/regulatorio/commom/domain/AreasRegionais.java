@@ -32,7 +32,8 @@ public class AreasRegionais extends AbstractEntity<Long> {
 	private String descricao;
 
 	@ManyToMany(targetEntity = UF.class)
-	@JoinTable(name = "regulatorio.UF_Areas", joinColumns = { @JoinColumn(name = "idAreaRegional", referencedColumnName = "idAreaRegional") },
+	@JoinTable(name = "regulatorio.UF_Areas",
+		joinColumns = { @JoinColumn(name = "idAreaRegional", referencedColumnName = "idAreaRegional") },
 		inverseJoinColumns = { @JoinColumn(name = "iduf", referencedColumnName = "iduf") })
 	private Collection<UF> ufs;
 

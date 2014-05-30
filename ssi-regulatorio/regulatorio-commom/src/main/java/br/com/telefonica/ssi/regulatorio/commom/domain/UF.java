@@ -1,10 +1,13 @@
 package br.com.telefonica.ssi.regulatorio.commom.domain;
 
+import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
@@ -25,6 +28,9 @@ public class UF extends AbstractEntity<Integer>{
 
 	@Column(name="descricao")
 	private String descricao;
+
+	@ManyToMany(targetEntity=DemandasRegulatorio.class,mappedBy="ufs")
+	private Collection<DemandasRegulatorio> demandas;
 
 	public Integer getId() {
 		return id;
@@ -47,6 +53,14 @@ public class UF extends AbstractEntity<Integer>{
 		return this.id != null ?
 		this.getClass().hashCode() + this.id.hashCode() :
 		super.hashCode();
+	}
+
+	public Collection<DemandasRegulatorio> getDemandas() {
+		return demandas;
+	}
+
+	public void setDemandas(Collection<DemandasRegulatorio> demandas) {
+		this.demandas = demandas;
 	}
 
 	@Override
