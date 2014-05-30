@@ -22,7 +22,7 @@
 			<h:commandButton action="#{classificacaoBean.assumirDemanda()}"
 				value="#{msg['botao.sim']}"
 				onclick="#{rich:component('assumirDemanda')}.hide(event);">
-				<f:ajax execute="@this" />
+				<f:ajax execute="@this" render="@all"/>
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('assumirDemanda')}.hide(event); return false;"
