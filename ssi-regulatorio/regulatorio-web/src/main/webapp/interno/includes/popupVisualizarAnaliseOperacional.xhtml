@@ -8,24 +8,24 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:hh="http://balusc.net/jsf/html">
 
-<h:form id="formveranalise" method="post"
-	enctype="multipart/form-data">
+<h:form id="formveranalise">
 	<f:loadBundle var="msg" basename="mensagens" />
 	<rich:popupPanel id="popupveranalise"
 		domElementAttachment="form" modal="true" width="500" height="270"
-		zindex="2" >
+		zindex="2" show="#{operacionalBean.mostrarTelaVisualizaAnaliseOperacional}"
+		showWhenRendered="#{operacionalBean.mostrarTelaVisualizaAnaliseOperacional}">
 		<f:facet name="header">
 			<h:outputText value="#{msg['header.analise.operacional']}" />
 		</f:facet>
 		<div class="area-input-100">
 			<h:outputText value="#{msg['label.autor']}" styleClass="label-campo" />
-			<h:outputText value="#{classificacaoBean.analiseOperacional.movimento.autor.cnmnome}" styleClass="label-campo"/>
+			<h:outputText value="#{operacionalBean.movimentoAnaliseOperacionalSelecionada.movimento.autor.cnmnome}" styleClass="label-campo"/>
 
 			<div class="clear" />
 
 			<h:outputText value="#{msg['label.dataHora']}"
 				styleClass="label-campo" />
-			<h:outputText value="#{classificacaoBean.analiseOperacional.movimento.dataHora}" styleClass="label-campo">
+			<h:outputText value="#{operacionalBean.movimentoAnaliseOperacionalSelecionada.movimento.dataHora}" styleClass="label-campo">
 				<f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
 			</h:outputText>
 
@@ -34,16 +34,20 @@
 			<h:outputText value="#{msg['label.comentario']}"
 				styleClass="label-campo" />
 			<h:inputTextarea styleClass="input-form-textarea" rows="20"
-				value="#{classificacaoBean.analiseOperacional.movimento.comentario}" 
+				value="#{operacionalBean.movimentoAnaliseOperacionalSelecionada.movimento.comentario}" 
 				id="comentarioanalise" readonly="true"/>
 		</div>
 
 		<div class="clear" />
 
 		<div class="alinhaBotao">
-			<h:commandButton
-				onclick="#{rich:component('popupveranalise')}.hide(event); return false;"
-				value="#{msg['botao.fechar']}" />
+			<h:commandButton value="#{msg['botao.fechar']}">
+			
+					<f:ajax render="@form" 
+							event="click"
+							listener="#{operacionalBean.fecharTelaVisualizaAnaliseOperacional()}"/>			
+			
+			</h:commandButton>
 		</div>
 	</rich:popupPanel>
 </h:form>

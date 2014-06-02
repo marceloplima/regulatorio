@@ -57,30 +57,4 @@ public class CategoriaRegulatorio extends AbstractEntity<Integer>{
 		this.procedencias = procedencias;
 	}
 
-	@Override
-	public int hashCode() {
-		return this.id != null ?
-		this.getClass().hashCode() + this.id.hashCode() :
-		super.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-
-		CategoriaRegulatorio objint = (CategoriaRegulatorio)obj;
-
-		if(this.getId() != null && objint.getId() != null){
-			if(this.getId().equals(objint.getId())){
-				objint = null;
-				return true;
-			}
-		}
-
-		objint = null;
-
-		return false;
-	}
-
-
-
 }

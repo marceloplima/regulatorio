@@ -3,17 +3,20 @@ package br.com.telefonica.ssi.web.beans;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Model;
+
+import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import br.com.telefonica.ssi.faces.bean.AbstractManagedBean;
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoAnaliseOperacional;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.MovimentoFacade;
+import br.com.telefonica.ssi.web.utils.RecuperadorInstanciasBean;
 
-@Model
+@ManagedBean
 @ViewScoped
 public class OperacionalBean extends AbstractManagedBean{
 
@@ -31,18 +34,43 @@ public class OperacionalBean extends AbstractManagedBean{
 
 	private MovimentoAnaliseOperacional analise;
 
+	private boolean mostrarTelaVisualizaAnaliseOperacional = false;
+	private MovimentoAnaliseOperacional movimentoAnaliseOperacionalSelecionada = new MovimentoAnaliseOperacional();
 
-	public List<MovimentoAnaliseOperacional> getAnalisesOperacionais(){
-		if(this.demanda!=null){
-			return movimentoService.analisesOperacionaisPorDemanda(demanda);
+	private List<MovimentoAnaliseOperacional> movimentosAnaliseOperacional = new ArrayList<MovimentoAnaliseOperacional>();
+
+	private DemandasBean demandasmb;
+
+	@PostConstruct
+	private void init(){
+
+		demandasmb = RecuperadorInstanciasBean.recuperarInstanciaDemandasBean();
+
+		if(demanda == null){
+			demanda = demandasmb.getDemanda();
 		}
-		else{
-			return new ArrayList<MovimentoAnaliseOperacional>();
+
+		if(this.demanda!=null && this.demanda.getId() != null){
+			atualizaMovimentosAnaliseOperacional();
 		}
+	}
+
+	public void atualizaMovimentosAnaliseOperacional() {
+		movimentosAnaliseOperacional = movimentoService.analisesOperacionaisPorDemanda(demanda);
+	}
+
+	public void visualizaAnaliseOperacional(MovimentoAnaliseOperacional movimentoAnaliseOperacional){
+		movimentoAnaliseOperacionalSelecionada = movimentoAnaliseOperacional;
+		mostrarTelaVisualizaAnaliseOperacional = true;
+	}
+
+	public void fecharTelaVisualizaAnaliseOperacional(){
+		mostrarTelaVisualizaAnaliseOperacional = false;
 	}
 
 	public void listenerDemanda(@Observes DemandasRegulatorio demanda){
 		this.demanda = demanda;
+		atualizaMovimentosAnaliseOperacional();
 	}
 
 	public Integer getIdMovimento() {
@@ -67,4 +95,34 @@ public class OperacionalBean extends AbstractManagedBean{
 	public void setAnalise(MovimentoAnaliseOperacional analise) {
 		this.analise = analise;
 	}
+
+	public boolean isMostrarTelaVisualizaAnaliseOperacional() {
+		return mostrarTelaVisualizaAnaliseOperacional;
+	}
+
+	public void setMostrarTelaVisualizaAnaliseOperacional(
+			boolean mostrarTelaVisualizaAnaliseOperacional) {
+		this.mostrarTelaVisualizaAnaliseOperacional = mostrarTelaVisualizaAnaliseOperacional;
+	}
+
+	public MovimentoAnaliseOperacional getMovimentoAnaliseOperacionalSelecionada() {
+		return movimentoAnaliseOperacionalSelecionada;
+	}
+
+	public void setMovimentoAnaliseOperacionalSelecionada(
+			MovimentoAnaliseOperacional movimentoAnaliseOperacionalSelecionada) {
+		this.movimentoAnaliseOperacionalSelecionada = movimentoAnaliseOperacionalSelecionada;
+	}
+
+	public List<MovimentoAnaliseOperacional> getMovimentosAnaliseOperacional() {
+		return movimentosAnaliseOperacional;
+	}
+
+	public void setMovimentosAnaliseOperacional(
+			List<MovimentoAnaliseOperacional> movimentosAnaliseOperacional) {
+		this.movimentosAnaliseOperacional = movimentosAnaliseOperacional;
+	}
+
+
+
 }
