@@ -223,7 +223,6 @@ public class PermissoesMB implements Serializable{
 		}
 
 		this.statusPossiveis = new ArrayList<Integer>();
-		this.statusPossiveis.add(StatusRegulatorio.ID_ANALISE_PRELIMINAR);
 		this.statusPossiveis.add(StatusRegulatorio.ID_ANALISE_TECNICA);
 
 		if(!isStatusContidoEmLista(statusPossiveis)){

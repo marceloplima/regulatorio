@@ -41,7 +41,7 @@
 		
 			<h:panelGroup layout="block" styleClass="alinhaBotao">
 				<h:commandButton value="Salvar">
-					<f:ajax render="@form" 
+					<f:ajax render="@form :formprocedencialistagem:panelprocedencias" 
 							event="click"
 							listener="#{procedenciaBean.salvar()}"
 							execute="@form"/>
