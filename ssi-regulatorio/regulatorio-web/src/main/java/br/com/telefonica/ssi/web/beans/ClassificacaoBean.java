@@ -11,6 +11,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.Transient;
@@ -175,7 +176,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	public void salvarDemanda(){
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-		if(demanda.getTipoDemanda() == null || demanda.getAreaRegional() == null || demanda.getTipoRede() == null){
+		if(demanda.getTipoDemanda() == null || demanda.getAreaRegional() == null || demanda.getTipoRede() == null || this.ufs==null || this.ufs.size()<1){
 			List<String> messages = new ArrayList<String>();
 			messages.add("Assunto, area regional, tipo de rede, documento de origem ou UF da demanda não informado! ");
 			index.setMsgspanel(messages);
@@ -183,8 +184,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 			return;
 		}
 		else{
-//			List<UF> teste = ufs;
-//			demanda.setUfs(ufs);
+			demanda.setUfs(ufs);
 			facadeDemanda.salvaDemanda(demanda);
 			logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Demanda salva, em "+demanda.getStatus().getDescricao());
 			index.setPanelexibesucesso(true);
@@ -195,7 +195,8 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	public void assumirDemanda(){
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-		if(demanda.getTipoDemanda() == null || demanda.getAreaRegional() == null || demanda.getTipoRede() == null ){
+		if(demanda.getTipoDemanda() == null || demanda.getAreaRegional() == null || demanda.getTipoRede() == null ||
+				this.ufs==null || this.ufs.size()<1){
 			List<String> messages = new ArrayList<String>();
 			messages.add("Assunto, area regional, tipo de rede, documento de origem ou UF da demanda não informado! ");
 			index.setMsgspanel(messages);
@@ -245,13 +246,13 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	public void listenerDemanda(@Observes DemandasRegulatorio demanda){
 		this.demanda = demanda;
-		//this.ufs = demanda.getUfs();
+		this.ufs = new ArrayList<UF>(demanda.getUfs());
 	}
 
 	public void listenerDemandaNovoAnexo(@Observes @NovoAnexo DemandasRegulatorio demanda){
 		this.demanda = facadeDemanda.recuperaDemanda(demanda.getId());
 		eventoDemanda.fire(demanda);
-		//this.ufs = demanda.getUfs();
+		this.ufs = new ArrayList<UF>(demanda.getUfs());
 	}
 
 	public AreasRegionais getAreaRegional() {
@@ -300,7 +301,8 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 			movimentoService.salvaMovimentoRevisaoPrazo(revisao);
 
-			demanda.setEncarregado(RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado());
+			demanda.setEncarregado(getLogado());
+
 			if(demanda.getStatus().getDescricao().equalsIgnoreCase("REVISÃO DE PRAZO")){
 				demanda.setStatus(statusService.findByName("ANÁLISE TÉCNICA"));
 				mensageria.notificarResponsavel("Prazo revisto e enviado para analise tecnica.", "Prazo revisto e enviado para analise tecnica.", demanda.getNumeroDemanda(), demanda);
@@ -770,6 +772,16 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	public void buscarAnaliseOperacional(){
 		if(getIdMovimento()!=null && !getIdMovimento().equals("")){
 			this.analiseOperacional = movimentoService.getAnaliseOperacionalPorId(new Integer(getIdMovimento()));
+		}
+	}
+
+	public void trocaAreaRegional(ValueChangeEvent evt){
+		AreasRegionais area = (AreasRegionais)evt.getNewValue();
+		if(area.getDescricao().equalsIgnoreCase("Brasil")){
+			this.ufs = new ArrayList<UF>(area.getUfs());
+		}
+		else{
+			this.ufs = new ArrayList<UF>(demanda.getUfs());
 		}
 	}
 }

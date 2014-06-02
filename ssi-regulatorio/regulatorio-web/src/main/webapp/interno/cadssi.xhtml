@@ -657,13 +657,13 @@
 			</rich:popupPanel>
 			
 			<!-- POPUP REVISAO PRAZO -->
-			<rich:popupPanel id="revisaoPrazo" modal="true" minWidth="450"
-				minHeight="380" resizeable="false" domElementAttachment="form"
+			<rich:popupPanel id="revisaoPrazo" modal="true" minWidth="600"
+				minHeight="450" resizeable="false" domElementAttachment="form"
 				header="#{msg['header.revisao.prazo']}">
 				<div class="area-input-100">
 					<h:outputText value="#{msg['label.autor']}"
 						styleClass="label-campo" />
-					<h:outputText value="#{classificacaoBean.demanda.autor.cnmnome}" styleClass="label-campo"/>
+					<h:outputText value="#{permissoesMB.recuperaPessoaLogada().cnmnome}" styleClass="label-campo"/>
 
 					<div class="clear" />
 
