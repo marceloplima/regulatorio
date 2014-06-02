@@ -372,7 +372,7 @@ public class PermissoesMB implements Serializable{
 
 	}
 
-	private Pessoas recuperaPessoaLogada(){
+	public Pessoas recuperaPessoaLogada(){
 		return (Pessoas) RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado();
 	}
 
