@@ -87,8 +87,6 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	private Execucao execucao;
 
-	private boolean valido;
-
 	@EJB
 	private AreasInt areasService;
 
@@ -394,60 +392,98 @@ public class ClassificacaoBean extends AbstractManagedBean{
 		analiseTecnica.setResultadoAnalise(analise);
 
 		if(analiseTecnica.getResultadoAnalise()==null || analiseTecnica.getComplexidade()==null || analiseTecnica.getPrevisao()==null || analiseTecnica.getExecucao()==null || analiseTecnica.getEsclarecimentos()==null){
-			setValido(false);
-			return;
+			List<String> messages = new ArrayList<String>();
+			if(analiseTecnica.getResultadoAnalise()==null){
+				messages.add("Resultado da análise é um campo obrigatório!");
+				index.setMsgspanel(messages);
+				index.setPanelexibeerro(true);
+				return;
+			}
+			if(analiseTecnica.getComplexidade()==null){
+				messages.add("Complexidade é um campo obrigatório!");
+				messages.add("Resultado da análise é um campo obrigatório!");
+				index.setMsgspanel(messages);
+				index.setPanelexibeerro(true);
+				return;
+			}
+			if(analiseTecnica.getPrevisao()==null){
+				messages.add("Previsão é um campo obrigatório!");
+				messages.add("Resultado da análise é um campo obrigatório!");
+				index.setMsgspanel(messages);
+				index.setPanelexibeerro(true);
+				return;
+			}
+			if(analiseTecnica.getPrevisao()==null && !analiseTecnica.getResultadoAnalise().getDescricao().equalsIgnoreCase("Em Atendimento")){
+				messages.add("O campo previsão é obrigatório!");
+				messages.add("Resultado da análise é um campo obrigatório!");
+				index.setMsgspanel(messages);
+				index.setPanelexibeerro(true);
+				return;
+			}
+			if(analiseTecnica.getExecucao()==null && !analiseTecnica.getResultadoAnalise().getDescricao().equalsIgnoreCase("Atendimento Concluído")){
+				messages.add("O campo execução é obrigatório!");
+				messages.add("Resultado da análise é um campo obrigatório!");
+				index.setMsgspanel(messages);
+				index.setPanelexibeerro(true);
+				return;
+			}
+			if(!analiseTecnica.getResultadoAnalise().getDescricao().equalsIgnoreCase("Atendimento Concluído") && !analiseTecnica.getResultadoAnalise().getDescricao().equalsIgnoreCase("Em Atendimento")){
+				messages.add("O campo comentério é obrigatório!");
+				messages.add("Resultado da análise é um campo obrigatório!");
+				index.setMsgspanel(messages);
+				index.setPanelexibeerro(true);
+				return;
+			}
 		}
 		else{
-			setValido(true);
+			demanda.setEncarregado(getLogado());
+
+			if(analise.getDescricao().equalsIgnoreCase("Atendimento Concluído")){
+				demanda.setStatus(statusService.findByName("CONCLUÍDA"));
+				logger.salvarLog(demanda, getLogado(), "Demanda concluída.");
+				mensageria.notificaSolicitante("Demanda concluida.", "Demanda concluida", demanda.getNumeroDemanda(), demanda);
+				mensageria.notificarResponsavel("Demanda concluida", "Demanda concluida", demanda.getNumeroDemanda(), demanda);
+			}
+			if(analise.getDescricao().equalsIgnoreCase("Em Atendimento")){
+				demanda.setStatus(statusService.findByName("EM ATENDIMENTO"));
+				logger.salvarLog(demanda, getLogado(), "Demanda em atendimento.");
+				mensageria.notificaSolicitante("Demanda em atendimento.", "Demanda em atendimento", demanda.getNumeroDemanda(), demanda);
+				mensageria.notificarResponsavel("Demanda em atendimento", "Demanda em atendimento", demanda.getNumeroDemanda(), demanda);
+			}
+			if(analise.getDescricao().equalsIgnoreCase("Necessita Dados")){
+				demanda.setStatus(statusService.findByName("PENDENTE DE DADOS"));
+				logger.salvarLog(demanda, getLogado(), "Demanda pendente de dados.");
+				mensageria.notificaSolicitante("Demanda pendente de dados.", "Demanda pendente de dados.", demanda.getNumeroDemanda(), demanda);
+				mensageria.notificarResponsavel("Demanda pendente de dados.", "Demanda pendente de dados.", demanda.getNumeroDemanda(), demanda);
+			}
+			if(analise.getDescricao().equalsIgnoreCase("Necessita Esclarecimentos")){
+				demanda.setStatus(statusService.findByName("PENDENTE DE ESCLARECIMENTOS"));
+				logger.salvarLog(demanda, getLogado(), "Demanda pendente de esclarecimentos.");
+				mensageria.notificaSolicitante("Demanda pendente de esclarecimentos.", "Demanda pendente de esclarecimentos.", demanda.getNumeroDemanda(), demanda);
+				mensageria.notificarResponsavel("Demanda pendente de esclarecimentos.", "Demanda pendente de esclarecimentos.", demanda.getNumeroDemanda(), demanda);
+			}
+			if(analise.getDescricao().equalsIgnoreCase("Revisão do Prazo")){
+				demanda.setStatus(statusService.findByName("REVISÃO DE PRAZO"));
+				logger.salvarLog(demanda, getLogado(), "Solicitada a revisão de prazo para a demanda.");
+				mensageria.notificaSolicitante("Solicitada a revisão de prazo para a demanda.", "Solicitada a revisão de prazo para a demanda.", demanda.getNumeroDemanda(), demanda);
+				mensageria.notificarResponsavel("Solicitada a revisão de prazo para a demanda.", "Solicitada a revisão de prazo para a demanda.", demanda.getNumeroDemanda(), demanda);
+			}
+
+			movimentoService.salvaMovimento(movimento);
+			movimentoService.salvaMovimentoAnaliseTecnica(analiseTecnica);
+			facadeDemanda.salvaDemanda(demanda);
+
+			eventoDemanda.fire(demanda);
+
+			index.setMsgpanel("Operacão realizada com sucesso!");
+			index.setPanelexibesucesso(true);
+
+
+			this.comentario = null;
+			this.complexidade = null;
+			this.analise = null;
+			this.execucao = null;
 		}
-
-		demanda.setEncarregado(getLogado());
-
-		if(analise.getDescricao().equalsIgnoreCase("Atendimento Concluído")){
-			demanda.setStatus(statusService.findByName("CONCLUÍDA"));
-			logger.salvarLog(demanda, getLogado(), "Demanda concluída.");
-			mensageria.notificaSolicitante("Demanda concluida.", "Demanda concluida", demanda.getNumeroDemanda(), demanda);
-			mensageria.notificarResponsavel("Demanda concluida", "Demanda concluida", demanda.getNumeroDemanda(), demanda);
-		}
-		if(analise.getDescricao().equalsIgnoreCase("Em Atendimento")){
-			demanda.setStatus(statusService.findByName("EM ATENDIMENTO"));
-			logger.salvarLog(demanda, getLogado(), "Demanda em atendimento.");
-			mensageria.notificaSolicitante("Demanda em atendimento.", "Demanda em atendimento", demanda.getNumeroDemanda(), demanda);
-			mensageria.notificarResponsavel("Demanda em atendimento", "Demanda em atendimento", demanda.getNumeroDemanda(), demanda);
-		}
-		if(analise.getDescricao().equalsIgnoreCase("Necessita Dados")){
-			demanda.setStatus(statusService.findByName("PENDENTE DE DADOS"));
-			logger.salvarLog(demanda, getLogado(), "Demanda pendente de dados.");
-			mensageria.notificaSolicitante("Demanda pendente de dados.", "Demanda pendente de dados.", demanda.getNumeroDemanda(), demanda);
-			mensageria.notificarResponsavel("Demanda pendente de dados.", "Demanda pendente de dados.", demanda.getNumeroDemanda(), demanda);
-		}
-		if(analise.getDescricao().equalsIgnoreCase("Necessita Esclarecimentos")){
-			demanda.setStatus(statusService.findByName("PENDENTE DE ESCLARECIMENTOS"));
-			logger.salvarLog(demanda, getLogado(), "Demanda pendente de esclarecimentos.");
-			mensageria.notificaSolicitante("Demanda pendente de esclarecimentos.", "Demanda pendente de esclarecimentos.", demanda.getNumeroDemanda(), demanda);
-			mensageria.notificarResponsavel("Demanda pendente de esclarecimentos.", "Demanda pendente de esclarecimentos.", demanda.getNumeroDemanda(), demanda);
-		}
-		if(analise.getDescricao().equalsIgnoreCase("Revisão do Prazo")){
-			demanda.setStatus(statusService.findByName("REVISÃO DE PRAZO"));
-			logger.salvarLog(demanda, getLogado(), "Solicitada a revisão de prazo para a demanda.");
-			mensageria.notificaSolicitante("Solicitada a revisão de prazo para a demanda.", "Solicitada a revisão de prazo para a demanda.", demanda.getNumeroDemanda(), demanda);
-			mensageria.notificarResponsavel("Solicitada a revisão de prazo para a demanda.", "Solicitada a revisão de prazo para a demanda.", demanda.getNumeroDemanda(), demanda);
-		}
-
-		movimentoService.salvaMovimento(movimento);
-		movimentoService.salvaMovimentoAnaliseTecnica(analiseTecnica);
-		facadeDemanda.salvaDemanda(demanda);
-
-		eventoDemanda.fire(demanda);
-
-		index.setMsgpanel("Operacão realizada com sucesso!");
-		index.setPanelexibesucesso(true);
-
-
-		this.comentario = null;
-		this.complexidade = null;
-		this.analise = null;
-		this.execucao = null;
 	}
 
 	public void registraFollowUp(){
@@ -539,14 +575,6 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	public void setExecucaoService(ExecucaoService execucaoService) {
 		this.execucaoService = execucaoService;
-	}
-
-	public boolean isValido() {
-		return valido;
-	}
-
-	public void setValido(boolean valido) {
-		this.valido = valido;
 	}
 
 	public void concluirDemanda(){
