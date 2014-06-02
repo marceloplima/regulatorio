@@ -2,9 +2,6 @@ package br.com.telefonica.ssi.core.domain.patterns.entity;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
 /**
  *
  * Esta classe define o comportamento padrão de toda e qualquer entidade
@@ -14,6 +11,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @date 17/04/2013 09:56:05
  * @version $Id: AbstractEntity.java 13404 2013-11-01 14:10:30Z marcelo.batista $
  */
+@SuppressWarnings("all")
 public abstract class AbstractEntity<Id> implements Serializable {
 
 	private static final long serialVersionUID = 2337679037272983736L;
@@ -27,16 +25,26 @@ public abstract class AbstractEntity<Id> implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
+		return this.getId() != null ?
+		this.getClass().hashCode() + this.getId().hashCode() :
+		super.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
+
+		AbstractEntity<Id> objint = (AbstractEntity<Id>)obj;
+
+		if(this.getId() != null && objint.getId() != null){
+			if(this.getId().equals(objint.getId())){
+				objint = null;
+				return true;
+			}
+		}
+
+		objint = null;
+
+		return false;
 	}
 
-//	@Override
-//	public String toString() {
-//		return ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE);
-//	}
 }
