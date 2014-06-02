@@ -58,4 +58,6 @@ public class MovimentoAnaliseOperacional extends AbstractEntity<Integer>{
 	public void setAreaOperacional(Areas areaOperacional) {
 		this.areaOperacional = areaOperacional;
 	}
+
+
 }
