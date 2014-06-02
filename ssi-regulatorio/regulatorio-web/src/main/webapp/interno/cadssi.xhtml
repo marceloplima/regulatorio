@@ -383,7 +383,8 @@
 								styleClass="label-campo" />
 							<h:selectOneMenu styleClass="select-form" rendered="#{permissoesMB.verificarCamposClassificacao()}"
 								id="areaRegional" 
-								value="#{classificacaoBean.demanda.areaRegional}" converter="#{areaRegionalConverter}">
+								value="#{classificacaoBean.demanda.areaRegional}" converter="#{areaRegionalConverter}" 
+									valueChangeListener="#{classificacaoBean.trocaAreaRegional()}">
 								<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}"
 									noSelectionOption="true" />
 								<f:selectItems
@@ -402,8 +403,8 @@
 						<div class="area-input-50">
 							<h:outputLabel value="#{msg['label.ufs']}"
 								styleClass="label-campo" />
-							<h:selectManyCheckbox id="ufs" value="#{classificacaoBean.demanda.ufs}" styleClass="select-form" 
-							disabled="true" converter="#{unidadeFederacaoConverter}">
+							<h:selectManyCheckbox id="ufs" value="#{classificacaoBean.ufs}" styleClass="select-form" 
+							disabled="false">
 								<f:selectItems value="#{classificacaoBean.demanda.areaRegional.ufs}"
 									var="r" itemLabel="#{r.descricao}" itemValue="#{r}" />
 								<a4j:ajax execute=":demandaform:ufs @this" immediate="true"/>
@@ -415,8 +416,9 @@
 
 					<!-- Operacional -->
 					<rich:tab header="#{msg['aba.operacional']}">
+						<a4j:outputPanel id="paneloperacoes">
 						<rich:dataTable keepSaved="true" rows="10" id="tabelaOperacional"
-							value="#{operacionalBean.analisesOperacionais}" var="analise">
+							value="#{operacionalBean.movimentosAnaliseOperacional}" var="analise">
 							<f:facet name="header">
 								<rich:columnGroup>
 									<rich:column style="text-align:left;">
@@ -456,12 +458,13 @@
 							</rich:column>
 
 							<rich:column style="text-align:right;">
-								<h:commandLink action="#{classificacaoBean}" immediate="true">
-									<f:setPropertyActionListener target="#{operacionalBean.idMovimento}" value="#{analise.id}"/>
-									<h:graphicImage value="imagens/busca_azul.png" />
-									<rich:componentControl target="popupveranalise" operation="show"
-										event="click" />
-								</h:commandLink>
+
+								<a4j:commandButton
+	       							  image="${pageContext.request.contextPath}/imagens/busca_azul.png" id="idvisualizaoperacao" value="Visualiza Operação"
+	                                  action="#{operacionalBean.visualizaAnaliseOperacional(analise)}"
+	                                  render=":formveranalise:popupveranalise"
+	                                  immediate="true"/>
+									      												
 							</rich:column>
 
 							<f:facet name="footer">
@@ -469,6 +472,7 @@
 							</f:facet>
 
 						</rich:dataTable>
+						</a4j:outputPanel>
 					</rich:tab>
 
 					<!-- Eventos -->
