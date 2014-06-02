@@ -1,13 +1,10 @@
 package br.com.telefonica.ssi.regulatorio.commom.domain;
 
-import java.util.Collection;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
@@ -29,9 +26,9 @@ public class UF extends AbstractEntity<Integer>{
 	@Column(name="descricao")
 	private String descricao;
 
-	@ManyToMany(targetEntity=DemandasRegulatorio.class,mappedBy="ufs")
-	private Collection<DemandasRegulatorio> demandas;
-
+	/*@ManyToMany(targetEntity=DemandasRegulatorio.class,mappedBy="ufs")
+	private Collection<DemandasRegulatorio> demandas;*/
+	@Override
 	public Integer getId() {
 		return id;
 	}
@@ -48,37 +45,13 @@ public class UF extends AbstractEntity<Integer>{
 		this.descricao = descricao;
 	}
 
-	@Override
-	public int hashCode() {
-		return this.id != null ?
-		this.getClass().hashCode() + this.id.hashCode() :
-		super.hashCode();
-	}
-
-	public Collection<DemandasRegulatorio> getDemandas() {
+	/*public Collection<DemandasRegulatorio> getDemandas() {
 		return demandas;
-	}
+	}*/
 
-	public void setDemandas(Collection<DemandasRegulatorio> demandas) {
+	/*public void setDemandas(Collection<DemandasRegulatorio> demandas) {
 		this.demandas = demandas;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-
-		UF objint = (UF)obj;
-
-		if(this.getId() != null && objint.getId() != null){
-			if(this.getId().equals(objint.getId())){
-				objint = null;
-				return true;
-			}
-		}
-
-		objint = null;
-
-		return false;
-	}
+	}*/
 
 	public UF getByid(Integer id){
 		UF obj = new UF();

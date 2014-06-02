@@ -1,5 +1,6 @@
 package br.com.telefonica.ssi.regulatorio.commom.domain;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
@@ -269,7 +270,7 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 	}
 
 	public boolean isVencendoNoDia() {
-		/*if (prazo != null) {
+		if (prazo != null) {
 			String dateToday = new SimpleDateFormat("dd/MM/yyyy")
 					.format(new Date());
 			String datePrazo = new SimpleDateFormat("dd/MM/yyyy").format(prazo);
@@ -281,12 +282,11 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 			}
 		} else {
 			return false;
-		}*/
-		return false;
+		}
 	}
 
 	public boolean isVencido() {
-		if (prazo != null) {
+		if (prazo != null && !isVenceEmDoisDias()) {
 			if (prazo.before(new Date())) {
 				return true;
 			} else {
@@ -297,7 +297,7 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 	}
 
 	public boolean isVenceEmDoisDias() {
-		if (prazo != null) {
+		if (prazo != null && !isVencendoNoDia()) {
 			DateTime hoje = new DateTime();
 			DateTime prazo = new DateTime(this.prazo);
 
@@ -316,4 +316,12 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 			return false;
 	}
 
+	public boolean isDemandaOk(){
+		if(!isVenceEmDoisDias() && !isVencendoNoDia() && !isVencido()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 }

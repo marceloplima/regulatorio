@@ -28,20 +28,20 @@
 								execute=":demandaform tipoRede assuntoDemanda documentoOrigem areaRegional ufs" 
 								action="#{classificacaoBean.salvarDemanda}"
 								rendered="#{permissoesMB.verificarSalvar()}"
-								render="@all :panelexibesucesso :panelexibeerro" immediate="true"/>
+								render="@all :demandaform :panelexibesucesso :panelexibeerro" immediate="true"/>
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.salvar.rascunho']}"
 								action="#{demandasBean.salvarComoRascunho}"
 								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
-								render="@all :panelexibesucesso :panelexibeerro"
+								render="@all :demandaform :panelexibesucesso :panelexibeerro"
 								rendered="#{permissoesMB.verificarEncaminhar()}" />
 
 							<rich:menuItem label="#{msg['botao.encaminhar']}" mode="ajax"
 								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
 								action="#{demandasBean.encaminhar}"
 								rendered="#{permissoesMB.verificarEncaminhar()}"
-								render="@form infoDemanda :panelexibesucesso :panelexibeerro" />
+								render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" />
 
 							<rich:menuItem label="#{msg['botao.cancelar']}" mode="ajax"
 								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
@@ -50,7 +50,7 @@
 								render="@form infoDemanda :panelexibesucesso :panelexibeerro">
 								<rich:componentControl target="cancelarDemanda" operation="show"
 									event="click" />
-								<f:ajax render="demandaform :panelexibesucesso :panelexibeerro" event="click" />
+								<f:ajax render="@all :demandaform :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax"
@@ -60,14 +60,14 @@
 								render="@form infoDemanda :panelexibesucesso :panelexibeerro @all">
 								<rich:componentControl target="assumirDemanda" operation="show"
 									event="click" />
-								<f:ajax render="@form infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
+								<f:ajax render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax" label="#{msg['botao.revisao.prazo']}"
 								execute=":demandaform:comentarioPrazo :demandaform:novoPrazo"
 								action="#{classificacaoBean.revisarPrazo}"
-								rendered="#{permissoesMB.verificarRevisarPrazo()}">
-								render="@form infoDemanda :panelexibesucesso :panelexibeerro">
+								rendered="#{permissoesMB.verificarRevisarPrazo()}"
+								render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro">
 								<rich:componentControl target="revisaoPrazo" operation="show"
 									event="click" />
 							</rich:menuItem>
@@ -77,14 +77,14 @@
 								rendered="#{permissoesMB.verificarCancelar()}">
 								<rich:componentControl target="popupdefinirtecnico" operation="show"
 									event="click" />
-								<f:ajax render="@form infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
+								<f:ajax render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.analise.tecnica']}" execute="@this"
 								rendered="#{permissoesMB.verificarAnaliseTecnica()}">
 								<rich:componentControl target="popupanalisetecnica" operation="show" event="click" />
-								<f:ajax render="@form infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
+								<f:ajax render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax" label="#{msg['botao.followup']}"
@@ -92,7 +92,7 @@
 								rendered="#{permissoesMB.verificarFollowUp()}">
 								<rich:componentControl target="popupfollowup" operation="show"
 									event="click" />
-								<f:ajax render="@form demandaform :panelexibesucesso :panelexibeerro" event="click" />
+								<f:ajax render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax" label="#{msg['botao.concluir.demanda']}"
@@ -100,7 +100,7 @@
 								rendered="#{permissoesMB.verificarConcluir()}">
 								<rich:componentControl target="popupconclusao" operation="show"
 									event="click" />
-								<f:ajax render="@form demandaform :panelexibesucesso :panelexibeerro" event="click" />
+								<f:ajax render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 							
 
@@ -109,27 +109,27 @@
 								rendered="#{permissoesMB.verificarAcionarAreasOperacionais()}">
 								<rich:componentControl target="popupacionamentooperacional" operation="show"
 									event="click" />
-								<f:ajax render="@form infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
+								<f:ajax render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 							
 							<rich:menuItem mode="ajax" label="#{msg['botao.atendimento']}"
 								execute="@form"
 								actionListener="#{demandasBean.salvarComoRascunho}"
 								rendered="#{permissoesMB.verificarEmAtendimento()}">
-								<f:ajax render="demandaform" event="click" />
+								<f:ajax render="demandaform :demandaform" event="click" />
 							</rich:menuItem>
 							
 							<rich:menuItem mode="ajax" label="#{msg['botao.dados']}"
 								execute="@form"
 								actionListener="#{demandasBean.salvarComoRascunho}"
 								rendered="#{permissoesMB.verificarNecessidadeDados()}">
-								<f:ajax render="demandaform" event="click" />
+								<f:ajax render="demandaform :demandaform" event="click" />
 							</rich:menuItem>
 							
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.esclarecimentos']}" execute="@form"
 								actionListener="false" rendered="#{permissoesMB.verificarNecessidadeEsclarecimento()}">
-								<f:ajax render="demandaform" event="click" />
+								<f:ajax render="demandaform :demandaform" event="click" />
 							</rich:menuItem>
 							
 							<rich:menuItem mode="ajax"
@@ -137,7 +137,7 @@
 								rendered="#{permissoesMB.verificarAnaliseOperacional()}">
 								<rich:componentControl target="popupanaliseoperacional" operation="show"
 									event="click" />
-								<f:ajax render="@form infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
+								<f:ajax render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
 							</rich:menuItem>
 
 						</rich:dropDownMenu>
@@ -170,6 +170,7 @@
 					<h:graphicImage value="/imagens/vaiVencer.png" rendered="#{demandasBean.demanda.venceEmDoisDias}" style="margin-top:-32px;"/>
 					<h:graphicImage value="/imagens/venceHoje.png" rendered="#{demandasBean.demanda.vencendoNoDia}" style="margin-top:-32px;"/>
 					<h:graphicImage value="/imagens/vencido.png" rendered="#{demandasBean.demanda.vencido}" style="margin-top:-32px;"/>
+					<h:graphicImage value="/imagens/naoVence.png" rendered="#{demandasBean.demanda.demandaOk}" style="margin-top:-32px;"/>
 				</div>
 			</h:panelGroup>
 
@@ -384,7 +385,7 @@
 							<h:selectOneMenu styleClass="select-form" rendered="#{permissoesMB.verificarCamposClassificacao()}"
 								id="areaRegional" 
 								value="#{classificacaoBean.demanda.areaRegional}" converter="#{areaRegionalConverter}" 
-									valueChangeListener="#{classificacaoBean.trocaAreaRegional()}">
+									valueChangeListener="#{classificacaoBean.trocaAreaRegional}">
 								<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}"
 									noSelectionOption="true" />
 								<f:selectItems
@@ -404,7 +405,7 @@
 							<h:outputLabel value="#{msg['label.ufs']}"
 								styleClass="label-campo" />
 							<h:selectManyCheckbox id="ufs" value="#{classificacaoBean.ufs}" styleClass="select-form" 
-							disabled="false">
+							disabled="false" converter="#{unidadeFederacaoConverter}">
 								<f:selectItems value="#{classificacaoBean.demanda.areaRegional.ufs}"
 									var="r" itemLabel="#{r.descricao}" itemValue="#{r}" />
 								<a4j:ajax execute=":demandaform:ufs @this" immediate="true"/>
