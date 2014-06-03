@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Model;
@@ -29,22 +30,28 @@ public class MovimentosBean extends AbstractManagedBean{
 
 	private DemandasRegulatorio demanda;
 
+	List<Movimento> movimentos = new ArrayList<Movimento>();
+
 	@EJB
 	private MovimentoFacade movimentoService;
 
-	public void listenerDemanda(@Observes DemandasRegulatorio demanda){
-		this.demanda = demanda;
-		Map<String, Object> filtros = new HashMap<String, Object>();
-		dataModel = new MovimentosDataModel(movimentoService, filtros, demanda);
+	@PostConstruct
+	private void init(){
+		if(demanda != null && demanda.getId() != null){
+			carregarMovimentos();
+		}
+
 	}
 
-	public List<Movimento> getMovimentos(){
-		if(demanda!=null){
-			return movimentoService.getMovimentosPorDemanda(demanda);
-		}
-		else{
-			return new ArrayList<Movimento>();
-		}
+	private void carregarMovimentos() {
+		this.movimentos = movimentoService.getMovimentosPorDemanda(demanda);
+	}
+
+	public void listenerDemanda(@Observes DemandasRegulatorio demanda){
+		this.demanda = demanda;
+		carregarMovimentos();
+		Map<String, Object> filtros = new HashMap<String, Object>();
+		dataModel = new MovimentosDataModel(movimentoService, filtros, demanda);
 	}
 
 	public MovimentosDataModel getDataModel() {
@@ -54,4 +61,10 @@ public class MovimentosBean extends AbstractManagedBean{
 	public void setDataModel(MovimentosDataModel dataModel) {
 		this.dataModel = dataModel;
 	}
+
+	public void setMovimentos(List<Movimento> movimentos) {
+		this.movimentos = movimentos;
+	}
+
+
 }

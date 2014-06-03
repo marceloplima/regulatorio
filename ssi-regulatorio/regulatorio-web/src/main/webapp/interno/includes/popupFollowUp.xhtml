@@ -46,6 +46,7 @@
 				<h:commandButton value="#{msg['botao.registrar.followup']}"
 					action="#{classificacaoBean.registraFollowUp}"
 					onclick="#{rich:component('popupfollowup')}.hide(event);">
+					<f:ajax render=":demandaform:tabelaeventos"/>
 				</h:commandButton>
 				<h:commandButton
 					onclick="#{rich:component('popupfollowup')}.hide(event); return false;"

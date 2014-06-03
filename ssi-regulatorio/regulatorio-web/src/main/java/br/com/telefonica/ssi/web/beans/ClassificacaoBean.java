@@ -246,7 +246,9 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	public void listenerDemanda(@Observes DemandasRegulatorio demanda){
 		this.demanda = demanda;
-		this.ufs = new ArrayList<UF>(demanda.getUfs());
+		if(demanda != null && demanda.getId() != null){
+			this.ufs = new ArrayList<UF>(demanda.getUfs());
+		}
 	}
 
 	public void listenerDemandaNovoAnexo(@Observes @NovoAnexo DemandasRegulatorio demanda){
