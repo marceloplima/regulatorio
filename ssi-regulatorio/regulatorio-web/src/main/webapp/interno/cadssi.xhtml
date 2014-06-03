@@ -55,7 +55,6 @@
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.assumir.demanda']}" 
-								execute="@form"
 								rendered="#{permissoesMB.verificarPodeAssumirDemanda()}"
 								render="@form infoDemanda :panelexibesucesso :panelexibeerro @all">
 								<rich:componentControl target="assumirDemanda" operation="show"
@@ -67,14 +66,14 @@
 								execute=":demandaform:comentarioPrazo :demandaform:novoPrazo"
 								action="#{classificacaoBean.revisarPrazo}"
 								rendered="#{permissoesMB.verificarRevisarPrazo()}"
-								render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro">
+								render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro">
 								<rich:componentControl target="revisaoPrazo" operation="show"
 									event="click" />
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.definir.tecnico']}" execute="@form"
-								rendered="#{permissoesMB.verificarCancelar()}">
+								rendered="true">
 								<rich:componentControl target="popupdefinirtecnico" operation="show"
 									event="click" />
 								<f:ajax render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" event="click" />
@@ -334,14 +333,14 @@
 							<h:outputLabel value="#{msg['label.assunto']}"
 								styleClass="label-campo" />
 							<h:selectOneMenu value="#{classificacaoBean.demanda.tipoDemanda}" rendered="#{permissoesMB.verificarCamposClassificacao()}"
-								styleClass="select-form" id="assuntoDemanda" converter="#{tipoDemandaConverter}" immediate="true">
+								styleClass="select-form" id="assuntoDemanda" converter="#{tipoDemandaConverter}">
 								<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}"
 									noSelectionOption="true" itemValue="#{null}" />
 								<f:selectItems
 									value="#{classificacaoBean.assuntoService.recuperaTodos()}"
 									var="assunto" itemLabel="#{assunto.descricao}"
 									itemValue="#{assunto}" />
-									<a4j:ajax execute=":demandaform:assuntoDemanda @this" immediate="true"/>
+								<a4j:ajax execute=":demandaform:assuntoDemanda @this" immediate="true" render="@this"/>
 							</h:selectOneMenu>
 							<h:outputText value="#{classificacaoBean.demanda.tipoDemanda.descricao}" rendered="#{not permissoesMB.verificarCamposClassificacao()}" />
 						</div>
@@ -358,7 +357,7 @@
 								<f:selectItems
 									value="#{classificacaoBean.documentoService.recuperaTodos()}"
 									var="doc" itemLabel="#{doc.descricao}" itemValue="#{doc}" />
-								<a4j:ajax execute=":demandaform:documentoOrigem @this" immediate="true"/>
+								<a4j:ajax execute="@this"/>
 							</h:selectOneMenu>
 							<h:outputText value="#{classificacaoBean.demanda.documentoOrigem.descricao}" rendered="#{not permissoesMB.verificarCamposClassificacao()}" />
 						</div>
@@ -374,7 +373,7 @@
 									value="#{classificacaoBean.tipoRedeService.recuperaTodos()}"
 									var="tipoRede" itemLabel="#{tipoRede.descricao}"
 									itemValue="#{tipoRede}" />
-								<a4j:ajax execute=":demandaform:tipoRede @this" immediate="true"/>
+								<a4j:ajax execute="@this"/>
 							</h:selectOneMenu>
 							<h:outputText value="#{classificacaoBean.demanda.tipoRede.descricao}" rendered="#{not permissoesMB.verificarCamposClassificacao()}" />							
 						</div>
@@ -394,7 +393,7 @@
 									itemValue="#{regional}">
 									<f:attribute name="collectionType" value="java.util.ArrayList"/>
 								</f:selectItems>
-								<a4j:ajax execute=":demandaform:areaRegional @this" render="ufs" immediate="true"/>
+								<a4j:ajax execute="@this" render="ufs"/>
 							</h:selectOneMenu>
 							<h:outputText value="#{classificacaoBean.demanda.areaRegional.descricao}" rendered="#{not permissoesMB.verificarCamposClassificacao()}" />
 						</div>
@@ -405,10 +404,10 @@
 							<h:outputLabel value="#{msg['label.ufs']}"
 								styleClass="label-campo" />
 							<h:selectManyCheckbox id="ufs" value="#{classificacaoBean.ufs}" styleClass="select-form" 
-							disabled="false" converter="#{unidadeFederacaoConverter}">
+							readonly="#{not permissoesMB.verificarCamposClassificacao()}" converter="#{unidadeFederacaoConverter}" >
 								<f:selectItems value="#{classificacaoBean.demanda.areaRegional.ufs}"
 									var="r" itemLabel="#{r.descricao}" itemValue="#{r}" />
-								<a4j:ajax execute=":demandaform:ufs @this" immediate="true"/>
+								<a4j:ajax execute="@this"/>
 							</h:selectManyCheckbox>
 						</div>
 						<div class="clear" />
@@ -718,7 +717,8 @@
 				<div class="alinhaBotao">
 					<h:commandButton value="#{msg['botao.analise.efetuar']}" action="#{classificacaoBean.revisarPrazo}"
 						onclick="#{rich:component('revisaoPrazo')}.hide(event);">
-						<f:ajax render="@form" execute="@this :demandaform:comentarioPrazo :demandaform:novoPrazo" />
+						<f:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" 
+							execute="@this :demandaform:comentarioPrazo :demandaform:novoPrazo" />
 					</h:commandButton>
 					<h:commandButton
 						onclick="#{rich:component('revisaoPrazo')}.hide(event); return false;"

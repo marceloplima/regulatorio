@@ -34,7 +34,7 @@
 				styleClass="label-campo" />
 			<h:selectOneMenu value="#{classificacaoBean.responsavel}"
 				styleClass="select-form" id="tecnicoResponsavel"
-				converter="pessoaConv" required="true" requiredMessage="#{msg['campo.obrigatorio']}" immediate="true">
+				converter="pessoaConv">
 				<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}"
 					itemValue="#{null}" />
 				<f:selectItems value="#{classificacaoBean.tecnicosResponsaveis}" var="resp"
@@ -48,8 +48,7 @@
 			<div class="area-input-100">
 				<h:outputText value="#{msg['label.comentario']}" styleClass="label-campo" />
 				<h:inputTextarea styleClass="input-form-textarea" rows="20"
-					value="#{classificacaoBean.comentario}" required="true"
-					requiredMessage="#{msg['campo.questao.obrigatorio']}"
+					value="#{classificacaoBean.comentario}" 
 					id="comentarioTecnico" />
 				<h:message for="comentarioTecnico"
 					style="font-weight:bold;color:#ff0000;" />
@@ -61,6 +60,8 @@
 				<h:commandButton value="#{msg['botao.definir.tecnico']}"
 					action="#{classificacaoBean.definirTecnico}"
 					onclick="#{rich:component('popupdefinirtecnico')}.hide(event);">
+					<a4j:ajax  render=":formdemanda infoDemanda :panelexibesucesso :panelexibeerro" 
+						execute=":formdefinirtecnico:tecnicoResponsavel :formdefinirtecnico:comentarioTecnico"/>
 				</h:commandButton>
 				<h:commandButton
 					onclick="#{rich:component('popupdefinirtecnico')}.hide(event); return false;"

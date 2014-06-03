@@ -56,7 +56,9 @@ public class OperacionalBean extends AbstractManagedBean{
 	}
 
 	public void atualizaMovimentosAnaliseOperacional() {
-		movimentosAnaliseOperacional = movimentoService.analisesOperacionaisPorDemanda(demanda);
+		if(demanda.getId()!=null){
+			movimentosAnaliseOperacional = movimentoService.analisesOperacionaisPorDemanda(demanda);
+		}
 	}
 
 	public void visualizaAnaliseOperacional(MovimentoAnaliseOperacional movimentoAnaliseOperacional){

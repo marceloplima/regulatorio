@@ -11,7 +11,7 @@
 <h:form id="formanacionamentooperacional" method="post"
 	enctype="multipart/form-data">
 	<f:loadBundle var="msg" basename="mensagens" />
-	<rich:popupPanel id="popupacionamentooperacional"
+	<rich:popupPanel id="popuprevisaopra"
 		domElementAttachment="form" modal="true" width="500" height="450"
 		zindex="2">
 		<f:facet name="header">
@@ -54,11 +54,11 @@
 			<h:commandButton value="#{msg['botao.ok']}"
 				action="#{classificacaoBean.acionarAreasOperacionais}"
 				onclick="#{rich:component('popupacionamentooperacional')}.hide(event);">
+				<a4j:ajax render=":formdemanda infoDemanda :panelexibesucesso :panelexibeerro" />
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupacionamentooperacional')}.hide(event); return false;"
 				value="#{msg['botao.fechar']}" />
-		</div>
 		</div>
 	</rich:popupPanel>
 </h:form>

@@ -176,4 +176,36 @@ public class MovimentoFacadeServiceBean implements MovimentoFacade{
 		}
 	}
 
+	@Override
+	public MovimentoRevisaoPrazo getUtimaRevisaoPrazo(
+			DemandasRegulatorio demanda) {
+
+		if(demanda == null || demanda.getId()==null){
+			return new MovimentoRevisaoPrazo();
+		}
+		try{
+			MovimentoRevisaoPrazo result = null;
+			TypedQuery<MovimentoRevisaoPrazo> q = em
+					.createQuery(
+							"Select mp from MovimentoRevisaoPrazo mp where mp.movimento.demanda = :demanda order by mp.movimento.dataHora desc",
+							MovimentoRevisaoPrazo.class);
+
+			q.setParameter("demanda", demanda);
+			q.setMaxResults(1);
+
+			List<MovimentoRevisaoPrazo> retorno = q.getResultList();
+
+			if(retorno!=null && !retorno.isEmpty()){
+				result = retorno.get(0);
+			}
+			else{
+				result = new MovimentoRevisaoPrazo();
+			}
+
+			return result;
+		}
+		catch(NoResultException nre ){
+			return new MovimentoRevisaoPrazo();
+		}
+	}
 }
