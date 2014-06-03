@@ -49,4 +49,6 @@ public interface MovimentoFacade extends Serializable{
 	int getRowCountMovimentos(Map<String, Object> filtros,DemandasRegulatorio demanda,Pessoas pessoa);
 
 	Movimento getRowDataMovimento(Object rowKey);
+
+	MovimentoRevisaoPrazo getUtimaRevisaoPrazo(DemandasRegulatorio demanda);
 }
