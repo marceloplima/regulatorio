@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
@@ -30,7 +31,7 @@ public class MovimentoTecnico extends AbstractEntity<Integer>{
 	@JoinColumn(name="idpessoaEncarregado",referencedColumnName="idpessoa")
 	private Pessoas encarregado;
 
-	@ManyToOne(targetEntity=Movimento.class)
+	@OneToOne(targetEntity=Movimento.class)
 	@JoinColumn(name="idMovimento",referencedColumnName="idMovimento")
 	private Movimento movimento;
 

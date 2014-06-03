@@ -1,6 +1,5 @@
 package br.com.telefonica.ssi.regulatorio.commom.domain;
 
-import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -37,30 +36,30 @@ public class Movimento extends AbstractEntity<Integer>{
 	@Column(name="cnmComentario")
 	private String comentario;
 
-	@ManyToOne(targetEntity=Pessoas.class)
-	@JoinColumn(name="idPessoaAutor",referencedColumnName="idpessoa")
+	@OneToOne(targetEntity=Pessoas.class)
+	@JoinColumn(name="idpessoaAutor",referencedColumnName="idpessoa")
 	private Pessoas autor;
 
-	@OneToMany(targetEntity=MovimentoAcionamentoArea.class,mappedBy="movimento")
-	private Collection<MovimentoAcionamentoArea> movimentosArea;
+	@OneToOne(targetEntity=MovimentoAcionamentoArea.class,mappedBy="movimento")
+	private MovimentoAcionamentoArea movimentosArea;
 
-	@OneToMany(targetEntity=MovimentoAnaliseOperacional.class,mappedBy="movimento")
-	private Collection<MovimentoAnaliseOperacional> movimentosAreaOperacional;
+	@OneToOne(targetEntity=MovimentoAnaliseOperacional.class,mappedBy="movimento")
+	private MovimentoAnaliseOperacional movimentosAreaOperacional;
 
-	@OneToMany(targetEntity=MovimentoAnaliseTecnica.class,mappedBy="movimento")
-	private Collection<MovimentoAnaliseTecnica> movimentosAnaliseTecnica;
+	@OneToOne(targetEntity=MovimentoAnaliseTecnica.class,mappedBy="movimento")
+	private MovimentoAnaliseTecnica movimentosAnaliseTecnica;
 
-	@OneToMany(targetEntity=MovimentoConclusao.class,mappedBy="movimento")
-	private Collection<MovimentoConclusao> movimentosConclusao;
+	@OneToOne(targetEntity=MovimentoConclusao.class,mappedBy="movimento")
+	private MovimentoConclusao movimentosConclusao;
 
-	@OneToMany(targetEntity=MovimentoFollowUp.class,mappedBy="movimento")
-	private Collection<MovimentoFollowUp> movimentosFollowUp;
+	@OneToOne(targetEntity=MovimentoFollowUp.class,mappedBy="movimento")
+	private MovimentoFollowUp movimentosFollowUp;
 
-	@OneToMany(targetEntity=MovimentoRevisaoPrazo.class,mappedBy="movimento")
-	private Collection<MovimentoRevisaoPrazo> movimentosRevisao;
+	@OneToOne(targetEntity=MovimentoRevisaoPrazo.class,mappedBy="movimento")
+	private MovimentoRevisaoPrazo movimentosRevisao;
 
-	@OneToMany(targetEntity=MovimentoTecnico.class,mappedBy="movimento")
-	private Collection<MovimentoTecnico> movimentosTecnico;
+	@OneToOne(targetEntity=MovimentoTecnico.class,mappedBy="movimento")
+	private MovimentoTecnico movimentosTecnico;
 
 	public Integer getId() {
 		return idMovimento;
@@ -98,68 +97,6 @@ public class Movimento extends AbstractEntity<Integer>{
 	@JoinColumn(name="idDemanda",referencedColumnName="idDemanda")
 	private DemandasRegulatorio demanda;
 
-	public Collection<MovimentoAcionamentoArea> getMovimentosArea() {
-		return movimentosArea;
-	}
-
-	public void setMovimentosArea(
-			Collection<MovimentoAcionamentoArea> movimentosArea) {
-		this.movimentosArea = movimentosArea;
-	}
-
-	public Collection<MovimentoAnaliseOperacional> getMovimentosAreaOperacional() {
-		return movimentosAreaOperacional;
-	}
-
-	public void setMovimentosAreaOperacional(
-			Collection<MovimentoAnaliseOperacional> movimentosAreaOperacional) {
-		this.movimentosAreaOperacional = movimentosAreaOperacional;
-	}
-
-	public Collection<MovimentoAnaliseTecnica> getMovimentosAnaliseTecnica() {
-		return movimentosAnaliseTecnica;
-	}
-
-	public void setMovimentosAnaliseTecnica(
-			Collection<MovimentoAnaliseTecnica> movimentosAnaliseTecnica) {
-		this.movimentosAnaliseTecnica = movimentosAnaliseTecnica;
-	}
-
-	public Collection<MovimentoConclusao> getMovimentosConclusao() {
-		return movimentosConclusao;
-	}
-
-	public void setMovimentosConclusao(
-			Collection<MovimentoConclusao> movimentosConclusao) {
-		this.movimentosConclusao = movimentosConclusao;
-	}
-
-	public Collection<MovimentoFollowUp> getMovimentosFollowUp() {
-		return movimentosFollowUp;
-	}
-
-	public void setMovimentosFollowUp(
-			Collection<MovimentoFollowUp> movimentosFollowUp) {
-		this.movimentosFollowUp = movimentosFollowUp;
-	}
-
-	public Collection<MovimentoRevisaoPrazo> getMovimentosRevisao() {
-		return movimentosRevisao;
-	}
-
-	public void setMovimentosRevisao(
-			Collection<MovimentoRevisaoPrazo> movimentosRevisao) {
-		this.movimentosRevisao = movimentosRevisao;
-	}
-
-	public Collection<MovimentoTecnico> getMovimentosTecnico() {
-		return movimentosTecnico;
-	}
-
-	public void setMovimentosTecnico(Collection<MovimentoTecnico> movimentosTecnico) {
-		this.movimentosTecnico = movimentosTecnico;
-	}
-
 	public DemandasRegulatorio getDemanda() {
 		return demanda;
 	}
@@ -168,27 +105,85 @@ public class Movimento extends AbstractEntity<Integer>{
 		this.demanda = demanda;
 	}
 
+	public MovimentoAcionamentoArea getMovimentosArea() {
+		return movimentosArea;
+	}
+
+	public void setMovimentosArea(MovimentoAcionamentoArea movimentosArea) {
+		this.movimentosArea = movimentosArea;
+	}
+
+	public MovimentoAnaliseOperacional getMovimentosAreaOperacional() {
+		return movimentosAreaOperacional;
+	}
+
+	public void setMovimentosAreaOperacional(
+			MovimentoAnaliseOperacional movimentosAreaOperacional) {
+		this.movimentosAreaOperacional = movimentosAreaOperacional;
+	}
+
+	public MovimentoAnaliseTecnica getMovimentosAnaliseTecnica() {
+		return movimentosAnaliseTecnica;
+	}
+
+	public void setMovimentosAnaliseTecnica(
+			MovimentoAnaliseTecnica movimentosAnaliseTecnica) {
+		this.movimentosAnaliseTecnica = movimentosAnaliseTecnica;
+	}
+
+	public MovimentoConclusao getMovimentosConclusao() {
+		return movimentosConclusao;
+	}
+
+	public void setMovimentosConclusao(MovimentoConclusao movimentosConclusao) {
+		this.movimentosConclusao = movimentosConclusao;
+	}
+
+	public MovimentoFollowUp getMovimentosFollowUp() {
+		return movimentosFollowUp;
+	}
+
+	public void setMovimentosFollowUp(MovimentoFollowUp movimentosFollowUp) {
+		this.movimentosFollowUp = movimentosFollowUp;
+	}
+
+	public MovimentoRevisaoPrazo getMovimentosRevisao() {
+		return movimentosRevisao;
+	}
+
+	public void setMovimentosRevisao(MovimentoRevisaoPrazo movimentosRevisao) {
+		this.movimentosRevisao = movimentosRevisao;
+	}
+
+	public MovimentoTecnico getMovimentosTecnico() {
+		return movimentosTecnico;
+	}
+
+	public void setMovimentosTecnico(MovimentoTecnico movimentosTecnico) {
+		this.movimentosTecnico = movimentosTecnico;
+	}
+
 	@Transient
 	public String getTipo(){
-		if(getMovimentosAnaliseTecnica()!=null && getMovimentosAnaliseTecnica().size()>0){
+		if(getMovimentosAnaliseTecnica()!=null){
 			return "ANÁLISE TÉCNICA";
 		}
-		if(getMovimentosArea()!=null && getMovimentosArea().size()>0){
+		if(getMovimentosArea()!=null){
 			return "ACIONAMENTO ÁREA OPERACIONAL";
 		}
-		if(getMovimentosAreaOperacional()!=null && getMovimentosAreaOperacional().size()>0){
+		if(getMovimentosAreaOperacional()!=null){
 			return "ACIONAMENTO ÁREA OPERACIONAL";
 		}
-		if(getMovimentosConclusao()!=null && getMovimentosConclusao().size()>0){
+		if(getMovimentosConclusao()!=null){
 			return "CONCLUSÃO DA DEMANDA";
 		}
-		if(getMovimentosFollowUp()!=null && getMovimentosFollowUp().size()>0){
+		if(getMovimentosFollowUp()!=null){
 			return "REGISTRO DE FOLLOW-UP";
 		}
-		if(getMovimentosRevisao()!=null && getMovimentosRevisao().size()>0){
+		if(getMovimentosRevisao()!=null){
 			return "REVISÃO DE PRAZO";
 		}
-		if(getMovimentosTecnico()!=null && getMovimentosTecnico().size()>0){
+		if(getMovimentosTecnico()!=null){
 			return "DEFINIÇÃO DE TÉCNICO";
 		}
 		else{

@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
@@ -30,7 +30,7 @@ public class MovimentoAcionamentoArea extends AbstractEntity<Integer>{
 	@Column(name="idMovimentoAreaOperacional")
 	private Integer idMovimento;
 
-	@ManyToOne(targetEntity=Movimento.class)
+	@OneToOne(targetEntity=Movimento.class)
 	@JoinColumn(name="idMovimento",referencedColumnName="idMovimento")
 	private Movimento movimento;
 

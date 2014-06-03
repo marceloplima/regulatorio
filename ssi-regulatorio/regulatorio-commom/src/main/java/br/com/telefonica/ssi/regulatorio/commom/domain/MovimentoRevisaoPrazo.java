@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
@@ -30,9 +30,13 @@ public class MovimentoRevisaoPrazo extends AbstractEntity<Integer>{
 	@Column(name="dtPrazoProposto")
 	private Date prazo;
 
-	@ManyToOne(targetEntity=Movimento.class)
+	@OneToOne(targetEntity=Movimento.class)
 	@JoinColumn(name="idMovimento",referencedColumnName="idMovimento")
 	private Movimento movimento;
+
+	@OneToOne(targetEntity=StatusRegulatorio.class)
+	@JoinColumn(name="idStatus",referencedColumnName="idStatus")
+	private StatusRegulatorio status;
 
 	public Integer getId() {
 		return idMovimento;
@@ -56,5 +60,13 @@ public class MovimentoRevisaoPrazo extends AbstractEntity<Integer>{
 
 	public void setMovimento(Movimento movimento) {
 		this.movimento = movimento;
+	}
+
+	public StatusRegulatorio getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusRegulatorio status) {
+		this.status = status;
 	}
 }
