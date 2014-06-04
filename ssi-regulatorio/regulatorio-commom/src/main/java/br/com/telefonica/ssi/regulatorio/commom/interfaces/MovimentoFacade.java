@@ -15,6 +15,7 @@ import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoConclusao;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoFollowUp;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoRevisaoPrazo;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoTecnico;
+import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Areas;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
 
 @Local
@@ -51,4 +52,6 @@ public interface MovimentoFacade extends Serializable{
 	Movimento getRowDataMovimento(Object rowKey);
 
 	MovimentoRevisaoPrazo getUtimaRevisaoPrazo(DemandasRegulatorio demanda);
+
+	MovimentoAnaliseOperacional retornaAnaliseOperacionalArea(DemandasRegulatorio demanda, Areas area);
 }

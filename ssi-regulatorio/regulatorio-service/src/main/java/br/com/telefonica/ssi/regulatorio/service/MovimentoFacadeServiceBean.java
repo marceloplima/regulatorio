@@ -19,6 +19,7 @@ import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoConclusao;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoFollowUp;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoRevisaoPrazo;
 import br.com.telefonica.ssi.regulatorio.commom.domain.MovimentoTecnico;
+import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Areas;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.MovimentoFacade;
 
@@ -209,6 +210,24 @@ public class MovimentoFacadeServiceBean implements MovimentoFacade{
 		}
 		catch(NoResultException nre ){
 			return new MovimentoRevisaoPrazo();
+		}
+	}
+
+	@Override
+	public MovimentoAnaliseOperacional retornaAnaliseOperacionalArea(
+			DemandasRegulatorio demanda, Areas area) {
+		MovimentoAnaliseOperacional movimento = null;
+		TypedQuery<MovimentoAnaliseOperacional> q = em.createQuery("select m from MovimentoAnaliseOperacional m where "
+				+ "m.movimento.demanda = :demanda and m.areaOperacional = :area",MovimentoAnaliseOperacional.class);
+		q.setParameter("demanda", demanda);
+		q.setParameter("area", area);
+
+		try{
+			movimento = q.getSingleResult();
+			return movimento;
+		}
+		catch(NoResultException nre){
+			return null;
 		}
 	}
 }
