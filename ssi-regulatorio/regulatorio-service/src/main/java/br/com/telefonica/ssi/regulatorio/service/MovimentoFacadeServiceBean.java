@@ -107,6 +107,9 @@ public class MovimentoFacadeServiceBean implements MovimentoFacade{
 
 	@Override
 	public List<Movimento> getMovimentosPorDemanda(DemandasRegulatorio demanda) {
+		if(demanda == null || demanda.getId() == null){
+			return new ArrayList<Movimento>();
+		}
 		List<Movimento> analises = new ArrayList<Movimento>();
 		TypedQuery<Movimento> q = em.createQuery("select m from Movimento m where m.demanda = :demanda order by m.dataHora desc",Movimento.class);
 		q.setParameter("demanda", demanda);
