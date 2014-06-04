@@ -187,7 +187,7 @@ public class MovimentoFacadeServiceBean implements MovimentoFacade{
 			MovimentoRevisaoPrazo result = null;
 			TypedQuery<MovimentoRevisaoPrazo> q = em
 					.createQuery(
-							"Select mp from MovimentoRevisaoPrazo mp where mp.movimento.demanda = :demanda order by mp.movimento.dataHora desc",
+							"Select mp from MovimentoRevisaoPrazo mp where mp.movimento.demanda = :demanda order by mp.idMovimento desc",
 							MovimentoRevisaoPrazo.class);
 
 			q.setParameter("demanda", demanda);
