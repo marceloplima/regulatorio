@@ -19,6 +19,7 @@ import javax.persistence.Transient;
 import br.com.telefonica.ssi.faces.bean.AbstractManagedBean;
 import br.com.telefonica.ssi.regulatorio.commom.cdi.qualifiers.NovaDemanda;
 import br.com.telefonica.ssi.regulatorio.commom.cdi.qualifiers.NovoAnexo;
+import br.com.telefonica.ssi.regulatorio.commom.cdi.qualifiers.PopupDemanda;
 import br.com.telefonica.ssi.regulatorio.commom.domain.AreasRegionais;
 import br.com.telefonica.ssi.regulatorio.commom.domain.Complexidade;
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
@@ -65,6 +66,9 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	private SendMailService mensageria;
 
 	private Integer idMovimento;
+
+	@Inject @PopupDemanda
+	private Event<DemandasRegulatorio> eventoPopup;
 
 	private MovimentoAnaliseOperacional analiseOperacional;
 
@@ -173,45 +177,27 @@ public class ClassificacaoBean extends AbstractManagedBean{
 		this.demanda = demanda;
 	}
 
-
 	public void salvarDemanda(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-		if(demanda.getTipoDemanda() == null || demanda.getAreaRegional() == null || demanda.getTipoRede() == null || this.ufs==null || this.ufs.size()<1){
-			List<String> messages = new ArrayList<String>();
-			messages.add("Assunto, area regional, tipo de rede, documento de origem ou UF da demanda não informado! ");
-			index.setMsgspanel(messages);
-			index.setPanelexibeerro(true);
-			return;
-		}
-		else{
+		if(validaDemanda()){
 			demanda.setUfs(ufs);
 			facadeDemanda.salvaDemanda(demanda);
-			logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Demanda salva, em "+demanda.getStatus().getDescricao());
-			index.setPanelexibesucesso(true);
-			index.setMsgpanel("Demanda salva com sucesso!");
+			logger.salvarLog(demanda, getLogado(), "Demanda salva, em "+demanda.getStatus().getDescricao());
+			exibeMensagemSucesso("Demanda salva com sucesso!");
 			eventoDemanda.fire(demanda);
 		}
 	}
 
 	public void assumirDemanda(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-		if(demanda.getTipoDemanda() == null || demanda.getAreaRegional() == null || demanda.getTipoRede() == null ||
-				this.ufs==null || this.ufs.size()<1){
-			List<String> messages = new ArrayList<String>();
-			messages.add("Assunto, area regional, tipo de rede, documento de origem ou UF da demanda não informado! ");
-			index.setMsgspanel(messages);
-			index.setPanelexibeerro(true);
-			return;
-		}
-		else{
-			this.demanda.setEncarregado(RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado());
+		this.demanda.setUfs(ufs);
+		if(validaDemanda()){
+			this.demanda.setUfs(this.ufs);
+			this.demanda.setEncarregado(getLogado());
 			this.demanda.setStatus(facadeDemanda.getStatusService().findByName("ANÁLISE TÉCNICA"));
 			facadeDemanda.salvaDemanda(demanda);
 
-			logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Demanda assumida por "+demanda.getEncarregado().getCnmnome()+" e enviada para "+demanda.getStatus().getDescricao());
+			logger.salvarLog(demanda, getLogado(), "Demanda assumida por "+demanda.getEncarregado().getCnmnome()+" e enviada para "+demanda.getStatus().getDescricao());
 
-			index.setMsgpanel("Operacão realizada com sucesso!");
-			index.setPanelexibesucesso(true);
+			exibeMensagemSucesso("Operacão realizada com sucesso!");
 
 			eventoDemanda.fire(demanda);
 
@@ -220,14 +206,12 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	}
 
 	public void cancelarDemanda(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 		this.demanda.setStatus(facadeDemanda.getStatusService().findByName("CANCELADA"));
 		facadeDemanda.salvaDemanda(demanda);
 
-		index.setMsgpanel("Demanda cancelada!");
-		index.setPanelexibesucesso(true);
+		exibeMensagemSucesso("Demanda cancelada!");
 
-		logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Demanda cancelada.");
+		logger.salvarLog(demanda, getLogado(), "Demanda cancelada.");
 
 		mensageria.notificaSolicitante("Demanda cancelada por "+demanda.getEncarregado().getCnmnome(), "Demanda cancelada!.", demanda.getNumeroDemanda(), demanda);
 	}
@@ -246,15 +230,23 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	public void listenerDemanda(@Observes DemandasRegulatorio demanda){
 		this.demanda = demanda;
-		if(demanda != null && demanda.getId() != null){
+		if(demanda.getUfs()!=null && !demanda.getUfs().isEmpty()){
 			this.ufs = new ArrayList<UF>(demanda.getUfs());
+		}
+		else{
+			this.ufs = new ArrayList<UF>();
 		}
 	}
 
 	public void listenerDemandaNovoAnexo(@Observes @NovoAnexo DemandasRegulatorio demanda){
 		this.demanda = facadeDemanda.recuperaDemanda(demanda.getId());
+		if(demanda.getUfs()!=null && !demanda.getUfs().isEmpty()){
+			this.ufs = new ArrayList<UF>(demanda.getUfs());
+		}
+		else{
+			this.ufs = new ArrayList<UF>();
+		}
 		eventoDemanda.fire(demanda);
-		this.ufs = new ArrayList<UF>(demanda.getUfs());
 	}
 
 	public AreasRegionais getAreaRegional() {
@@ -282,16 +274,19 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	}
 
 	public void revisarPrazo(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-		if(demanda.getTipoDemanda() == null || demanda.getTipoRede() == null){
-			index.setMsgpanel("Assunto, area regional, tipo de rede, documento de origem ou UF da demanda não informado! ");
-			index.setPanelexibeerro(true);
-		}
-		else{
+//		String validacao = validaCamposDemanda(demanda);
+//
+//		if(validacao!=null){
+//			exibeMensagemDeErro(validacao);
+//		}
+//
+//		else{
+			MovimentoRevisaoPrazo ultimaRevisao = movimentoService.getUtimaRevisaoPrazo(demanda);
+
 			Movimento movimento = new Movimento();
 			MovimentoRevisaoPrazo revisao = new MovimentoRevisaoPrazo();
 
-			movimento.setAutor(RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado());
+			movimento.setAutor(getLogado());
 			movimento.setComentario(comentario);
 			movimento.setDataHora(new Date());
 			movimento.setDemanda(demanda);
@@ -300,19 +295,33 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 			revisao.setMovimento(movimento);
 			revisao.setPrazo(novoPrazo);
+			revisao.setStatus(demanda.getStatus());
 
 			movimentoService.salvaMovimentoRevisaoPrazo(revisao);
 
-			demanda.setEncarregado(getLogado());
+			if(demanda.getUfs()==null || demanda.getUfs().isEmpty()){
+				demanda.setUfs(this.ufs);
+			}
 
 			if(demanda.getStatus().getDescricao().equalsIgnoreCase("REVISÃO DE PRAZO")){
-				demanda.setStatus(statusService.findByName("ANÁLISE TÉCNICA"));
+				if(ultimaRevisao.getMovimento()==null){
+					demanda.setStatus(statusService.findByName("ANÁLISE TÉCNICA"));
+					demanda.setEncarregado(demanda.getAutor());
+					demanda.setPrazo(novoPrazo);
+				}
+				else{
+					demanda.setPrazo(novoPrazo);
+					demanda.setEncarregado(ultimaRevisao.getMovimento().getAutor());
+					demanda.setStatus(ultimaRevisao.getStatus());
+				}
 				mensageria.notificarResponsavel("Prazo revisto e enviado para analise tecnica.", "Prazo revisto e enviado para analise tecnica.", demanda.getNumeroDemanda(), demanda);
-				logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Prazo revisto e enviado para analise tecnica.");
+				logger.salvarLog(demanda, getLogado(), "Prazo revisto e enviado para analise tecnica.");
 			}
 			else{
+				demanda.setEncarregado(demanda.getSolicitante());
 				demanda.setStatus(statusService.findByName("REVISÃO DE PRAZO"));
-				logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Solicitada revisão de prazo para a demanda.");
+				logger.salvarLog(demanda, getLogado(), "Solicitada revisão de prazo para a demanda.");
+				demanda.setPrazo(novoPrazo);
 				mensageria.notificaSolicitante("Solicitada revisão de prazo por "+demanda.getEncarregado().getCnmnome(), "Solicitada revisão de prazo para a demanda.", demanda.getNumeroDemanda(), demanda);
 			}
 
@@ -320,11 +329,11 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 			eventoDemanda.fire(demanda);
 
-			index.setMsgpanel("Operacão realizada com sucesso!");
-			index.setPanelexibesucesso(true);
+			exibeMensagemSucesso("Operação realizada com sucesso!");
+
 			this.comentario = null;
 			this.novoPrazo = null;
-		}
+//		}
 	}
 
 	public Pessoas getResponsavel() {
@@ -336,13 +345,9 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	}
 
 	public void definirTecnico(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-		if(demanda.getTipoDemanda() == null || demanda.getAreaRegional() == null || demanda.getTipoRede() == null){
-			index.setMsgpanel("Assunto, area regional, tipo de rede, documento de origem ou UF da demanda não informado! ");
-			index.setPanelexibeerro(true);
-		}
-		else{
-			demanda.setEncarregado(this.responsavel);
+		demanda.setUfs(ufs);
+		if(validaDemanda()){
+			demanda.setEncarregado(pessoaService.recuperarUnico(this.responsavel.getId()));
 			demanda.setStatus(statusService.findByName("ANÁLISE TÉCNICA"));
 
 			facadeDemanda.salvaDemanda(demanda);
@@ -350,7 +355,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 			Movimento movimento = new Movimento();
 			MovimentoTecnico movimentoTecnico = new MovimentoTecnico();
 
-			movimento.setAutor(RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado());
+			movimento.setAutor(getLogado());
 			movimento.setComentario(comentario);
 			movimento.setDataHora(new Date());
 			movimento.setDemanda(demanda);
@@ -360,7 +365,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 			movimentoTecnico.setMovimento(movimento);
 			movimentoService.salvaMovimentoTecnico(movimentoTecnico);
 
-			logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Definido técnico técnico "+demanda.getEncarregado().getCnmnome()+" para a demanda e enviada para "
+			logger.salvarLog(demanda, getLogado(), "Definido técnico técnico "+demanda.getEncarregado().getCnmnome()+" para a demanda e enviada para "
 					+ demanda.getStatus().getDescricao());
 
 			mensageria.notificaSolicitante("Definido técnico "+demanda.getEncarregado().getCnmnome()+" para a demanda.", "Definição de encarregado técnico", demanda.getNumeroDemanda(), demanda);
@@ -369,8 +374,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 			eventoDemanda.fire(demanda);
 
-			index.setMsgpanel("Operacão realizada com sucesso!");
-			index.setPanelexibesucesso(true);
+			exibeMensagemSucesso("Operacão realizada com sucesso!");
 
 			this.responsavel = null;
 
@@ -378,142 +382,189 @@ public class ClassificacaoBean extends AbstractManagedBean{
 		}
 	}
 
-	public void realizarAnaliseTecnica(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-		Movimento movimento = new Movimento();
-		MovimentoAnaliseTecnica analiseTecnica = new MovimentoAnaliseTecnica();
-
-		movimento.setAutor(getLogado());
-		movimento.setComentario(comentario);
-		movimento.setDataHora(new Date());
-		movimento.setDemanda(demanda);
-
-		analiseTecnica.setComplexidade(complexidade);
-		analiseTecnica.setEsclarecimentos(comentario);
-		analiseTecnica.setMovimento(movimento);
-		analiseTecnica.setPrevisao(novoPrazo);
-		analiseTecnica.setExecucao(execucao);
-		analiseTecnica.setResultadoAnalise(analise);
-
-		if(analiseTecnica.getResultadoAnalise()==null || analiseTecnica.getComplexidade()==null || analiseTecnica.getPrevisao()==null || analiseTecnica.getExecucao()==null || analiseTecnica.getEsclarecimentos()==null){
-			List<String> messages = new ArrayList<String>();
-			if(analiseTecnica.getResultadoAnalise()==null){
-				messages.add("Resultado da análise é um campo obrigatório!");
-				index.setMsgspanel(messages);
-				index.setPanelexibeerro(true);
-				return;
-			}
-			if(analiseTecnica.getComplexidade()==null){
-				messages.add("Complexidade é um campo obrigatório!");
-				messages.add("Resultado da análise é um campo obrigatório!");
-				index.setMsgspanel(messages);
-				index.setPanelexibeerro(true);
-				return;
-			}
-			if(analiseTecnica.getPrevisao()==null){
-				messages.add("Previsão é um campo obrigatório!");
-				messages.add("Resultado da análise é um campo obrigatório!");
-				index.setMsgspanel(messages);
-				index.setPanelexibeerro(true);
-				return;
-			}
-			if(analiseTecnica.getPrevisao()==null && !analiseTecnica.getResultadoAnalise().getDescricao().equalsIgnoreCase("Em Atendimento")){
-				messages.add("O campo previsão é obrigatório!");
-				messages.add("Resultado da análise é um campo obrigatório!");
-				index.setMsgspanel(messages);
-				index.setPanelexibeerro(true);
-				return;
-			}
-			if(analiseTecnica.getExecucao()==null && !analiseTecnica.getResultadoAnalise().getDescricao().equalsIgnoreCase("Atendimento Concluído")){
-				messages.add("O campo execução é obrigatório!");
-				messages.add("Resultado da análise é um campo obrigatório!");
-				index.setMsgspanel(messages);
-				index.setPanelexibeerro(true);
-				return;
-			}
-			if(!analiseTecnica.getResultadoAnalise().getDescricao().equalsIgnoreCase("Atendimento Concluído") && !analiseTecnica.getResultadoAnalise().getDescricao().equalsIgnoreCase("Em Atendimento")){
-				messages.add("O campo comentério é obrigatório!");
-				messages.add("Resultado da análise é um campo obrigatório!");
-				index.setMsgspanel(messages);
-				index.setPanelexibeerro(true);
-				return;
-			}
+	public void realizarAnaliseTecnica() {
+		if(demanda.getUfs()== null || demanda.getUfs().isEmpty()){
+			demanda.setUfs(ufs);
 		}
-		else{
-			demanda.setEncarregado(getLogado());
+		if (validaDemanda()) {
+			Movimento movimento = new Movimento();
+			MovimentoAnaliseTecnica analiseTecnica = new MovimentoAnaliseTecnica();
 
-			if(analise.getDescricao().equalsIgnoreCase("Atendimento Concluído")){
-				demanda.setStatus(statusService.findByName("CONCLUÍDA"));
-				logger.salvarLog(demanda, getLogado(), "Demanda concluída.");
-				mensageria.notificaSolicitante("Demanda concluida.", "Demanda concluida", demanda.getNumeroDemanda(), demanda);
-				mensageria.notificarResponsavel("Demanda concluida", "Demanda concluida", demanda.getNumeroDemanda(), demanda);
+			movimento.setAutor(getLogado());
+			movimento.setComentario(comentario);
+			movimento.setDataHora(new Date());
+			movimento.setDemanda(demanda);
+
+			analiseTecnica.setComplexidade(complexidade);
+			analiseTecnica.setEsclarecimentos(comentario);
+			analiseTecnica.setMovimento(movimento);
+			analiseTecnica.setPrevisao(novoPrazo);
+			analiseTecnica.setExecucao(execucao);
+			analiseTecnica.setResultadoAnalise(analise);
+
+			if (analiseTecnica.getResultadoAnalise() == null
+					|| analiseTecnica.getComplexidade() == null
+					|| analiseTecnica.getPrevisao() == null
+					|| analiseTecnica.getExecucao() == null
+					|| analiseTecnica.getEsclarecimentos() == null) {
+				if (analiseTecnica.getResultadoAnalise() == null) {
+					exibeMensagemDeErro("Resultado da análise é um campo obrigatório!");
+					return;
+				}
+				if (analiseTecnica.getComplexidade() == null) {
+					exibeMensagemDeErro("Complexidade é um campo obrigatório!");
+					return;
+				}
+				if (analiseTecnica.getPrevisao() == null) {
+					exibeMensagemDeErro("Previsão é um campo obrigatório!");
+					return;
+				}
+				if (analiseTecnica.getPrevisao() == null
+						&& !analiseTecnica.getResultadoAnalise().getDescricao()
+								.equalsIgnoreCase("Em Atendimento")) {
+					exibeMensagemDeErro("O campo previsão é obrigatório!");
+					return;
+				}
+				if (analiseTecnica.getExecucao() == null
+						&& !analiseTecnica.getResultadoAnalise().getDescricao()
+								.equalsIgnoreCase("Atendimento Concluído")) {
+					exibeMensagemDeErro("O campo execução é obrigatório!");
+					return;
+				}
+				if (!analiseTecnica.getResultadoAnalise().getDescricao()
+						.equalsIgnoreCase("Atendimento Concluído")
+						&& !analiseTecnica.getResultadoAnalise().getDescricao()
+								.equalsIgnoreCase("Em Atendimento")) {
+					exibeMensagemDeErro("O campo comentário é obrigatório!");
+					return;
+				}
+			} else {
+				demanda.setEncarregado(getLogado());
+
+				if (analise.getDescricao().equalsIgnoreCase(
+						"Atendimento Concluído")) {
+					demanda.setStatus(statusService.findByName("CONCLUÍDA"));
+					logger.salvarLog(demanda, getLogado(), "Demanda concluída.");
+					mensageria.notificaSolicitante("Demanda concluida.",
+							"Demanda concluida", demanda.getNumeroDemanda(),
+							demanda);
+					mensageria.notificarResponsavel("Demanda concluida",
+							"Demanda concluida", demanda.getNumeroDemanda(),
+							demanda);
+				}
+				if (analise.getDescricao().equalsIgnoreCase("Em Atendimento")) {
+					demanda.setStatus(statusService
+							.findByName("EM ATENDIMENTO"));
+					logger.salvarLog(demanda, getLogado(),
+							"Demanda em atendimento.");
+					mensageria.notificaSolicitante("Demanda em atendimento.",
+							"Demanda em atendimento",
+							demanda.getNumeroDemanda(), demanda);
+					mensageria.notificarResponsavel("Demanda em atendimento",
+							"Demanda em atendimento",
+							demanda.getNumeroDemanda(), demanda);
+				}
+				if (analise.getDescricao().equalsIgnoreCase("Necessita Dados")) {
+					demanda.setStatus(statusService
+							.findByName("PENDENTE DE DADOS"));
+					logger.salvarLog(demanda, getLogado(),
+							"Demanda pendente de dados.");
+					mensageria.notificaSolicitante(
+							"Demanda pendente de dados.",
+							"Demanda pendente de dados.",
+							demanda.getNumeroDemanda(), demanda);
+					mensageria.notificarResponsavel(
+							"Demanda pendente de dados.",
+							"Demanda pendente de dados.",
+							demanda.getNumeroDemanda(), demanda);
+				}
+				if (analise.getDescricao().equalsIgnoreCase(
+						"Necessita Esclarecimentos")) {
+					demanda.setStatus(statusService
+							.findByName("PENDENTE DE ESCLARECIMENTOS"));
+					logger.salvarLog(demanda, getLogado(),
+							"Demanda pendente de esclarecimentos.");
+					mensageria.notificaSolicitante(
+							"Demanda pendente de esclarecimentos.",
+							"Demanda pendente de esclarecimentos.",
+							demanda.getNumeroDemanda(), demanda);
+					mensageria.notificarResponsavel(
+							"Demanda pendente de esclarecimentos.",
+							"Demanda pendente de esclarecimentos.",
+							demanda.getNumeroDemanda(), demanda);
+				}
+				if (analise.getDescricao().equalsIgnoreCase("Revisão do Prazo")) {
+
+					Movimento movimentoRevisao = new Movimento();
+					movimentoRevisao.setAutor(getLogado());
+					movimentoRevisao.setDataHora(new Date());
+					movimentoRevisao.setDemanda(demanda);
+					movimentoRevisao.setComentario("Solicitação de revisão de prazo realizada por "+getLogado().getCnmnome());
+
+					MovimentoRevisaoPrazo revisao = new MovimentoRevisaoPrazo();
+					revisao.setStatus(demanda.getStatus());
+					revisao.setPrazo(demanda.getPrazo());
+
+					demanda.setStatus(statusService
+							.findByName("REVISÃO DE PRAZO"));
+					demanda.setEncarregado(demanda.getSolicitante());
+
+					movimentoService.salvaMovimento(movimentoRevisao);
+					revisao.setMovimento(movimentoRevisao);
+					movimentoService.salvaMovimentoRevisaoPrazo(revisao);
+
+					logger.salvarLog(demanda, getLogado(),
+							"Solicitada a revisão de prazo para a demanda.");
+					mensageria.notificaSolicitante(
+							"Solicitada a revisão de prazo para a demanda.",
+							"Solicitada a revisão de prazo para a demanda.",
+							demanda.getNumeroDemanda(), demanda);
+					mensageria.notificarResponsavel(
+							"Solicitada a revisão de prazo para a demanda.",
+							"Solicitada a revisão de prazo para a demanda.",
+							demanda.getNumeroDemanda(), demanda);
+				}
+
+				movimentoService.salvaMovimento(movimento);
+				movimentoService.salvaMovimentoAnaliseTecnica(analiseTecnica);
+				facadeDemanda.salvaDemanda(demanda);
+
+				eventoDemanda.fire(demanda);
+
+				exibeMensagemSucesso("Operacão realizada com sucesso!");
+
+				this.comentario = null;
+				this.complexidade = null;
+				this.novoPrazo = null;
+				this.analise = null;
+				this.execucao = null;
 			}
-			if(analise.getDescricao().equalsIgnoreCase("Em Atendimento")){
-				demanda.setStatus(statusService.findByName("EM ATENDIMENTO"));
-				logger.salvarLog(demanda, getLogado(), "Demanda em atendimento.");
-				mensageria.notificaSolicitante("Demanda em atendimento.", "Demanda em atendimento", demanda.getNumeroDemanda(), demanda);
-				mensageria.notificarResponsavel("Demanda em atendimento", "Demanda em atendimento", demanda.getNumeroDemanda(), demanda);
-			}
-			if(analise.getDescricao().equalsIgnoreCase("Necessita Dados")){
-				demanda.setStatus(statusService.findByName("PENDENTE DE DADOS"));
-				logger.salvarLog(demanda, getLogado(), "Demanda pendente de dados.");
-				mensageria.notificaSolicitante("Demanda pendente de dados.", "Demanda pendente de dados.", demanda.getNumeroDemanda(), demanda);
-				mensageria.notificarResponsavel("Demanda pendente de dados.", "Demanda pendente de dados.", demanda.getNumeroDemanda(), demanda);
-			}
-			if(analise.getDescricao().equalsIgnoreCase("Necessita Esclarecimentos")){
-				demanda.setStatus(statusService.findByName("PENDENTE DE ESCLARECIMENTOS"));
-				logger.salvarLog(demanda, getLogado(), "Demanda pendente de esclarecimentos.");
-				mensageria.notificaSolicitante("Demanda pendente de esclarecimentos.", "Demanda pendente de esclarecimentos.", demanda.getNumeroDemanda(), demanda);
-				mensageria.notificarResponsavel("Demanda pendente de esclarecimentos.", "Demanda pendente de esclarecimentos.", demanda.getNumeroDemanda(), demanda);
-			}
-			if(analise.getDescricao().equalsIgnoreCase("Revisão do Prazo")){
-				demanda.setStatus(statusService.findByName("REVISÃO DE PRAZO"));
-				logger.salvarLog(demanda, getLogado(), "Solicitada a revisão de prazo para a demanda.");
-				mensageria.notificaSolicitante("Solicitada a revisão de prazo para a demanda.", "Solicitada a revisão de prazo para a demanda.", demanda.getNumeroDemanda(), demanda);
-				mensageria.notificarResponsavel("Solicitada a revisão de prazo para a demanda.", "Solicitada a revisão de prazo para a demanda.", demanda.getNumeroDemanda(), demanda);
-			}
-
-			movimentoService.salvaMovimento(movimento);
-			movimentoService.salvaMovimentoAnaliseTecnica(analiseTecnica);
-			facadeDemanda.salvaDemanda(demanda);
-
-			eventoDemanda.fire(demanda);
-
-			index.setMsgpanel("Operacão realizada com sucesso!");
-			index.setPanelexibesucesso(true);
-
-
-			this.comentario = null;
-			this.complexidade = null;
-			this.analise = null;
-			this.execucao = null;
 		}
 	}
 
 	public void registraFollowUp(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-		Movimento movimento = new Movimento();
-		MovimentoFollowUp movimentoFollowUp = new MovimentoFollowUp();
+		if(validaDemanda()){
+			Movimento movimento = new Movimento();
+			MovimentoFollowUp movimentoFollowUp = new MovimentoFollowUp();
 
-		movimento.setAutor(RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado());
-		movimento.setComentario(comentario);
-		movimento.setDataHora(new Date());
-		movimento.setDemanda(demanda);
-		movimentoService.salvaMovimento(movimento);
+			movimento.setAutor(getLogado());
+			movimento.setComentario(comentario);
+			movimento.setDataHora(new Date());
+			movimento.setDemanda(demanda);
+			movimentoService.salvaMovimento(movimento);
 
-		movimentoFollowUp.setMovimento(movimento);
-		movimentoService.salvarFollowUp(movimentoFollowUp);
+			movimentoFollowUp.setMovimento(movimento);
+			movimentoService.salvarFollowUp(movimentoFollowUp);
 
-		logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Registrado follow up para a demanda");
+			logger.salvarLog(demanda, getLogado(), "Registrado follow up para a demanda");
 
-		mensageria.notificaSolicitante(movimento.getComentario(), "Registrado follow up", demanda.getNumeroDemanda(), demanda);
+			mensageria.notificaSolicitante(movimento.getComentario(), "Registrado follow up", demanda.getNumeroDemanda(), demanda);
 
-		eventoDemanda.fire(demanda);
+			eventoDemanda.fire(demanda);
 
-		index.setMsgpanel("Operacão realizada com sucesso!");
-		index.setPanelexibesucesso(true);
-
-		this.comentario = null;
+			exibeMensagemSucesso("Operacão realizada com sucesso!");
+			this.comentario = null;
+		}
 	}
 
 	public ResultadoAnalise getAnalise() {
@@ -582,7 +633,6 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	}
 
 	public void concluirDemanda(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 		Movimento movimento = new Movimento();
 		MovimentoConclusao conclusao = new MovimentoConclusao();
 
@@ -595,8 +645,6 @@ public class ClassificacaoBean extends AbstractManagedBean{
 		conclusao.setExecucao(execucao);
 		conclusao.setMovimento(movimento);
 
-		demanda.setEncarregado(getLogado());
-
 		demanda.setStatus(statusService.findByName("CONCLUÍDA"));
 		logger.salvarLog(demanda, getLogado(), "Demanda concluída.");
 		mensageria.notificaSolicitante("Demanda concluida.", "Demanda concluida", demanda.getNumeroDemanda(), demanda);
@@ -607,9 +655,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 		eventoDemanda.fire(demanda);
 
-		index.setMsgpanel("Operacão realizada com sucesso!");
-		index.setPanelexibesucesso(true);
-
+		exibeMensagemSucesso("Demanda conclida com sucesso!");
 
 		this.comentario = null;
 		this.complexidade = null;
@@ -626,15 +672,11 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	}
 
 	public void acionarAreasOperacionais(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 		Movimento movimento = new Movimento();
 		MovimentoAcionamentoArea acionamentoOperacional = new MovimentoAcionamentoArea();
 
 		if(areasOperacionais == null || areasOperacionais.size()<1){
-			List<String> messages = new ArrayList<String>();
-			messages.add("O campo áreas operacionais é obrigatório!");
-			index.setMsgspanel(messages);
-			index.setPanelexibeerro(true);
+			exibeMensagemDeErro("O campo áreas operacionais é obrigatório!");
 			return;
 		}
 		else {
@@ -666,12 +708,19 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 			for(Areas a:areas){
 				for(Pessoas p:a.getAreaspessoas()){
-					if(p.getCargo()!=null && p.getCargo().getCnmcargo().equalsIgnoreCase("gestor")){
+					if(p.getCargo()!=null && p.getCargo().getCnmcargo().equalsIgnoreCase("colaborador")){
 						Map<String, String> emails = new HashMap<String, String>();
-						emails.put(p.getCnmnome(), mensageria.getEmailPessoa(responsavel));
-						mensageria.enviarMensagem("Acionamento de área operacional para a demanda "
-								+ demanda.getNumeroDemanda(), "Acionamento de área operacional para a demanda "+demanda.getNumeroDemanda(),
-								emails, demanda.getNumeroDemanda());
+						if (p.getPessoaemails() != null
+								&& !p.getPessoaemails().isEmpty()) {
+							emails.put(p.getCnmnome(),
+									mensageria.getEmailPessoa(p));
+							mensageria.enviarMensagem(
+									"Acionamento de área operacional para a demanda "
+											+ demanda.getNumeroDemanda(),
+									"Acionamento de área operacional para a demanda "
+											+ demanda.getNumeroDemanda(),
+									emails, demanda.getNumeroDemanda());
+						}
 					}
 				}
 			}
@@ -679,30 +728,20 @@ public class ClassificacaoBean extends AbstractManagedBean{
 			this.comentario=null;
 
 			eventoDemanda.fire(demanda);
-
-			index.setMsgpanel("Operação realizada com sucesso!");
-			index.setPanelexibesucesso(true);
+			exibeMensagemSucesso("Operação realizada com sucesso!");
 		}
 	}
 
 	public void realizarAnaliseOperacional(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-
 		Movimento movimento = new Movimento();
 		MovimentoAnaliseOperacional analise = new MovimentoAnaliseOperacional();
 
 		if(comentario == null || comentario.equals("")){
-			List<String> mensagens = new ArrayList<String>();
-			mensagens.add("Campo comentário é obrigtório!");
-			index.setMsgspanel(mensagens);
-			index.setPanelexibeerro(true);
+			exibeMensagemDeErro("Campo comentário é obrigtório!");
 			return;
 		}
 		if(getLogado().getArea()==null){
-			List<String> mensagens = new ArrayList<String>();
-			mensagens.add("Usuário não cadastrado em área operacional acionada nesta demanda!");
-			index.setMsgspanel(mensagens);
-			index.setPanelexibeerro(true);
+			exibeMensagemDeErro("Usuário não cadastrado em área operacional acionada nesta demanda!");
 			return;
 		}
 		else{
@@ -748,8 +787,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 			mensageria.notificarResponsaveisTecnicos("Análise operacional da demanda "+demanda.getNumeroDemanda()+": \n "+comentario, "Análise operacional da demanda "+demanda.getNumeroDemanda(), demanda.getNumeroDemanda(), demanda);
 
-			index.setMsgpanel("Operação realizada com sucesso!");
-			index.setPanelexibesucesso(true);
+			exibeMensagemSucesso("Operação realizada com sucesso!");
 			this.comentario = null;
 			eventoDemanda.fire(demanda);
 		}
@@ -779,11 +817,99 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 	public void trocaAreaRegional(ValueChangeEvent evt){
 		AreasRegionais area = (AreasRegionais)evt.getNewValue();
-		if(area.getDescricao().equalsIgnoreCase("Brasil")){
+		if(area!=null && area.getDescricao().equalsIgnoreCase("Brasil")){
 			this.ufs = new ArrayList<UF>(area.getUfs());
 		}
 		else{
-			this.ufs = new ArrayList<UF>(demanda.getUfs());
+			if(demanda.getUfs()!=null && demanda.getUfs().size()>0){
+				this.ufs = new ArrayList<UF>(demanda.getUfs());
+			}
+			else{
+				this.ufs = new ArrayList<UF>();
+			}
+		}
+	}
+
+	public void exibeMensagemDeErro(String msg){
+		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
+		List<String> messages = new ArrayList<String>();
+		messages.add(msg);
+		index.setMsgspanel(messages);
+		index.setPanelexibeerro(true);
+	}
+	public void exibeMensagemSucesso(String msg){
+		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
+		index.setMsgpanel(msg);
+		index.setPanelexibesucesso(true);
+	}
+
+	public void solicitarRevisaoPrazo(){
+		demanda.setUfs(ufs);
+		if(validaDemanda()){
+			Movimento movimento = new Movimento();
+			movimento.setAutor(getLogado());
+			movimento.setDataHora(new Date());
+			movimento.setDemanda(demanda);
+			movimento.setComentario("Solicitação de revisão de prazo realizada por "+getLogado().getCnmnome());
+
+			MovimentoRevisaoPrazo revisao = new MovimentoRevisaoPrazo();
+			revisao.setMovimento(movimento);
+			revisao.setStatus(demanda.getStatus());
+			revisao.setPrazo(demanda.getPrazo());
+
+			demanda.setStatus(statusService.findByName("REVISÃO DE PRAZO"));
+			demanda.setEncarregado(demanda.getSolicitante());
+
+			facadeDemanda.salvaDemanda(demanda);
+
+			movimentoService.salvaMovimento(movimento);
+			movimentoService.salvaMovimentoRevisaoPrazo(revisao);
+
+			mensageria.notificaSolicitante("Solicitada revisão de prazo por "+demanda.getEncarregado().getCnmnome(), "Solicitada revisão de prazo para a demanda.", demanda.getNumeroDemanda(), demanda);
+
+			logger.salvarLog(demanda, getLogado(), "Solicitada revisão de prazo para a demanda.");
+
+			eventoDemanda.fire(demanda);
+
+			exibeMensagemSucesso("Operação realizada com sucesso!");
+		}
+	}
+
+	public boolean validaDemanda(){
+		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
+		List<String> messages = new ArrayList<String>();
+		if(demanda.getTipoDemanda() == null){
+			messages.add("Assunto não informado! ");
+			index.setMsgspanel(messages);
+			index.setPanelexibeerro(true);
+			return false;
+		}
+		if(demanda.getAreaRegional() == null){
+			messages.add("Área regional não informada! ");
+			index.setMsgspanel(messages);
+			index.setPanelexibeerro(true);
+			return false;
+		}
+		if(demanda.getDocumentoOrigem() == null){
+ 			messages.add("Documento de origem não informado! ");
+ 			index.setMsgspanel(messages);
+			index.setPanelexibeerro(true);
+			return false;
+		}
+		if(demanda.getTipoRede() == null){
+			messages.add("Tipo de rede não informada! ");
+			index.setMsgspanel(messages);
+			index.setPanelexibeerro(true);
+			return false;
+		}
+		if(demanda.getUfs()==null || demanda.getUfs().isEmpty()){
+			messages.add("UFs não informadas! ");
+			index.setMsgspanel(messages);
+			index.setPanelexibeerro(true);
+			return false;
+		}
+		else{
+			return true;
 		}
 	}
 }
