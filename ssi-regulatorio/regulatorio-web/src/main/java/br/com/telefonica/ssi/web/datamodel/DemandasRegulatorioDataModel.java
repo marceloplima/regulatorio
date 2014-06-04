@@ -34,7 +34,6 @@ import org.richfaces.model.Arrangeable;
 import org.richfaces.model.ArrangeableState;
 
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
-import br.com.telefonica.ssi.regulatorio.commom.domain.Movimento;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.facade.DemandaServiceFacade;
 import br.com.telefonica.ssi.web.utils.RecuperadorInstanciasBean;
 
