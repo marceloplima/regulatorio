@@ -268,37 +268,72 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 	public List<DemandasRegulatorio> retornarPaginado(int firstRow, int numberOfRows,
 			Map<String, Object> filtros,
 			Pessoas pessoa) {
-		String jpaQuery = "Select d from DemandasRegulatorio d where (d.autor = :pessoa "
-				+ "OR d.encarregado = :pessoa OR d.solicitante = :pessoa) ";
+		String jpaQuery = "Select d from DemandasRegulatorio d ";
 
 		// === OUTROS FILTROS ===
 
 		if(filtros.get("nomeSolicitante")!=null){
-			jpaQuery+=" and upper(d.solicitante.cnmnome) like '"+filtros.get("nomeSolicitante").toString().toUpperCase()+"%'";
+			if(jpaQuery.indexOf("where")== -1){
+				jpaQuery+="where ";
+			}
+			else{
+				jpaQuery+=("and ");
+			}
+			jpaQuery+=" upper(d.solicitante.cnmnome) like '"+filtros.get("nomeSolicitante").toString().toUpperCase()+"%'";
 		}
 		if(filtros.get("numeroDemanda")!=null){
-			jpaQuery+=" and upper(d.numeroDemanda) like '"+filtros.get("numeroDemanda").toString().toUpperCase()+"%'";
+			if(jpaQuery.indexOf("where")== -1){
+				jpaQuery+="where ";
+			}
+			else{
+				jpaQuery+=("and ");
+			}
+			jpaQuery+="  upper(d.numeroDemanda) like '"+filtros.get("numeroDemanda").toString().toUpperCase()+"%'";
 		}
 		if(filtros.get("status")!=null && !filtros.get("status").equals("")){
-			jpaQuery+=" and upper(d.status.descricao) = '"+filtros.get("status")+"'";
+			if(jpaQuery.indexOf("where")== -1){
+				jpaQuery+="where ";
+			}
+			else{
+				jpaQuery+=("and ");
+			}
+			jpaQuery+=" upper(d.status.descricao) = '"+filtros.get("status")+"'";
 		}
 		if(filtros.get("dataInicial")!=null && filtros.get("dataFinal")==null){
-			jpaQuery+=" and d.dataHoraDemanda >= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"));
+			if(jpaQuery.indexOf("where")== -1){
+				jpaQuery+="where ";
+			}
+			else{
+				jpaQuery+=("and ");
+			}
+			jpaQuery+=" d.dataHoraDemanda >= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"));
 		}
 		if(filtros.get("dataInicial")==null && filtros.get("dataFinal")!=null){
-			jpaQuery+=" and d.dataHoraDemanda <= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
+			if(jpaQuery.indexOf("where")== -1){
+				jpaQuery+="where ";
+			}
+			else{
+				jpaQuery+=("and ");
+			}
+			jpaQuery+=" d.dataHoraDemanda <= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
 		}
 		if(filtros.get("dataInicial")!=null && filtros.get("dataFinal")!=null){
-			jpaQuery+=" and d.dataHoraDemanda between "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"))+" and "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
+			if(jpaQuery.indexOf("where")== -1){
+				jpaQuery+="where ";
+			}
+			else{
+				jpaQuery+=("and ");
+			}
+			jpaQuery+=" d.dataHoraDemanda between "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"))+" and "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
 		}
 		// === FIM OUTROS FILTROS ===
 
 		jpaQuery+=" order by d.dataHoraDemanda desc";
 
 		TypedQuery<DemandasRegulatorio> q = em.createQuery(jpaQuery,DemandasRegulatorio.class);
-		q.setParameter("pessoa", pessoa);
+//		q.setParameter("pessoa", pessoa);
 
-		if(firstRow>0 && numberOfRows>0){
+		if(firstRow>-1 && numberOfRows>0){
 			q.setFirstResult(firstRow);
 			q.setMaxResults(numberOfRows);
 		}
