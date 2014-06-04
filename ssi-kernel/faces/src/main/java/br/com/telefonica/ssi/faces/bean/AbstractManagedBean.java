@@ -345,4 +345,6 @@ public abstract class AbstractManagedBean implements Serializable {
 		HttpServletRequest request = this.getHttpRequest();
         return request.getRequestURL().toString().replace(request.getRequestURI().substring(0), "") + request.getContextPath();
 	}
+
+
 }
