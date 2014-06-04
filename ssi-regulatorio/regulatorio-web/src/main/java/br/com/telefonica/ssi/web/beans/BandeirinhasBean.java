@@ -1,6 +1,7 @@
 
 package br.com.telefonica.ssi.web.beans;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,9 +15,12 @@ import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.DemandaService;
 import br.com.telefonica.ssi.web.utils.RecuperadorInstanciasBean;
 
+@SuppressWarnings("all")
 @ManagedBean
 @ViewScoped
 public class BandeirinhasBean{
+
+	private static final long serialVersionUID = 1L;
 
 	@EJB
 	private DemandaService demandaService;
@@ -41,7 +45,7 @@ public class BandeirinhasBean{
 		atualizarBandeirinhas();
 	}
 
-	public int getQtdDemandasComPessoaLogada(){
+	public int getQtdDemandasCriadasPelaPessoaLogada(){
 		if(demandasMinhas == null){
 			return 0;
 		}
@@ -55,6 +59,26 @@ public class BandeirinhasBean{
 		}
 
 		return demandasComigo.size();
+	}
+
+	public List<DemandasRegulatorio> getDemandasEncarregado(){
+
+		if(demandasComigo == null){
+			return new ArrayList<DemandasRegulatorio>();
+		}
+
+		return demandasComigo;
+
+	}
+
+	public List<DemandasRegulatorio> getDemandasCriadasPelaPessoaLogada(){
+
+		if(demandasMinhas == null){
+			return new ArrayList<DemandasRegulatorio>();
+		}
+
+		return demandasMinhas;
+
 	}
 
 }
