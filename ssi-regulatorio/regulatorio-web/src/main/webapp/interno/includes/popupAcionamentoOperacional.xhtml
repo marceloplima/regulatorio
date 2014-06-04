@@ -33,9 +33,10 @@
 			
 			<h:outputText value="#{msg['label.areas.operacionais']}" styleClass="label-campo"/>
 			<h:selectManyCheckbox value="#{classificacaoBean.areaOperacional}" styleClass="select-form" required="true" 
-				requiredMessage="#{msg['campo.obrigatorio']}" converter="areaConv" immediate="true">
+				requiredMessage="#{msg['campo.obrigatorio']}" converter="areaConv" id="areasop">
 				<f:selectItems value="#{classificacaoBean.areasOperacionais}" var="areaOp" itemLabel="#{areaOp.cnmdescarea}"
 					itemValue="#{areaOp}"/>
+				<a4j:ajax execute="@this" immediate="true" />
 			</h:selectManyCheckbox>
 			<h:message for="ufs"
 								style="font-weight:bold;color:#ff0000;" />
@@ -46,15 +47,15 @@
 				styleClass="label-campo" />
 			<h:inputTextarea styleClass="input-form-textarea" rows="20"
 				value="#{classificacaoBean.comentario}" 
-				id="comentarioanalise" immediate="true" />
+				id="comentarioanaliseop"/>
 		</div>
 
 		<div class="clear" />
-
 		<div class="alinhaBotao">
-			<h:commandButton value="#{msg['botao.ok']}"
-				action="#{classificacaoBean.acionarAreasOperacionais}"
-				onclick="#{rich:component('popupacionamentooperacional')}.hide(event);">
+			<h:commandButton value="#{msg['botao.ok']}">
+				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" event="click"
+					oncomplete="#{rich:component('popupacionamentooperacional')}.hide(event);" execute="@this areasop comentarioanaliseop" immediate="true"
+					listener="#{classificacaoBean.acionarAreasOperacionais()}"/>
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupacionamentooperacional')}.hide(event); return false;"

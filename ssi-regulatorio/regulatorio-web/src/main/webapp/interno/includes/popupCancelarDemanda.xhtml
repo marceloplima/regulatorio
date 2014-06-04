@@ -54,11 +54,11 @@
 			<h:commandButton value="#{msg['botao.ok']}"
 				action="#{classificacaoBean.acionarAreasOperacionais}"
 				onclick="#{rich:component('popupacionamentooperacional')}.hide(event);">
+				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro"/>
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupacionamentooperacional')}.hide(event); return false;"
 				value="#{msg['botao.fechar']}" />
-		</div>
 		</div>
 	</rich:popupPanel>
 </h:form>

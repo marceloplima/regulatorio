@@ -43,7 +43,8 @@
 		<div class="alinhaBotao">
 			<h:commandButton value="#{msg['botao.ok']}"
 				action="#{classificacaoBean.realizarAnaliseOperacional()}"
-				onclick="#{rich:component('popupanaliseoperacional')}.hide(event);">													
+				onclick="#{rich:component('popupanaliseoperacional')}.hide(event);">
+				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" event="click"/>													
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupanaliseoperacional')}.hide(event); return false;"

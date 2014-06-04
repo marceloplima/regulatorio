@@ -39,7 +39,7 @@
 			<div class="clear" />
 
 			<h:outputText value="#{msg['label.comentario']}"
-				styleClass="label-campo" />
+				styleClass="label-campo"/>
 			<h:inputTextarea styleClass="input-form-textarea" rows="20"
 				value="#{classificacaoBean.comentario}" required="true"
 				requiredMessage="#{msg['campo.questao.obrigatorio']}"
@@ -54,7 +54,7 @@
 			<h:commandButton value="#{msg['botao.ok']}"
 				action="#{classificacaoBean.acionarAreasOperacionais}"
 				onclick="#{rich:component('popupacionamentooperacional')}.hide(event);">
-				<a4j:ajax render=":formdemanda infoDemanda :panelexibesucesso :panelexibeerro" />
+				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" />
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupacionamentooperacional')}.hide(event); return false;"

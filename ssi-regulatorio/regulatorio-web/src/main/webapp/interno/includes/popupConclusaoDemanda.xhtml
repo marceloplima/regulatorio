@@ -75,6 +75,7 @@
 			<h:commandButton value="#{msg['botao.concluir.demanda']}"
 				action="#{classificacaoBean.concluirDemanda()}"
 				onclick="#{rich:component('popupconclusao')}.hide(event);">
+				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" execute="@this complexidade execucao comentarioanalise"/>
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupconclusao')}.hide(event); return false;"

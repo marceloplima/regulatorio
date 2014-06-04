@@ -43,7 +43,7 @@
 		<div class="alinhaBotao">
 			<h:commandButton value="#{msg['botao.fechar']}">
 			
-					<f:ajax render="@form" 
+					<f:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" 
 							event="click"
 							listener="#{operacionalBean.fecharTelaVisualizaAnaliseOperacional()}"/>			
 			

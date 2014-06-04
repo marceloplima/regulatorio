@@ -8,26 +8,24 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:hh="http://balusc.net/jsf/html">
 
-<h:form id="formassumirDemanda" method="post"
-	enctype="multipart/form-data">
-	<f:loadBundle var="msg" basename="mensagens" />
-	<rich:popupPanel id="assumirDemanda" modal="true" height="90"
-		width="200" resizeable="false" domElementAttachment="form">
-		<div class="area-input-100">
-			<h:outputText value="#{msg['confirmar.assumirDemanda']}"
-				styleClass="label-campo" />
-		</div>
-		<div class="clear" />
-		<div class="alinhaBotao">
-			<h:commandButton action="#{classificacaoBean.assumirDemanda()}"
-				value="#{msg['botao.sim']}"
-				onclick="#{rich:component('assumirDemanda')}.hide(event);">
-				<f:ajax execute="@this" render="@all"/>
-			</h:commandButton>
-			<h:commandButton
-				onclick="#{rich:component('assumirDemanda')}.hide(event); return false;"
-				value="#{msg['botao.nao']}" />
-		</div>
-	</rich:popupPanel>
-</h:form>
+<f:loadBundle var="msg" basename="mensagens" />
+<rich:popupPanel id="assumirDemanda" modal="true" height="90"
+	width="200" resizeable="false" domElementAttachment="form">
+	<div class="area-input-100">
+		<h:outputText value="#{msg['confirmar.assumirDemanda']}"
+			styleClass="label-campo" />
+	</div>
+	<div class="alinhaBotao">
+		<h:commandButton action="#{assuminDemandaBean.execute()}"
+			value="#{msg['botao.sim']}"
+			onclick="#{rich:component('assumirDemanda')}.hide(event);">
+			<a4j:ajax execute="@this"
+				render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro"
+				oncomplete="#{rich:component('assumirDemanda')}.hide(event);" />
+		</h:commandButton>
+		<h:commandButton action="#{assuminDemandaBean.setHidden()}"
+			onclick="#{rich:component('assumirDemanda')}.hide(event); return false;"
+			value="#{msg['botao.nao']}" />
+	</div>
+</rich:popupPanel>
 </html>
