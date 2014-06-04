@@ -62,7 +62,7 @@ public class DemandaServiceBean extends
 		Query q = getEntityManager()
 				.createQuery(
 						"select d from DemandasRegulatorio d where d.encarregado = :encarregado");
-		q.setParameter("autor", encarregado);
+		q.setParameter("encarregado", encarregado);
 		List<DemandasRegulatorio> result = (List<DemandasRegulatorio>) q
 				.getResultList();
 		return result;

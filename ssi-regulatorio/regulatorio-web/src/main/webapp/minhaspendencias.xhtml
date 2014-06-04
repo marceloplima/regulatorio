@@ -10,48 +10,88 @@
  	xmlns:rich="http://richfaces.org/rich">
 
 	<ui:define name="conteudosistema">
-		<rich:dataTable keepSaved="true" rows="8" id="demadascomigo" value="#{pessoasMB.demandasComigo}" var="demanda">
-			<f:facet name="header">
-				<rich:columnGroup>
+	<h:form id="minhaspendenciasform">
+		<rich:dataTable keepSaved="true" rows="8" id="demadascomigo" value="#{bandeirinhasBean.demandasEncarregado}" var="demanda">
+				<f:facet name="header">
+						<rich:columnGroup>
+							<rich:column style="text-align:left;">
+								<h:outputText value="#{msg['header.numero']}" />
+							</rich:column>
+
+							<rich:column style="text-align:left;">
+								<h:outputText value="#{msg['header.autor']}" />
+							</rich:column>
+
+							<rich:column style="text-align:left;">
+								<h:outputText value="#{msg['header.encarregado']}" />
+							</rich:column>
+
+							<rich:column style="text-align:left;">
+								<h:outputText value="#{msg['header.solicitante']}" />
+							</rich:column>
+
+							<rich:column style="text-align:left;">
+								<h:outputText value="#{msg['header.status']}" />
+							</rich:column>
+
+							<rich:column style="text-align:left;">
+								<h:outputText value="#{msg['header.data.cadastro']}" />
+							</rich:column>
+
+							<rich:column style="text-align:left;">
+								<h:outputText value="#{msg['header.prazo']}" />
+							</rich:column>
+						</rich:columnGroup>
+					</f:facet>
+
 					<rich:column style="text-align:left;">
-						<h:outputText value="Número" />
+						<h:graphicImage value="/imagens/vaiVencer.png"
+							rendered="#{demanda.venceEmDoisDias}" />
+						<h:graphicImage value="/imagens/venceHoje.png"
+							rendered="#{demanda.vencendoNoDia}" />
+						<h:graphicImage value="/imagens/vencido.png"
+							rendered="#{demanda.vencido}" />
+						<h:graphicImage value="/imagens/naoVence.png"
+						 rendered="#{demandasBean.demanda.demandaOk}"/>								
+						<h:outputText value="#{demanda.numeroDemanda}" />
+						<h:outputText value="#{msg['label.semNumero']}"
+							rendered="#{demanda.numeroDemanda eq null}" />
 					</rich:column>
+
 					<rich:column style="text-align:left;">
-						<h:outputText value="Status" />
+						<h:outputText value="#{demanda.autor.cnmnome}" />
 					</rich:column>
-					
+
 					<rich:column style="text-align:left;">
-						<h:outputText value="Data Cadastro" />
+						<h:outputText value="#{demanda.encarregado.cnmnome}" />
 					</rich:column>
+
 					<rich:column style="text-align:left;">
-						<h:outputText value="" />
+						<h:outputText value="#{demanda.solicitante.cnmnome}" />
 					</rich:column>
-				</rich:columnGroup>
-			</f:facet>
-			<rich:column style="text-align:left;">
-				<h:link outcome="interno/cadssi">
-					<f:param name="iddemanda" value="#{demanda.id}"/>
-					<h:outputText value="#{demanda.numeroDemanda}"/>
-				</h:link>
-			</rich:column>
-			<rich:column style="text-align:left;">
-				<h:outputText value="#{demanda.status.descricao}"/>
-			</rich:column>
-			
-			<rich:column style="text-align:left;">
-				<h:outputText value="#{demanda.dataHoraDemanda}">
-					<f:convertDateTime pattern="dd/MM/yyyy"/>
-				</h:outputText>
-			</rich:column>
-			<rich:column style="text-align:left;">
-				<h:link outcome="interno/cadssi">
-					<f:param name="iddemanda" value="#{demanda.id}"/>
-						<h:graphicImage value="imagens/busca_azul.png" alt="Excluir"/>
-				</h:link>
-			</rich:column>
-			<f:facet name="footer">
-				<rich:dataScroller id="scrollerindexdemanda"/>
-			</f:facet>
+
+					<rich:column style="text-align:left;">
+						<h:outputText value="#{demanda.status.descricao}" />
+					</rich:column>
+
+					<rich:column style="text-align:left;">
+						<h:outputText value="#{demanda.dataHoraDemanda}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column style="text-align:left;">
+						<h:outputText value="#{demanda.prazo}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</rich:column>
+
+					<rich:column style="text-align:right;">
+						<h:commandLink action="#{indexBean.consultaDemanda(demanda.id)}">
+							<h:graphicImage value="imagens/busca_azul.png" />
+						</h:commandLink>
+					</rich:column>
 		</rich:dataTable>
+		</h:form>
   	</ui:define>
 </ui:composition>
