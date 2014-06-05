@@ -43,6 +43,7 @@
 								rendered="#{permissoesMB.verificarEncaminhar()}"
 								render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" />								
 
+
 							<rich:menuItem label="#{msg['botao.cancelar']}" mode="ajax"
 								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
 								action="#{classificacaoBean.cancelarDemanda()}"

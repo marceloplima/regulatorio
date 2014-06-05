@@ -33,6 +33,7 @@ public class PermissoesMB implements Serializable{
 	private List<Integer> statusPossiveis = new ArrayList<Integer>();
 	private List<Integer> statusNaoPossiveis = new ArrayList<Integer>();
 
+
 	private DemandasBean demandasmb = RecuperadorInstanciasBean.recuperarInstanciaDemandasBean();
 
 	@PostConstruct
