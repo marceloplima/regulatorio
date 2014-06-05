@@ -733,12 +733,11 @@
 				<div class="clear" />
 
 				<div class="alinhaBotao">
-					<h:commandButton value="#{msg['botao.analise.efetuar']}"
-						action="#{classificacaoBean.revisarPrazo}"
-						onclick="#{rich:component('revisaoPrazo')}.hide(event);">
-						<f:ajax
+					<h:commandButton value="#{msg['botao.analise.efetuar']}">
+						<a4j:ajax
 							render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro"
-							execute="@this :demandaform:comentarioPrazo :demandaform:novoPrazo" />
+							execute="@this :demandaform:comentarioPrazo :demandaform:novoPrazo" event="click"
+							oncomplete="#{rich:component('revisaoPrazo')}.hide(event);" listener="#{classificacaoBean.revisarPrazo}"/>
 					</h:commandButton>
 					<h:commandButton
 						onclick="#{rich:component('revisaoPrazo')}.hide(event); return false;"
