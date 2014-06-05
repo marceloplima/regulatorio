@@ -54,7 +54,7 @@
 		<div class="alinhaBotao">
 			<h:commandButton value="#{msg['botao.ok']}">
 				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" event="click"
-					oncomplete="#{rich:component('popupacionamentooperacional')}.hide(event);" execute="@this areasop comentarioanaliseop" immediate="true"
+					oncomplete="#{rich:component('popupacionamentooperacional')}.hide(event);" execute="@this areasop comentarioanaliseop"
 					listener="#{classificacaoBean.acionarAreasOperacionais()}"/>
 			</h:commandButton>
 			<h:commandButton

@@ -53,5 +53,7 @@ public interface MovimentoFacade extends Serializable{
 
 	MovimentoRevisaoPrazo getUtimaRevisaoPrazo(DemandasRegulatorio demanda);
 
-	MovimentoAnaliseOperacional retornaAnaliseOperacionalArea(DemandasRegulatorio demanda, Areas area);
+	MovimentoAcionamentoArea retornaUltimoAcionamentoAreaOperacional(DemandasRegulatorio demanda);
+
+	int analisesOperacionaisPorArea(Areas area, DemandasRegulatorio demanda);
 }

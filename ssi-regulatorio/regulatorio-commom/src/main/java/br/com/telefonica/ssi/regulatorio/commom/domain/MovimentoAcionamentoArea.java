@@ -28,7 +28,7 @@ public class MovimentoAcionamentoArea extends AbstractEntity<Integer>{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="idMovimentoAreaOperacional")
-	private Integer idMovimento;
+	private Integer idMovimentoAcionamento;
 
 	@OneToOne(targetEntity=Movimento.class)
 	@JoinColumn(name="idMovimento",referencedColumnName="idMovimento")
@@ -42,11 +42,11 @@ public class MovimentoAcionamentoArea extends AbstractEntity<Integer>{
 	private Collection<Areas> areasOperacionais;
 
 	public Integer getId() {
-		return idMovimento;
+		return idMovimentoAcionamento;
 	}
 
-	public void setId(Integer idMovimento) {
-		this.idMovimento = idMovimento;
+	public void setId(Integer idMovimentoAcionamento) {
+		this.idMovimentoAcionamento = idMovimentoAcionamento;
 	}
 
 	public Movimento getMovimento() {

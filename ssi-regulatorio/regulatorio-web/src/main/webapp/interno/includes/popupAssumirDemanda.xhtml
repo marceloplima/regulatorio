@@ -16,12 +16,10 @@
 			styleClass="label-campo" />
 	</div>
 	<div class="alinhaBotao">
-		<h:commandButton action="#{assuminDemandaBean.execute()}"
-			value="#{msg['botao.sim']}"
-			onclick="#{rich:component('assumirDemanda')}.hide(event);">
+		<h:commandButton value="#{msg['botao.sim']}">
 			<a4j:ajax execute="@this"
 				render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro"
-				oncomplete="#{rich:component('assumirDemanda')}.hide(event);" />
+				oncomplete="#{rich:component('assumirDemanda')}.hide(event);" listener="#{classificacaoBean.assumirDemanda()}"/>
 		</h:commandButton>
 		<h:commandButton action="#{assuminDemandaBean.setHidden()}"
 			onclick="#{rich:component('assumirDemanda')}.hide(event); return false;"

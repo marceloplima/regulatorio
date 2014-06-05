@@ -120,10 +120,6 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	@EJB
 	private DemandaServiceFacade facadeDemanda;
 
-
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -2439580032775024054L;
 
 	@EJB
@@ -274,66 +270,66 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	}
 
 	public void revisarPrazo(){
-//		String validacao = validaCamposDemanda(demanda);
-//
-//		if(validacao!=null){
-//			exibeMensagemDeErro(validacao);
-//		}
-//
-//		else{
-			MovimentoRevisaoPrazo ultimaRevisao = movimentoService.getUtimaRevisaoPrazo(demanda);
+		MovimentoRevisaoPrazo ultimaRevisao = movimentoService
+				.getUtimaRevisaoPrazo(demanda);
 
-			Movimento movimento = new Movimento();
-			MovimentoRevisaoPrazo revisao = new MovimentoRevisaoPrazo();
+		Movimento movimento = new Movimento();
+		MovimentoRevisaoPrazo revisao = new MovimentoRevisaoPrazo();
 
-			movimento.setAutor(getLogado());
-			movimento.setComentario(comentario);
-			movimento.setDataHora(new Date());
-			movimento.setDemanda(demanda);
+		movimento.setAutor(getLogado());
+		movimento.setComentario(comentario);
+		movimento.setDataHora(new Date());
+		movimento.setDemanda(demanda);
 
-			movimentoService.salvaMovimento(movimento);
+		movimentoService.salvaMovimento(movimento);
 
-			revisao.setMovimento(movimento);
-			revisao.setPrazo(novoPrazo);
-			revisao.setStatus(demanda.getStatus());
+		revisao.setMovimento(movimento);
+		revisao.setPrazo(novoPrazo);
+		revisao.setStatus(demanda.getStatus());
 
-			movimentoService.salvaMovimentoRevisaoPrazo(revisao);
+		movimentoService.salvaMovimentoRevisaoPrazo(revisao);
 
-			if(demanda.getUfs()==null || demanda.getUfs().isEmpty()){
-				demanda.setUfs(this.ufs);
-			}
+		if (demanda.getUfs() == null || demanda.getUfs().isEmpty()) {
+			demanda.setUfs(this.ufs);
+		}
 
-			if(demanda.getStatus().getDescricao().equalsIgnoreCase("REVISÃO DE PRAZO")){
-				if(ultimaRevisao.getMovimento()==null){
-					demanda.setStatus(statusService.findByName("ANÁLISE TÉCNICA"));
-					demanda.setEncarregado(demanda.getAutor());
-					demanda.setPrazo(novoPrazo);
-				}
-				else{
-					demanda.setPrazo(novoPrazo);
-					demanda.setEncarregado(ultimaRevisao.getMovimento().getAutor());
-					demanda.setStatus(ultimaRevisao.getStatus());
-				}
-				mensageria.notificarResponsavel("Prazo revisto e enviado para analise tecnica.", "Prazo revisto e enviado para analise tecnica.", demanda.getNumeroDemanda(), demanda);
-				logger.salvarLog(demanda, getLogado(), "Prazo revisto e enviado para analise tecnica.");
-			}
-			else{
-				demanda.setEncarregado(demanda.getSolicitante());
-				demanda.setStatus(statusService.findByName("REVISÃO DE PRAZO"));
-				logger.salvarLog(demanda, getLogado(), "Solicitada revisão de prazo para a demanda.");
+		if (demanda.getStatus().getDescricao()
+				.equalsIgnoreCase("REVISÃO DE PRAZO")) {
+			if (ultimaRevisao.getMovimento() == null) {
+				demanda.setStatus(statusService.findByName("ANÁLISE TÉCNICA"));
+				demanda.setEncarregado(demanda.getAutor());
 				demanda.setPrazo(novoPrazo);
-				mensageria.notificaSolicitante("Solicitada revisão de prazo por "+demanda.getEncarregado().getCnmnome(), "Solicitada revisão de prazo para a demanda.", demanda.getNumeroDemanda(), demanda);
+			} else {
+				demanda.setPrazo(novoPrazo);
+				demanda.setEncarregado(ultimaRevisao.getMovimento().getAutor());
+				demanda.setStatus(ultimaRevisao.getStatus());
 			}
+			mensageria.notificarResponsavel(
+					"Prazo revisto e enviado para analise tecnica.",
+					"Prazo revisto e enviado para analise tecnica.",
+					demanda.getNumeroDemanda(), demanda);
+			logger.salvarLog(demanda, getLogado(),
+					"Prazo revisto e enviado para analise tecnica.");
+		} else {
+			demanda.setEncarregado(demanda.getSolicitante());
+			demanda.setStatus(statusService.findByName("REVISÃO DE PRAZO"));
+			logger.salvarLog(demanda, getLogado(),
+					"Solicitada revisão de prazo para a demanda.");
+			demanda.setPrazo(novoPrazo);
+			mensageria.notificaSolicitante("Solicitada revisão de prazo por "
+					+ demanda.getEncarregado().getCnmnome(),
+					"Solicitada revisão de prazo para a demanda.",
+					demanda.getNumeroDemanda(), demanda);
+		}
 
-			facadeDemanda.salvaDemanda(demanda);
+		facadeDemanda.salvaDemanda(demanda);
 
-			eventoDemanda.fire(demanda);
+		eventoDemanda.fire(demanda);
 
-			exibeMensagemSucesso("Operação realizada com sucesso!");
+		exibeMensagemSucesso("Operação realizada com sucesso!");
 
-			this.comentario = null;
-			this.novoPrazo = null;
-//		}
+		this.comentario = null;
+		this.novoPrazo = null;
 	}
 
 	public Pessoas getResponsavel() {
@@ -745,50 +741,54 @@ public class ClassificacaoBean extends AbstractManagedBean{
 			return;
 		}
 		else{
-			movimento.setAutor(getLogado());
-			movimento.setDataHora(new Date());
-			movimento.setComentario(comentario);
-			movimento.setDemanda(demanda);
-
-			movimentoService.salvaMovimento(movimento);
-
-			analise.setMovimento(movimento);
-			analise.setAreaOperacional(getLogado().getArea());
-
-			movimentoService.salvaMovimentoAnaliseOperacional(analise);
-
 			// === Verificar se esta é a última área operacional acionada
 
-			List<MovimentoAcionamentoArea> movimentosAcionamentos = movimentoService.movimentosAcionamentosPorDemanda(demanda);
-			if(movimentosAcionamentos!=null && movimentosAcionamentos.size()>1){
-				List<Areas> areas = new ArrayList<Areas>(movimentosAcionamentos.get(0).getAreasOperacionais());
+			MovimentoAcionamentoArea movimentoAcionamento = movimentoService.retornaUltimoAcionamentoAreaOperacional(demanda);
+			if(movimentoAcionamento!=null){
+				List<Areas> areas = new ArrayList<Areas>(movimentoAcionamento.getAreasOperacionais());
 				if(areas.contains(getLogado().getArea())){
-					List<MovimentoAnaliseOperacional> analises = movimentoService.analisesOperacionaisPorDemanda(demanda);
-					if(analises!=null){
-						if(analises.size()<1){
+					int acionamentosDaArea = movimentoService.analisesOperacionaisPorArea(getLogado().getArea(), demanda);
+					if(acionamentosDaArea == 0){
+						movimento.setAutor(getLogado());
+						movimento.setDataHora(new Date());
+						movimento.setComentario(comentario);
+						movimento.setDemanda(demanda);
+
+						analise.setMovimento(movimento);
+						analise.setAreaOperacional(getLogado().getArea());
+
+						logger.salvarLog(demanda, getLogado(), "Nova análise operacional realizada.");
+
+						movimentoService.salvaMovimento(movimento);
+						movimentoService.salvaMovimentoAnaliseOperacional(analise);
+
+						int qtdAcionamentos = movimentoService.analisesOperacionaisPorDemanda(demanda).size();
+
+						if(qtdAcionamentos >= areas.size()){
 							demanda.setStatus(statusService.findByName("ANÁLISE FINAL"));
+							logger.salvarLog(demanda, getLogado(), "Última area operacional acionada efetuou análise. Demanda enviada para "
+									+demanda.getStatus().getDescricao());
 						}
-						else{
-							boolean areaFound = false;
-							for(MovimentoAnaliseOperacional m:analises){
-								if(m.getAreaOperacional().getId() == getLogado().getId()){
-									areaFound = true;
-								}
-							}
-							if(!areaFound){
-								demanda.setStatus(statusService.findByName("ANÁLISE FINAL"));
-							}
-						}
+
+						facadeDemanda.salvaDemanda(demanda);
+
+						mensageria.notificarResponsaveisTecnicos("Análise operacional da demanda "+demanda.getNumeroDemanda()+": \n "+comentario, "Análise operacional da demanda "+demanda.getNumeroDemanda(), demanda.getNumeroDemanda(), demanda);
+						this.comentario = null;
+					}
+					else{
+						exibeMensagemDeErro("Área acionada já efetuou análise operacional");
+						this.comentario = null;
+						return;
 					}
 				}
+				else{
+					exibeMensagemDeErro("A área do usuário "+getLogado().getCnmnome()+" não foi acionada nesta demanda.");
+					this.comentario = null;
+					return;
+				}
 			}
-			logger.salvarLog(demanda, getLogado(), "Nova análise operacional realizada.");
-			facadeDemanda.salvaDemanda(demanda);
-
-			mensageria.notificarResponsaveisTecnicos("Análise operacional da demanda "+demanda.getNumeroDemanda()+": \n "+comentario, "Análise operacional da demanda "+demanda.getNumeroDemanda(), demanda.getNumeroDemanda(), demanda);
 
 			exibeMensagemSucesso("Operação realizada com sucesso!");
-			this.comentario = null;
 			eventoDemanda.fire(demanda);
 		}
 	}
@@ -876,36 +876,24 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	}
 
 	public boolean validaDemanda(){
-		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
-		List<String> messages = new ArrayList<String>();
 		if(demanda.getTipoDemanda() == null){
-			messages.add("Assunto não informado! ");
-			index.setMsgspanel(messages);
-			index.setPanelexibeerro(true);
+			exibeMensagemDeErro("Assunto não informado! ");
 			return false;
 		}
 		if(demanda.getAreaRegional() == null){
-			messages.add("Área regional não informada! ");
-			index.setMsgspanel(messages);
-			index.setPanelexibeerro(true);
+			exibeMensagemDeErro("Área regional não informada! ");
 			return false;
 		}
 		if(demanda.getDocumentoOrigem() == null){
- 			messages.add("Documento de origem não informado! ");
- 			index.setMsgspanel(messages);
-			index.setPanelexibeerro(true);
+ 			exibeMensagemDeErro("Documento de origem não informado! ");
 			return false;
 		}
 		if(demanda.getTipoRede() == null){
-			messages.add("Tipo de rede não informada! ");
-			index.setMsgspanel(messages);
-			index.setPanelexibeerro(true);
+			exibeMensagemDeErro("Tipo de rede não informada! ");
 			return false;
 		}
 		if(demanda.getUfs()==null || demanda.getUfs().isEmpty()){
-			messages.add("UFs não informadas! ");
-			index.setMsgspanel(messages);
-			index.setPanelexibeerro(true);
+			exibeMensagemDeErro("UFs não informadas! ");
 			return false;
 		}
 		else{
