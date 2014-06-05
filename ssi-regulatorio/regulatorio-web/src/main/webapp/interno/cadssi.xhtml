@@ -41,14 +41,7 @@
 								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
 								action="#{demandasBean.encaminhar}"
 								rendered="#{permissoesMB.verificarEncaminhar()}"
-								render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" />
-								
-							<rich:menuItem label="#{msg['botao.solicitar.revisao']}" mode="ajax"
-								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
-								action="#{classificacaoBean.solicitarRevisaoPrazo()}"
-								rendered="#{permissoesMB.verificarPodeAssumirDemanda()}">
-									<a4j:ajax render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" event="click"/>
-							</rich:menuItem>
+								render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" />								
 
 							<rich:menuItem label="#{msg['botao.cancelar']}" mode="ajax"
 								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
@@ -64,25 +57,17 @@
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.assumir.demanda']}" 
-								rendered="#{permissoesMB.verificarPodeAssumirDemanda()}">
-								<a4j:ajax
-									render=":demandaform infoDemanda :panelexibesucesso :panelexibeerro assumirDemanda"
-									event="click" listener="#{classificacaoBean.assumirDemanda()}"
-									oncomplete="if (#{assuminDemandaBean.showPopup}) #{rich:component('assumirDemanda')}.show();" />
-							</rich:menuItem>
-
-							<rich:menuItem mode="ajax"
-								label="#{msg['botao.assumir.demanda']}" 
 								execute="@form"
 								rendered="#{permissoesMB.verificarPodeAssumirDemanda()}">
 								<rich:componentControl target="assumirDemanda" operation="show"
 									event="click" />
 							</rich:menuItem>
 
+							<!-- REVISAO PRAZO -->
 							<rich:menuItem mode="ajax" label="#{msg['botao.revisao.prazo']}"
 								execute=":demandaform:comentarioPrazo :demandaform:novoPrazo"
 								action="#{classificacaoBean.revisarPrazo}"
-								rendered="true"
+								rendered="#{permissoesMB.verificarResponderRevisaoPrazo()}"
 								render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro">
 								<rich:componentControl target="revisaoPrazo" operation="show"
 									event="click" />
@@ -100,30 +85,13 @@
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.analise.tecnica']}" execute="@this"
-								rendered="true">
+								rendered="#{permissoesMB.verificarAnaliseTecnica()}">
 								<rich:componentControl target="popupanalisetecnica"
 									operation="show" event="click" />
 								<f:ajax
 									render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro"
 									event="click" />
 							</rich:menuItem>
-
-							<rich:menuItem mode="ajax" label="#{msg['botao.followup']}"
-								execute="@form" rendered="#{permissoesMB.verificarFollowUp()}">
-								<rich:componentControl target="popupfollowup" operation="show"
-									event="click" />
-								<f:ajax
-									render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro"
-									event="click" />
-							</rich:menuItem>
-
-							<rich:menuItem mode="ajax"
-								label="#{msg['botao.concluir.demanda']}" execute="@form"
-								rendered="#{permissoesMB.verificarConcluir()}">
-								<rich:componentControl target="popupconclusao" operation="show"
-									event="click" />
-							</rich:menuItem>
-
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.areas.operacionaos']}" execute="@form"
@@ -135,27 +103,6 @@
 									event="click" />
 							</rich:menuItem>
 
-							<rich:menuItem mode="ajax" label="#{msg['botao.atendimento']}"
-								execute="@form"
-								actionListener="#{demandasBean.salvarComoRascunho}"
-								rendered="#{permissoesMB.verificarEmAtendimento()}">
-								<f:ajax render="demandaform :demandaform" event="click" />
-							</rich:menuItem>
-
-							<rich:menuItem mode="ajax" label="#{msg['botao.dados']}"
-								execute="@form"
-								actionListener="#{demandasBean.salvarComoRascunho}"
-								rendered="#{permissoesMB.verificarNecessidadeDados()}">
-								<f:ajax render="demandaform :demandaform" event="click" />
-							</rich:menuItem>
-
-							<rich:menuItem mode="ajax"
-								label="#{msg['botao.esclarecimentos']}" execute="@form"
-								actionListener="false"
-								rendered="#{permissoesMB.verificarNecessidadeEsclarecimento()}">
-								<f:ajax render="demandaform :demandaform" event="click" />
-							</rich:menuItem>
-
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.analise.operacional']}" execute="@form"
 								rendered="#{permissoesMB.verificarAnaliseOperacional()}">
@@ -165,6 +112,15 @@
 									render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro"
 									event="click" />
 							</rich:menuItem>
+							
+							<rich:menuItem mode="ajax" label="#{msg['botao.followup']}"
+								execute="@form" rendered="#{permissoesMB.verificarFollowUp()}">
+								<rich:componentControl target="popupfollowup" operation="show"
+									event="click" />
+								<f:ajax
+									render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro"
+									event="click" />
+							</rich:menuItem>							
 
 						</rich:dropDownMenu>
 
@@ -450,7 +406,7 @@
 							<h:outputLabel value="#{msg['label.ufs']}"
 								styleClass="label-campo" />
 							<h:selectManyCheckbox id="ufs" value="#{classificacaoBean.ufs}"
-								styleClass="select-form" disabled="#{permissoesMB.verificarCamposClassificacao()}"
+								styleClass="select-form" disabled="!#{permissoesMB.verificarCamposClassificacao()}"
 								converter="#{unidadeFederacaoConverter}">
 								<f:selectItems
 									value="#{classificacaoBean.demanda.areaRegional.ufs}" var="r"

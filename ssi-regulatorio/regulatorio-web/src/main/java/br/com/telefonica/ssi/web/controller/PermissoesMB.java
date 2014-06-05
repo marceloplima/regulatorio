@@ -154,6 +154,21 @@ public class PermissoesMB implements Serializable{
 
 	}
 
+	public boolean verificarResponderRevisaoPrazo(){
+		if(!isDemandaPersistida()){
+			return false;
+		}
+
+		this.statusPossiveis = new ArrayList<Integer>();
+		this.statusPossiveis.add(StatusRegulatorio.ID_REVISAO_PRAZO);
+
+		if(!isStatusContidoEmLista(statusPossiveis)){
+			return false;
+		}
+
+		return isAutor();
+	}
+
 	public boolean verificarDefinirTecnico(){
 
 		//recuperaDemanda();
@@ -189,6 +204,10 @@ public class PermissoesMB implements Serializable{
 			return false;
 		}
 
+		if(demanda.getStatus().getId() == StatusRegulatorio.ID_ANALISE_TECNICA){
+			return isTecnicoEncarregado();
+		}
+
 		return isResponsavelCategoria();
 
 	}
@@ -209,12 +228,15 @@ public class PermissoesMB implements Serializable{
 			return false;
 		}
 
-		return isResponsavelCategoria() ||
-				isTecnicoEncarregado();
+		if(demanda.getStatus().getId() == StatusRegulatorio.ID_ANALISE_TECNICA){
+			return isTecnicoEncarregado();
+		}
+
+		return isResponsavelCategoria();
 
 	}
 
-	public boolean verificarConcluir(){
+/*	public boolean verificarConcluir(){
 
 		//recuperaDemanda();
 
@@ -231,28 +253,9 @@ public class PermissoesMB implements Serializable{
 
 		return isTecnicoEncarregado();
 
-	}
+	}*/
 
-	public boolean verificarNecessidadeDados(){
-
-		//recuperaDemanda();
-
-		if(!isDemandaPersistida()){
-			return false;
-		}
-
-		this.statusPossiveis = new ArrayList<Integer>();
-		this.statusPossiveis.add(StatusRegulatorio.ID_ANALISE_TECNICA);
-
-		if(!isStatusContidoEmLista(statusPossiveis)){
-			return false;
-		}
-
-		return isTecnicoEncarregado();
-
-	}
-
-	public boolean verificarNecessidadeEsclarecimento(){
+/*	public boolean verificarNecessidadeDados(){
 
 		//recuperaDemanda();
 
@@ -269,9 +272,9 @@ public class PermissoesMB implements Serializable{
 
 		return isTecnicoEncarregado();
 
-	}
+	}*/
 
-	public boolean verificarEmAtendimento(){
+/*	public boolean verificarNecessidadeEsclarecimento(){
 
 		//recuperaDemanda();
 
@@ -288,7 +291,26 @@ public class PermissoesMB implements Serializable{
 
 		return isTecnicoEncarregado();
 
-	}
+	}*/
+
+/*	public boolean verificarEmAtendimento(){
+
+		//recuperaDemanda();
+
+		if(!isDemandaPersistida()){
+			return false;
+		}
+
+		this.statusPossiveis = new ArrayList<Integer>();
+		this.statusPossiveis.add(StatusRegulatorio.ID_ANALISE_TECNICA);
+
+		if(!isStatusContidoEmLista(statusPossiveis)){
+			return false;
+		}
+
+		return isTecnicoEncarregado();
+
+	}*/
 
 	public boolean verificarAcionarAreasOperacionais(){
 
