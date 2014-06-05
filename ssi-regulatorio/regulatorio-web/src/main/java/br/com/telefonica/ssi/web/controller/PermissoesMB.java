@@ -35,6 +35,7 @@ public class PermissoesMB implements Serializable{
 
 	private DemandasBean demandasmb = RecuperadorInstanciasBean.recuperarInstanciaDemandasBean();
 
+
 	@PostConstruct
 	public void init() {
 		this.demanda = demandasmb.getDemanda();
