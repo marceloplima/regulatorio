@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
@@ -214,20 +215,39 @@ public class MovimentoFacadeServiceBean implements MovimentoFacade{
 	}
 
 	@Override
-	public MovimentoAnaliseOperacional retornaAnaliseOperacionalArea(
-			DemandasRegulatorio demanda, Areas area) {
-		MovimentoAnaliseOperacional movimento = null;
-		TypedQuery<MovimentoAnaliseOperacional> q = em.createQuery("select m from MovimentoAnaliseOperacional m where "
-				+ "m.movimento.demanda = :demanda and m.areaOperacional = :area",MovimentoAnaliseOperacional.class);
+	public MovimentoAcionamentoArea retornaUltimoAcionamentoAreaOperacional(
+			DemandasRegulatorio demanda) {
+		MovimentoAcionamentoArea movimento = null;
+		TypedQuery<MovimentoAcionamentoArea> q = em.createQuery("select m from MovimentoAcionamentoArea m where "
+				+ "m.movimento.demanda = :demanda order by idMovimentoAcionamento desc",MovimentoAcionamentoArea.class);
+
 		q.setParameter("demanda", demanda);
-		q.setParameter("area", area);
+
+		q.setMaxResults(1);
 
 		try{
-			movimento = q.getSingleResult();
+			if(q.getResultList()== null || q.getResultList().isEmpty()){
+				return null;
+			}
+			movimento = q.getResultList().get(0);
 			return movimento;
 		}
 		catch(NoResultException nre){
 			return null;
 		}
 	}
+
+	@Override
+	public int analisesOperacionaisPorArea(Areas area,
+			DemandasRegulatorio demanda) {
+		Query q = em.createQuery("select count(m) from MovimentoAnaliseOperacional m where m.movimento.demanda = :demanda and "
+				+ "m.areaOperacional = :area");
+		q.setParameter("demanda", demanda);
+		q.setParameter("area", area);
+
+		Long result =(Long)q.getSingleResult();
+
+		return result.intValue();
+	}
+
 }

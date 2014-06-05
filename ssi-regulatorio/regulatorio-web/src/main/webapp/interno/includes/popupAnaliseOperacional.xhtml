@@ -35,16 +35,17 @@
 				styleClass="label-campo" />
 			<h:inputTextarea styleClass="input-form-textarea" rows="20"
 				value="#{classificacaoBean.comentario}" 
-				id="comentarioanalise" immediate="true" />
+				id="comentarioanalise"/>
 		</div>
 
 		<div class="clear" />
 
 		<div class="alinhaBotao">
-			<h:commandButton value="#{msg['botao.ok']}"
-				action="#{classificacaoBean.realizarAnaliseOperacional()}"
-				onclick="#{rich:component('popupanaliseoperacional')}.hide(event);">
-				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" event="click"/>													
+			<h:commandButton value="#{msg['botao.ok']}">
+				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" event="click"
+					oncomplete="#{rich:component('popupanaliseoperacional')}.hide(event);" 
+					execute="@this comentarioanalise "
+					listener="#{classificacaoBean.realizarAnaliseOperacional()}"/>													
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupanaliseoperacional')}.hide(event); return false;"
