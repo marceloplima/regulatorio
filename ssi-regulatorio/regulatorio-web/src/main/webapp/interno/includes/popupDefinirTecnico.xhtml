@@ -57,11 +57,11 @@
 			<div class="clear" />
 
 			<div class="alinhaBotao">
-				<h:commandButton value="#{msg['botao.definir.tecnico']}"
-					action="#{classificacaoBean.definirTecnico}"
-					onclick="#{rich:component('popupdefinirtecnico')}.hide(event);">
+				<h:commandButton value="#{msg['botao.definir.tecnico']}">
 					<a4j:ajax  render=":formdemanda infoDemanda :panelexibesucesso :panelexibeerro" 
-						execute=":formdefinirtecnico:tecnicoResponsavel :formdefinirtecnico:comentarioTecnico"/>
+						execute=":formdefinirtecnico:tecnicoResponsavel :formdefinirtecnico:comentarioTecnico"
+						listener="#{classificacaoBean.definirTecnico()}"
+						oncomplete="#{rich:component('popupdefinirtecnico')}.hide(event);"/>
 				</h:commandButton>
 				<h:commandButton
 					onclick="#{rich:component('popupdefinirtecnico')}.hide(event); return false;"

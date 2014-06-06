@@ -51,10 +51,11 @@
 		<div class="clear" />
 
 		<div class="alinhaBotao">
-			<h:commandButton value="#{msg['botao.ok']}"
-				action="#{classificacaoBean.acionarAreasOperacionais}"
-				onclick="#{rich:component('popupacionamentooperacional')}.hide(event);">
-				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro"/>
+			<h:commandButton value="#{msg['botao.ok']}">
+				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro"
+					listener="#{classificacaoBean.acionarAreasOperacionais()}"
+					oncomplete="#{rich:component('popupacionamentooperacional')}.hide(event);"
+				/>
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupacionamentooperacional')}.hide(event); return false;"

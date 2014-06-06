@@ -43,10 +43,10 @@
 			<div class="clear" />
 
 			<div class="alinhaBotao">
-				<h:commandButton value="#{msg['botao.registrar.followup']}"
-					action="#{classificacaoBean.registraFollowUp}"
-					onclick="#{rich:component('popupfollowup')}.hide(event);">
-					<f:ajax render=":demandaform:tabelaeventos"/>
+				<h:commandButton value="#{msg['botao.registrar.followup']}">
+					<a4j:ajax render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro"
+					listener="#{classificacaoBean.registraFollowUp()}"
+					oncomplete="#{rich:component('popupfollowup')}.hide(event);"/>
 				</h:commandButton>
 				<h:commandButton
 					onclick="#{rich:component('popupfollowup')}.hide(event); return false;"

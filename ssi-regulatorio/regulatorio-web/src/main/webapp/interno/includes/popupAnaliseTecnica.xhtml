@@ -16,13 +16,6 @@
 		<f:facet name="header">
 			<h:outputText value="#{msg['header.analise.tecnica']}" />
 		</f:facet>
-		<!-- <f:facet name="controls">
-			<h:outputLink value="#"
-				onclick="#{rich:component('popupupload')}.hide(); return false;">
-				<img src="#{request.contextPath}/imagens/action_fechar.png"
-					title="fechar" />
-			</h:outputLink>
-		</f:facet> -->
 		<div class="area-input-100">
 			<h:outputText value="#{msg['label.autor']}" styleClass="label-campo"/>
 			<h:outputText value="#{classificacaoBean.logado.cnmnome}" styleClass="label-campo"/>
@@ -97,9 +90,11 @@
 			<div class="clear" />
 			
 			<div class="alinhaBotao">
-				<h:commandButton value="#{msg['botao.analise.efetuar']}"
-					action="#{classificacaoBean.realizarAnaliseTecnica()}"
-					onclick="#{rich:component('popupanalisetecnica')}.hide(event);" >
+				<h:commandButton value="#{msg['botao.analise.efetuar']}">
+					<a4j:ajax
+					render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro"
+					listener="#{classificacaoBean.realizarAnaliseTecnica()}"
+					onclick="#{rich:component('popupanalisetecnica')}.hide(event);" />
 				</h:commandButton>
 				<h:commandButton
 					onclick="#{rich:component('popupanalisetecnica')}.hide(event); return false;"
