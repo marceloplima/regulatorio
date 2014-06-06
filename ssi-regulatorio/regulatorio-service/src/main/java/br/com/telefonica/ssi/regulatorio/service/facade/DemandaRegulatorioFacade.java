@@ -40,10 +40,12 @@ import br.com.telefonica.ssi.regulatorio.commom.interfaces.facade.DemandaService
 @Stateless
 public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 
-	@Inject @CriarDemanda
+	@Inject
+	@CriarDemanda
 	private Event<DemandasRegulatorio> eventoSalvarRascunho;
 
-	@Inject @AlteracaoDemanda
+	@Inject
+	@AlteracaoDemanda
 	private Event<DemandasRegulatorio> enventoEncaminhar;
 
 	@PersistenceContext
@@ -105,10 +107,9 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 		demanda.setStatus(statusService.findByName("rascunho"));
 		demanda.setDataHoraDemanda(new Date());
 		demanda.setCategoria(categoriaService.findByName("regulatório"));
-		if(demanda.getSolicitante().getPessoasareas().size()>0){
+		if (demanda.getSolicitante().getPessoasareas().size() > 0) {
 			demanda.setOrigem(demanda.getSolicitante().getPessoasareas().get(0));
-		}
-		else{
+		} else {
 			demanda.setOrigem(demanda.getSolicitante().getArea());
 		}
 		demanda.setProcedencia(procedenciaService.findAll().get(0));
@@ -123,10 +124,9 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 	@Override
 	public String getEmailSolicitante(Pessoas pessoa) {
 		if (pessoa != null) {
-			String email = pessoaService.retornarEmailsPessoa(pessoa)
-					.size() > 0 ? pessoaService
-					.retornarEmailsPessoa(pessoa).get(0)
-					.getCnmemail() : "";
+			String email = pessoaService.retornarEmailsPessoa(pessoa).size() > 0 ? pessoaService
+					.retornarEmailsPessoa(pessoa).get(0).getCnmemail()
+					: "";
 			return email;
 		} else {
 			return "";
@@ -137,7 +137,6 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 	public void setEmailSolicitante(Emails email) {
 		emailService.incluir(email);
 	}
-
 
 	@Override
 	public List<Areas> getAreasSolicitante(Pessoas pessoa) {
@@ -150,10 +149,10 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 	}
 
 	@Override
-	public List<Procedencia> getProcedenciasCategoriaDaDemanda(CategoriaRegulatorio categoria) {
+	public List<Procedencia> getProcedenciasCategoriaDaDemanda(
+			CategoriaRegulatorio categoria) {
 		return procedenciaService.findByCategoria(categoria);
 	}
-
 
 	@Override
 	public List<Pessoas> pessoasAreaOrigem(Areas area) {
@@ -171,38 +170,39 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 		String mail = "[a-zA-Z]+[a-zA-Z0-9]*([\\.|\\-|_][a-zA-Z0-9]+)*";
 		String domain = "[a-zA-Z]+[a-zA-Z0-9]*([\\.|\\-|_][a-zA-Z0-9]+)+";
 
-		if(mailSolicitante!=null && !mailSolicitante.trim().equals("")){
-			if(mailSolicitante.trim().matches(mail+"@"+domain)){
+		if (mailSolicitante != null && !mailSolicitante.trim().equals("")) {
+			if (mailSolicitante.trim().matches(mail + "@" + domain)) {
 				return true;
-			}
-			else{
+			} else {
 				return false;
 			}
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
 
 	@Override
-	public DemandasRegulatorio alteraAreaDemandaPorIdArea(String id,DemandasRegulatorio demanda) {
-		if(id !=null && !id.equals("")){
+	public DemandasRegulatorio alteraAreaDemandaPorIdArea(String id,
+			DemandasRegulatorio demanda) {
+		if (id != null && !id.equals("")) {
 			Long idArea = Long.parseLong(id);
 
-			Query q = em.createQuery("select a from Areas a where a.idarea = :id");
+			Query q = em
+					.createQuery("select a from Areas a where a.idarea = :id");
 
 			q.setParameter("id", idArea);
 
-			demanda.setOrigem((Areas)q.getResultList().get(0));
+			demanda.setOrigem((Areas) q.getResultList().get(0));
 
-			demanda.setSolicitante(areasService.recuperarPessoasArea(demanda.getOrigem()).get(0));
+			demanda.setSolicitante(areasService.recuperarPessoasArea(
+					demanda.getOrigem()).get(0));
 		}
 		return demanda;
 	}
 
 	@Override
 	public void salvaNovoEmailSolicitante(Emails email) {
-		if(email!=null){
+		if (email != null) {
 			email.setFlagativo(true);
 			email.setDatacadastro(Calendar.getInstance());
 			emailService.incluir(email);
@@ -211,27 +211,29 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 
 	@Override
 	public void salvarComoRascunho(DemandasRegulatorio demanda) {
-		if(demanda!=null){
+		if (demanda != null) {
 			demandaService.save(demanda);
 		}
 	}
 
 	@Override
 	public DemandasRegulatorio encaminhar(DemandasRegulatorio demanda) {
-		if(demanda!=null){
+		if (demanda != null) {
 			demanda.setNumeroDemanda(demandaService.getNumeroNovaDemanda());
-			if(demanda.getStatus().getDescricao().equalsIgnoreCase("rascunho")){
-				StatusRegulatorio status = statusService.findByName("ANÁLISE PRELIMINAR");
+			if (demanda.getStatus().getDescricao().equalsIgnoreCase("rascunho")) {
+				StatusRegulatorio status = statusService
+						.findByName("ANÁLISE PRELIMINAR");
 				demanda.setStatus(status);
 				demanda.setDataHoraDemanda(new Date());
 				demandaService.save(demanda);
 			}
 
-//			Mensageria msg = new Mensageria();
-//
-//			Modulos mod = moduloService.recuperarUnico(338L);
-//
-//			msg.enviarMensagem(, assunto, listaemails, smtpserver, modulo, ssi);
+			// Mensageria msg = new Mensageria();
+			//
+			// Modulos mod = moduloService.recuperarUnico(338L);
+			//
+			// msg.enviarMensagem(, assunto, listaemails, smtpserver, modulo,
+			// ssi);
 		}
 		return demanda;
 	}
@@ -265,125 +267,178 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 	}
 
 	@Override
-	public List<DemandasRegulatorio> retornarPaginado(int firstRow, int numberOfRows,
-			Map<String, Object> filtros,
-			Pessoas pessoa) {
+	public List<DemandasRegulatorio> retornarPaginado(int firstRow,
+			int numberOfRows, Map<String, Object> filtros, Pessoas pessoa) {
 		String jpaQuery = "Select d from DemandasRegulatorio d ";
 
 		// === OUTROS FILTROS ===
 
-		if(filtros.get("nomeSolicitante")!=null){
-			if(jpaQuery.indexOf("where")== -1){
-				jpaQuery+="where ";
+		if (filtros.get("nomeSolicitante") != null) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
 			}
-			else{
-				jpaQuery+=("and ");
-			}
-			jpaQuery+=" upper(d.solicitante.cnmnome) like '"+filtros.get("nomeSolicitante").toString().toUpperCase()+"%'";
+			jpaQuery += " upper(d.solicitante.cnmnome) like '%"
+					+ filtros.get("nomeSolicitante").toString().toUpperCase()
+					+ "%' ";
 		}
-		if(filtros.get("numeroDemanda")!=null){
-			if(jpaQuery.indexOf("where")== -1){
-				jpaQuery+="where ";
+		if (filtros.get("numeroDemanda") != null) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
 			}
-			else{
-				jpaQuery+=("and ");
-			}
-			jpaQuery+="  upper(d.numeroDemanda) like '"+filtros.get("numeroDemanda").toString().toUpperCase()+"%'";
+			jpaQuery += "  upper(d.numeroDemanda) like '%"
+					+ filtros.get("numeroDemanda").toString().toUpperCase()
+					+ "%' ";
 		}
-		if(filtros.get("status")!=null && !filtros.get("status").equals("")){
-			if(jpaQuery.indexOf("where")== -1){
-				jpaQuery+="where ";
+		if (filtros.get("status") != null && !filtros.get("status").equals("")) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
 			}
-			else{
-				jpaQuery+=("and ");
-			}
-			jpaQuery+=" upper(d.status.descricao) = '"+filtros.get("status")+"'";
+			jpaQuery += " upper(d.status.descricao) = '"
+					+ filtros.get("status") + "'";
 		}
-		if(filtros.get("dataInicial")!=null && filtros.get("dataFinal")==null){
-			if(jpaQuery.indexOf("where")== -1){
-				jpaQuery+="where ";
+		if (filtros.get("dataInicial") != null
+				&& filtros.get("dataFinal") == null) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
 			}
-			else{
-				jpaQuery+=("and ");
-			}
-			jpaQuery+=" d.dataHoraDemanda >= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"));
+			jpaQuery += " d.dataHoraDemanda >= "
+					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
+							.get("dataInicial"));
 		}
-		if(filtros.get("dataInicial")==null && filtros.get("dataFinal")!=null){
-			if(jpaQuery.indexOf("where")== -1){
-				jpaQuery+="where ";
+		if (filtros.get("dataInicial") == null
+				&& filtros.get("dataFinal") != null) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
 			}
-			else{
-				jpaQuery+=("and ");
-			}
-			jpaQuery+=" d.dataHoraDemanda <= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
+			jpaQuery += " d.dataHoraDemanda <= "
+					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
+							.get("dataFinal"));
 		}
-		if(filtros.get("dataInicial")!=null && filtros.get("dataFinal")!=null){
-			if(jpaQuery.indexOf("where")== -1){
-				jpaQuery+="where ";
+		if (filtros.get("dataInicial") != null
+				&& filtros.get("dataFinal") != null) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
 			}
-			else{
-				jpaQuery+=("and ");
-			}
-			jpaQuery+=" d.dataHoraDemanda between "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"))+" and "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
+			jpaQuery += " d.dataHoraDemanda between "
+					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
+							.get("dataInicial"))
+					+ " and "
+					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
+							.get("dataFinal"));
 		}
 		// === FIM OUTROS FILTROS ===
 
-		jpaQuery+=" order by d.dataHoraDemanda desc";
+		jpaQuery += " order by d.dataHoraDemanda desc";
 
-		TypedQuery<DemandasRegulatorio> q = em.createQuery(jpaQuery,DemandasRegulatorio.class);
-//		q.setParameter("pessoa", pessoa);
+		TypedQuery<DemandasRegulatorio> q = em.createQuery(jpaQuery,
+				DemandasRegulatorio.class);
 
-		if(firstRow>-1 && numberOfRows>0){
+		if (firstRow > -1 && numberOfRows > 0) {
 			q.setFirstResult(firstRow);
 			q.setMaxResults(numberOfRows);
 		}
 
-		try{
+		try {
 			List<DemandasRegulatorio> result = q.getResultList();
 
 			return result;
-		}
-		catch(NoResultException nre){
+		} catch (NoResultException nre) {
 			return new ArrayList<DemandasRegulatorio>();
 		}
 	}
 
 	@Override
 	public int getRowCount(Map<String, Object> filtros, Pessoas pessoa) {
-		String jpaQuery = "Select count(d.id) from DemandasRegulatorio d where (d.autor = :pessoa OR "
-				+ "d.encarregado = :pessoa OR d.solicitante = :pessoa) ";
+		String jpaQuery = "Select count(d) from DemandasRegulatorio d ";
 
 		// === OUTROS FILTROS ===
-		if(filtros.get("nomeSolicitante")!=null){
-			jpaQuery+=" and upper(d.solicitante.cnmnome) like '"+filtros.get("nomeSolicitante").toString().toUpperCase()+"%'";
+
+		if (filtros.get("nomeSolicitante") != null) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " upper(d.solicitante.cnmnome) like '%"
+					+ filtros.get("nomeSolicitante").toString().toUpperCase()
+					+ "%' ";
 		}
-		if(filtros.get("numeroDemanda")!=null){
-			jpaQuery+=" and upper(d.numeroDemanda) like '"+filtros.get("numeroDemanda").toString().toUpperCase()+"%'";
+		if (filtros.get("numeroDemanda") != null) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += "  upper(d.numeroDemanda) like '%"
+					+ filtros.get("numeroDemanda").toString().toUpperCase()
+					+ "%' ";
 		}
-		if(filtros.get("status")!=null && !filtros.get("status").equals("")){
-			jpaQuery+=" and upper(d.status.descricao) = '"+filtros.get("status").toString()+"'";
+		if (filtros.get("status") != null && !filtros.get("status").equals("")) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " upper(d.status.descricao) = '"
+					+ filtros.get("status") + "'";
 		}
-		if(filtros.get("dataInicial")!=null && filtros.get("dataFinal")==null){
-			jpaQuery+=" and d.dataHoraDemanda >= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"));
+		if (filtros.get("dataInicial") != null
+				&& filtros.get("dataFinal") == null) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " d.dataHoraDemanda >= "
+					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
+							.get("dataInicial"));
 		}
-		if(filtros.get("dataInicial")==null && filtros.get("dataFinal")!=null){
-			jpaQuery+=" and d.dataHoraDemanda <= "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
+		if (filtros.get("dataInicial") == null
+				&& filtros.get("dataFinal") != null) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " d.dataHoraDemanda <= "
+					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
+							.get("dataFinal"));
 		}
-		if(filtros.get("dataInicial")!=null && filtros.get("dataFinal")!=null){
-			jpaQuery+=" and d.dataHoraDemanda between "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataInicial"))+" and "+new SimpleDateFormat("yyyy-MMdd").format(filtros.get("dataFinal"));
+		if (filtros.get("dataInicial") != null
+				&& filtros.get("dataFinal") != null) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " d.dataHoraDemanda between "
+					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
+							.get("dataInicial"))
+					+ " and "
+					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
+							.get("dataFinal"));
 		}
 		// === FIM OUTROS FILTROS ===
 
-		TypedQuery<Long> q = em.createQuery(jpaQuery,Long.class);
+		TypedQuery<Long> q = em.createQuery(jpaQuery, Long.class);
 
-		q.setParameter("pessoa", pessoa);
-
-		try{
+		try {
 			Long result = q.getSingleResult();
 
 			return result.intValue();
-		}
-		catch(NoResultException nre){
+		} catch (NoResultException nre) {
 			return 0;
 		}
 	}
@@ -392,6 +447,5 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 	public DemandasRegulatorio getRowData(Object rowKey) {
 		return em.find(DemandasRegulatorio.class, rowKey);
 	}
-
 
 }

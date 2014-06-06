@@ -174,6 +174,7 @@ public class Mensageria implements SendMailService {
 					message.setStringProperty("modulo", modulo);
 					message.setStringProperty("ssi", ssi);
 
+
 					producer.send(message);
 
 					jmsconnection.close();
@@ -188,10 +189,8 @@ public class Mensageria implements SendMailService {
 					mapa = null;
 
 				} catch (NamingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JMSException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -227,5 +226,42 @@ public class Mensageria implements SendMailService {
 		else{
 			return null;
 		}
+	}
+
+	@Override
+	public String getAssunto(DemandasRegulatorio demanda) {
+		return demanda.getStatus().getDescricao() + " da SSI " + demanda.getNumeroDemanda() + " - " + demanda.getProcedencia() + " - PRAZO: " + demanda.getPrazo();
+	}
+
+	@Override
+	public String getCorpo(DemandasRegulatorio demanda) {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Encontra-se disponível parecer técnico da área " + demanda.getAreaRegional() + " sobre a a seguinte SSI de número: " + demanda.getNumeroDemanda());
+		sb.append("<br>");
+		sb.append("Emissor: " + demanda.getAutor().getCnmnome());
+		sb.append("<br>");
+		sb.append("Área de Origem: " + demanda.getAreaRegional());
+		sb.append("<br>");
+		sb.append("Título da SSI: " + demanda.getQuestao());
+		sb.append("<br>");
+		sb.append("Previsão de conclusão: " + demanda.getPrazo());
+		sb.append("<br>");
+		//TODO Falta colocar o link, para isso falta implementar o acesso por iddemanda=zzz ex: http://ssi.vivo.com.br/REGULATORIO/?iddemanda=115
+
+		return sb.toString();
+
+	}
+
+	@Override
+	public void notificaAutor(String strmensagem, String assunto, String ssi,DemandasRegulatorio demanda) {
+
+		Map<String, String> emails = new HashMap<String, String>();
+
+		emails.put(demanda.getAutor().getCnmnome(), getEmailPessoa(demanda.getAutor()));
+
+		send(strmensagem, assunto, emails, getConfig().getCnmipsmtp(), getModulo().getCnmmodulo(), demanda.getNumeroDemanda());
+
 	}
 }

@@ -58,17 +58,16 @@
 				<h:panelGroup class="label-campo"></h:panelGroup>
 				<h:commandButton value="Buscar">
 					<a4j:ajax event="click" execute="@form"
-						listener="#{indexBean.buscar()}" render="demandasForm" />
+						listener="#{indexBean.buscar()}" render="testerender"/>
 				</h:commandButton>
 			</h:panelGroup>
 
 			<h:panelGroup layout="block" class="clear" />
 			<h:panelGroup layout="block" class="linha" />
-		</h:form>
+		
 
 
-		<rich:panel id="ssiinicial">
-			<h:form id="demandasForm">
+			<a4j:outputPanel id="testerender">
 				<rich:dataTable keepSaved="true" rows="5" id="tabela"
 					value="#{indexBean.dataModel}" var="demanda">
 					<f:facet name="header">
@@ -105,13 +104,13 @@
 
 					<rich:column style="text-align:left;">
 						<h:graphicImage value="/imagens/vaiVencer.png"
-							rendered="#{demanda.venceEmDoisDias}" />
+							rendered="#{demanda.estadoDemanda == 2}" />
 						<h:graphicImage value="/imagens/venceHoje.png"
-							rendered="#{demanda.vencendoNoDia}" />
+							rendered="#{demanda.estadoDemanda == 3}" />
 						<h:graphicImage value="/imagens/vencido.png"
-							rendered="#{demanda.vencido}" />
+							rendered="#{demanda.estadoDemanda == 1}}" />
 						<h:graphicImage value="/imagens/naoVence.png"
-						 rendered="#{demandasBean.demanda.demandaOk}"/>								
+						 rendered="#{demanda.estadoDemanda == 4}"/>								
 						<h:outputText value="#{demanda.numeroDemanda}" />
 						<h:outputText value="#{msg['label.semNumero']}"
 							rendered="#{demanda.numeroDemanda eq null}" />
@@ -152,12 +151,11 @@
 					</rich:column>
 
 					<f:facet name="footer">
-						<rich:dataScroller for="tabela" maxPages="30" />
+						<rich:dataScroller for="tabela" maxPages="30" id="scroller"/>
 					</f:facet>
 
 				</rich:dataTable>
-			</h:form>
-		</rich:panel>
+			</a4j:outputPanel>
 
 		<rich:panel id="noticiasredes">
 			<rich:dataTable keepSaved="true" rows="3" id="dtresbuscanoticias"
@@ -183,5 +181,6 @@
 				</f:facet>
 			</rich:dataTable>
 		</rich:panel>
+		</h:form>
 	</ui:define>
 </ui:composition>

@@ -237,7 +237,7 @@ public class PermissoesMB implements Serializable{
 
 	}
 
-/*	public boolean verificarConcluir(){
+	public boolean verificarConcluir(){
 
 		//recuperaDemanda();
 
@@ -245,16 +245,10 @@ public class PermissoesMB implements Serializable{
 			return false;
 		}
 
-		this.statusPossiveis = new ArrayList<Integer>();
-		this.statusPossiveis.add(StatusRegulatorio.ID_ANALISE_TECNICA);
+		return (demanda.getStatus().getDescricao().equalsIgnoreCase("ANÁLISE FINAL") ||
+				demanda.getStatus().getDescricao().equalsIgnoreCase("ANÁLISE TÉCNICA"));
 
-		if(!isStatusContidoEmLista(statusPossiveis)){
-			return false;
-		}
-
-		return isTecnicoEncarregado();
-
-	}*/
+	}
 
 /*	public boolean verificarNecessidadeDados(){
 

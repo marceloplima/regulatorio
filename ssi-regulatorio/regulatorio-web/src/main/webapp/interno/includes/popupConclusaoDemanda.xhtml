@@ -17,13 +17,15 @@
 		</f:facet>
 		<div class="area-input-100">
 			<h:outputText value="#{msg['label.autor']}" styleClass="label-campo" />
-			<h:outputText value="#{classificacaoBean.logado.cnmnome}" styleClass="label-campo"/>
+			<h:outputText value="#{classificacaoBean.logado.cnmnome}"
+				styleClass="label-campo" />
 
 			<div class="clear" />
 
 			<h:outputText value="#{msg['label.dataHora']}"
 				styleClass="label-campo" />
-			<h:outputText value="#{session.lastAccessedTime}" styleClass="label-campo">
+			<h:outputText value="#{session.lastAccessedTime}"
+				styleClass="label-campo">
 				<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 			</h:outputText>
 
@@ -34,9 +36,9 @@
 			<h:outputText value="#{msg['label.complexidade']}"
 				styleClass="label-campo" />
 			<h:selectOneRadio value="#{classificacaoBean.complexidade}"
-				immediate="true" styleClass="select-form" required="true"
+				styleClass="select-form"
 				converter="#{complexidadeConverter}"
-				requiredMessage="#{msg['campo.obrigatorio']}" id="complexidade">
+				id="complexidade">
 				<f:selectItems
 					value="#{classificacaoBean.complexidadeService.buscarTodos()}"
 					var="cmp" itemLabel="#{cmp.cnmDescricao}" itemValue="#{cmp}" />
@@ -48,9 +50,8 @@
 			<h:outputText value="#{msg['label.execucao']}"
 				styleClass="label-campo" />
 			<h:selectOneRadio value="#{classificacaoBean.execucao}"
-				immediate="true" styleClass="select-form" required="true"
-				converter="#{execucaoConverter}"
-				requiredMessage="#{msg['campo.obrigatorio']}" id="execucao">
+				styleClass="select-form" 
+				converter="#{execucaoConverter}" id="execucao">
 				<f:selectItems
 					value="#{classificacaoBean.execucaoService.buscarTodos()}"
 					var="exec" itemLabel="#{exec.descricao}" itemValue="#{exec}" />
@@ -62,9 +63,8 @@
 			<h:outputText value="#{msg['label.comentario']}"
 				styleClass="label-campo" />
 			<h:inputTextarea styleClass="input-form-textarea" rows="20"
-				value="#{classificacaoBean.comentario}" required="true"
-				requiredMessage="#{msg['campo.questao.obrigatorio']}"
-				id="comentarioanalise" immediate="true" />
+				value="#{classificacaoBean.comentario}"
+				id="comentarioanalise"/>
 			<h:message for="comentarioanalise"
 				style="font-weight:bold;color:#ff0000;" />
 		</div>
@@ -72,10 +72,12 @@
 		<div class="clear" />
 
 		<div class="alinhaBotao">
-			<h:commandButton value="#{msg['botao.concluir.demanda']}"
-				action="#{classificacaoBean.concluirDemanda()}"
-				onclick="#{rich:component('popupconclusao')}.hide(event);">
-				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" execute="@this complexidade execucao comentarioanalise"/>
+			<h:commandButton value="#{msg['botao.concluir.demanda']}">
+				<a4j:ajax
+					render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro"
+					execute="@this :formanconclusao:complexidade :formanconclusao:execucao :formanconclusao:comentarioanalise"
+					listener="#{classificacaoBean.concluirDemanda()}"
+					oncomplete="#{rich:component('popupconclusao')}.hide(event);"/>
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupconclusao')}.hide(event); return false;"

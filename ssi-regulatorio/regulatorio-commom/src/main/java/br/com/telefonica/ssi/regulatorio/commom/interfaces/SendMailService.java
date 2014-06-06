@@ -17,6 +17,8 @@ public interface SendMailService extends Serializable{
 
 	public void notificaSolicitante(String strmensagem, String assunto,String ssi, DemandasRegulatorio demanda);
 
+	public void notificaAutor(String strmensagem, String assunto,String ssi, DemandasRegulatorio demanda);
+
 	public void notificaTecnicoEncarregado(String strmensagem, String assunto,String ssi, DemandasRegulatorio demanda);
 
 	public void notificaEncarregadosOperacionais(String strmensagem, String assunto,String ssi, DemandasRegulatorio demanda);
@@ -24,4 +26,9 @@ public interface SendMailService extends Serializable{
 	public void notificarResponsaveisTecnicos(String strmensagem, String assunto,String ssi, DemandasRegulatorio demanda);
 
 	public String getEmailPessoa(Pessoas p);
+
+	String getAssunto(DemandasRegulatorio demanda);
+
+	String getCorpo (DemandasRegulatorio demanda);
+
 }

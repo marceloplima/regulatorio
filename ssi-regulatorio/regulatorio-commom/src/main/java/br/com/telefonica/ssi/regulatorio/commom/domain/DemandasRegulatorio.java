@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,6 +23,7 @@ import org.joda.time.Hours;
 import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Areas;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
+import br.com.telefonica.ssi.regulatorio.commom.enums.StatusDemandaEnum;
 
 @Entity
 @Table(name = "DemandasRegulatorio", schema = "regulatorio")
@@ -270,7 +270,7 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 		}
 	}
 
-	public boolean isVencendoNoDia() {
+	private boolean isVencendoNoDia() {
 		if (prazo != null) {
 			String dateToday = new SimpleDateFormat("dd/MM/yyyy")
 					.format(new Date());
@@ -286,7 +286,7 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 		}
 	}
 
-	public boolean isVencido() {
+	private boolean isVencido() {
 		if (prazo != null && !isVenceEmDoisDias()) {
 			if (prazo.before(new Date())) {
 				return true;
@@ -297,7 +297,7 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 			return false;
 	}
 
-	public boolean isVenceEmDoisDias() {
+	private boolean isVenceEmDoisDias() {
 		if (prazo != null && !isVencendoNoDia()) {
 			DateTime hoje = new DateTime();
 			DateTime prazo = new DateTime(this.prazo);
@@ -317,12 +317,18 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 			return false;
 	}
 
-	public boolean isDemandaOk(){
-		if(!isVenceEmDoisDias() && !isVencendoNoDia() && !isVencido()){
-			return true;
+	public int getEstadoDemanda(){
+		if(isVencido()){
+			return 1;
+		}
+		if(isVenceEmDoisDias()){
+			return 2;
+		}
+		if(isVencendoNoDia()){
+			return 3;
 		}
 		else{
-			return false;
+			return 4;
 		}
 	}
 }

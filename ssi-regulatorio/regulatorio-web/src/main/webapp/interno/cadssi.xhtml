@@ -121,7 +121,13 @@
 								<f:ajax
 									render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro"
 									event="click" />
-							</rich:menuItem>							
+							</rich:menuItem>			
+							
+							<rich:menuItem mode="ajax" label="#{msg['botao.concluir.demanda']}"
+								execute="@form" rendered="#{permissoesMB.verificarConcluir()}">
+								<rich:componentControl target="popupconclusao" operation="show"
+									event="click" />
+							</rich:menuItem>				
 
 						</rich:dropDownMenu>
 
@@ -151,17 +157,13 @@
 
 				<div class="area-input-30">
 					<h:graphicImage value="/imagens/vaiVencer.png"
-						rendered="#{demandasBean.demanda.venceEmDoisDias}"
-						style="margin-top:-32px;" />
-					<h:graphicImage value="/imagens/venceHoje.png"
-						rendered="#{demandasBean.demanda.vencendoNoDia}"
-						style="margin-top:-32px;" />
-					<h:graphicImage value="/imagens/vencido.png"
-						rendered="#{demandasBean.demanda.vencido}"
-						style="margin-top:-32px;" />
-					<h:graphicImage value="/imagens/naoVence.png"
-						rendered="#{demandasBean.demanda.demandaOk}"
-						style="margin-top:-32px;" />
+							rendered="#{demanda.estadoDemanda == 2}" />
+						<h:graphicImage value="/imagens/venceHoje.png"
+							rendered="#{demanda.estadoDemanda == 3}" />
+						<h:graphicImage value="/imagens/vencido.png"
+							rendered="#{demanda.estadoDemanda == 1}}" />
+						<h:graphicImage value="/imagens/naoVence.png"
+						 rendered="#{demanda.estadoDemanda == 4}"/>		
 				</div>
 			</h:panelGroup>
 
