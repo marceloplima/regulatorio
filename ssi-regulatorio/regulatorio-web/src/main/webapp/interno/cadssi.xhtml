@@ -29,7 +29,7 @@
 								action="#{classificacaoBean.salvarDemanda}"
 								rendered="#{permissoesMB.verificarSalvar()}"
 								render="@all :demandaform :panelexibesucesso :panelexibeerro"
-								immediate="true" />
+								immediate="true"/>
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.salvar.rascunho']}"
@@ -409,7 +409,7 @@
 								<f:selectItems
 									value="#{classificacaoBean.demanda.areaRegional.ufs}" var="r"
 									itemLabel="#{r.descricao}" itemValue="#{r}" />
-								<a4j:ajax execute="@this" immediate="true" />
+								<a4j:ajax execute="@this" immediate="true"/>
 							</h:selectManyCheckbox>
 						</div>
 						<div class="clear" />
