@@ -3,6 +3,7 @@ package br.com.telefonica.ssi.web.beans;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -92,7 +93,7 @@ public class DemandasBean extends AbstractManagedBean {
 			index.setPanelexibeerro(true);
 			return;
 		}
-		if(demanda.isVencido()){
+		if(demanda.getPrazo().before(new Date())){
 			mensagens.add("Prazo anterior ou igual à data atual!");
 			index.setMsgspanel(mensagens);
 			index.setPanelexibeerro(true);
