@@ -3,7 +3,7 @@ package br.com.telefonica.ssi.web.beans;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Named;
 
@@ -13,7 +13,7 @@ import br.com.telefonica.ssi.regulatorio.commom.domain.Log;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.LogService;
 
 @Named
-@RequestScoped
+@SessionScoped
 public class LogBean extends AbstractManagedBean {
 
 	/**

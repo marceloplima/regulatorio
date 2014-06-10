@@ -9,4 +9,13 @@
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#interno#cadssi.xhtml"
   PATH="/interno/cadssi.xhtml" SHAPE="240,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#index_sistema.xhtml"
+  PATH="/index_sistema.xhtml" SHAPE="32,129,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#index_sistema.xhtml:0" NAME="item"
+   PATH="/index_sistema.xhtml" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="cadssi::#interno#cadssi.xhtml" NAME="output"
+    PATH="/interno/cadssi.xhtml" TARGET="rules:#interno#cadssi.xhtml"
+    TITLE="cadssi" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
 </PROCESS>

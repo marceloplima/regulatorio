@@ -59,11 +59,23 @@ public class IndexBean extends AbstractManagedBean{
 
 	@PostConstruct
 	public void init(){
+		String idDemanda = getUrlParameter("idDemanda");
+		if(idDemanda!=null && !idDemanda.equals("")){
+			String outcome = consultaDemanda(Integer.parseInt(idDemanda));
+			try{
+				getFacesContext().getExternalContext().redirect("interno/cadssi.xhtml?faces-redirect=true");
+			}
+			catch(Exception ex){
+				System.out.println("Exceção ocorrida na pesquisa de demanda por url: ");
+				ex.printStackTrace();
+			}
+		}
+
 		Map<String, Object> filtros = new HashMap<String,Object>();
-		Pessoas pessoa = RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado();
+		/*Pessoas pessoa = RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado();
 
 		filtros.put("autor", pessoa);
-		filtros.put("encarregado", pessoa);
+		filtros.put("encarregado", pessoa);*/
 
 		dataModel = new DemandasRegulatorioDataModel(facadeDemanda, filtros, new DemandasRegulatorio());
 

@@ -629,6 +629,15 @@ public class ClassificacaoBean extends AbstractManagedBean{
 	}
 
 	public void concluirDemanda(){
+		if(complexidade == null){
+			exibeMensagemDeErro("Campo complexidade é obrigatório!");
+			return;
+		}
+		if(execucao == null){
+			exibeMensagemDeErro("Campo execução é obrigatório!");
+			return;
+		}
+
 		Movimento movimento = new Movimento();
 		MovimentoConclusao conclusao = new MovimentoConclusao();
 
@@ -643,7 +652,35 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 		demanda.setStatus(statusService.findByName("CONCLUÍDA"));
 		logger.salvarLog(demanda, getLogado(), "Demanda concluída.");
+
 		mensageria.notificaSolicitante("Demanda concluida.", "Demanda concluida", demanda.getNumeroDemanda(), demanda);
+
+		mensageria.notificaTecnicoEncarregado("Demanda concluida.", "Demanda concluida", demanda.getNumeroDemanda(), demanda);
+
+		Collection<Areas> areas = null;
+
+		MovimentoAcionamentoArea acionamento = movimentoService.retornaUltimoAcionamentoAreaOperacional(demanda);
+
+		areas = acionamento.getAreasOperacionais();
+
+		for(Areas a:areas){
+			for(Pessoas p:a.getAreaspessoas()){
+				if(p.getCargo()!=null && p.getCargo().getCnmcargo().equalsIgnoreCase("colaborador")){
+					Map<String, String> emails = new HashMap<String, String>();
+					if (p.getPessoaemails() != null
+							&& !p.getPessoaemails().isEmpty()) {
+						emails.put(p.getCnmnome(),
+								mensageria.getEmailPessoa(p));
+						mensageria.enviarMensagem(
+								"Demanda concluida: "
+										+ demanda.getNumeroDemanda(),
+										"Demanda concluida: "
+										+ demanda.getNumeroDemanda(),
+								emails, demanda.getNumeroDemanda());
+					}
+				}
+			}
+		}
 
 		movimentoService.salvaMovimento(movimento);
 		movimentoService.salvaMovimentoConclusao(conclusao);
@@ -651,7 +688,7 @@ public class ClassificacaoBean extends AbstractManagedBean{
 
 		eventoDemanda.fire(demanda);
 
-		exibeMensagemSucesso("Demanda conclida com sucesso!");
+		exibeMensagemSucesso("Demanda concluída com sucesso!");
 
 		this.comentario = null;
 		this.complexidade = null;

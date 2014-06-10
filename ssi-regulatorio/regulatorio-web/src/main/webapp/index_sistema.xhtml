@@ -103,14 +103,11 @@
 					</f:facet>
 
 					<rich:column style="text-align:left;">
-						<h:graphicImage value="/imagens/vaiVencer.png"
-							rendered="#{demanda.estadoDemanda == 2}" />
-						<h:graphicImage value="/imagens/venceHoje.png"
-							rendered="#{demanda.estadoDemanda == 3}" />
-						<h:graphicImage value="/imagens/vencido.png"
-							rendered="#{demanda.estadoDemanda == 1}}" />
-						<h:graphicImage value="/imagens/naoVence.png"
-						 rendered="#{demanda.estadoDemanda == 4}"/>								
+						<h:graphicImage value="/imagens/vencido.png" rendered="#{demanda.estadoDemanda eq 1}"/>
+						<h:graphicImage value="/imagens/naoVence.png"  rendered="#{demanda.estadoDemanda eq 4}"/>
+						<h:graphicImage value="/imagens/vaiVencer.png" rendered="#{demanda.estadoDemanda eq 2}"/>
+						<h:graphicImage value="/imagens/venceHoje.png"  rendered="#{demanda.estadoDemanda eq 3}"/>
+													
 						<h:outputText value="#{demanda.numeroDemanda}" />
 						<h:outputText value="#{msg['label.semNumero']}"
 							rendered="#{demanda.numeroDemanda eq null}" />

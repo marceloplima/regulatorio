@@ -49,7 +49,7 @@
 				<h:commandButton value="Fechar">
 					<f:ajax render="@form" 
 							event="click"
-							listener="#{procedenciaBean.fecharTelaProcedencia()}"/>
+							onevent="#{rich:component('popupprocedencia')}.hide(event);"/>
 				</h:commandButton>	        
 			</h:panelGroup>		
 		

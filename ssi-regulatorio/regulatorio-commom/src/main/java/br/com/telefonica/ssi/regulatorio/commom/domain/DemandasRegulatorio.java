@@ -1,6 +1,5 @@
 package br.com.telefonica.ssi.regulatorio.commom.domain;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 
@@ -18,12 +17,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.joda.time.DateTime;
-import org.joda.time.Hours;
 
 import br.com.telefonica.ssi.core.domain.patterns.entity.AbstractEntity;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Areas;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
-import br.com.telefonica.ssi.regulatorio.commom.enums.StatusDemandaEnum;
 
 @Entity
 @Table(name = "DemandasRegulatorio", schema = "regulatorio")
@@ -270,62 +267,63 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 		}
 	}
 
-	private boolean isVencendoNoDia() {
-		if (prazo != null) {
-			String dateToday = new SimpleDateFormat("dd/MM/yyyy")
-					.format(new Date());
-			String datePrazo = new SimpleDateFormat("dd/MM/yyyy").format(prazo);
+	public boolean isVencendoNoDia() {
+		DateTime dataPrazo = new DateTime(this.prazo);
+		DateTime hoje = new DateTime();
 
-			if (datePrazo.equals(dateToday)) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
+		if(dataPrazo.getYear() == hoje.getYear() &&
+				dataPrazo.getMonthOfYear() == hoje.getMonthOfYear() &&
+				dataPrazo.getDayOfMonth() == hoje.getDayOfMonth()){
+			return true;
+		}
+		else{
 			return false;
 		}
 	}
 
-	private boolean isVencido() {
-		if (prazo != null && !isVenceEmDoisDias()) {
-			if (prazo.before(new Date())) {
+	public boolean isVencido() {
+		DateTime dataPrazo = new DateTime(this.prazo);
+		DateTime hoje = new DateTime();
+
+		if(dataPrazo.getYear()<hoje.getYear() || dataPrazo.getMonthOfYear()<hoje.getMonthOfYear()){
+			return true;
+		}
+		else {
+			if(dataPrazo.getDayOfMonth()-hoje.getDayOfMonth() <= 2){
 				return true;
-			} else {
+			}
+			else{
 				return false;
 			}
-		} else
-			return false;
+		}
 	}
 
-	private boolean isVenceEmDoisDias() {
-		if (prazo != null && !isVencendoNoDia()) {
-			DateTime hoje = new DateTime();
-			DateTime prazo = new DateTime(this.prazo);
+	public boolean isVenceEmDoisDias() {
+		DateTime dataPrazo = new DateTime(this.prazo);
+		DateTime hoje = new DateTime();
 
-			int horas = Hours.hoursBetween(hoje, prazo).getHours();
-
-			if (horas > 0) {
-				if (horas > 12 && horas < 48) {
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
+		if(dataPrazo.getYear() == hoje.getYear() &&
+				dataPrazo.getMonthOfYear() == hoje.getMonthOfYear()){
+			int diff_dias =dataPrazo.getDayOfMonth() - hoje.getDayOfMonth();
+			if(diff_dias>=1 && diff_dias<=2){
+				return true;
 			}
-		} else
+			else return false;
+		}
+		else{
 			return false;
+		}
 	}
 
 	public int getEstadoDemanda(){
-		if(isVencido()){
-			return 1;
+		if(isVencendoNoDia()){
+			return 3;
 		}
 		if(isVenceEmDoisDias()){
 			return 2;
 		}
-		if(isVencendoNoDia()){
-			return 3;
+		if(isVencido()){
+			return 1;
 		}
 		else{
 			return 4;

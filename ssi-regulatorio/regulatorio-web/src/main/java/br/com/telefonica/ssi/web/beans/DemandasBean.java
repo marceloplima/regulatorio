@@ -92,8 +92,8 @@ public class DemandasBean extends AbstractManagedBean {
 			index.setPanelexibeerro(true);
 			return;
 		}
-		if(demanda.getPrazo().before(Calendar.getInstance().getTime())){
-			mensagens.add("Prazo anterior à data atual!");
+		if(demanda.isVencido()){
+			mensagens.add("Prazo anterior ou igual à data atual!");
 			index.setMsgspanel(mensagens);
 			index.setPanelexibeerro(true);
 			return;
@@ -124,8 +124,8 @@ public class DemandasBean extends AbstractManagedBean {
 			if(demanda.getPrazo() == null || demanda.getQuestao() == null){
 				messages.add("Os campos prazo, e questão são obrigatórios!");
 			}
-			else if(demanda.getPrazo().before(Calendar.getInstance().getTime())){
-				messages.add("Prazo anterior à data atual!");
+			else if(demanda.isVencido()){
+				messages.add("Prazo anterior ou igual à data atual!");
 			}
 			else if(demanda.getQuestao()==null || demanda.getQuestao().equals("")){
 				messages.add("Campo questão não preenchido!");

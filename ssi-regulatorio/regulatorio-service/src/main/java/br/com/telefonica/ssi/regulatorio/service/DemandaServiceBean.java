@@ -16,6 +16,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.quartz.SchedulerFactory;
+
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.StatusRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;

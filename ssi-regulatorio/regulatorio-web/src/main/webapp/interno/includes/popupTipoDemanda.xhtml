@@ -37,7 +37,7 @@
 				<h:commandButton value="Fechar">
 					<f:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" 
 							event="click"
-							listener="#{tipoDemandaBean.fecharTelaTipoDemanda()}"/>
+							onevent="#{rich:component('popuptipodemanda')}.hide(event);" />
 				</h:commandButton>	        
 			</h:panelGroup>		
 		

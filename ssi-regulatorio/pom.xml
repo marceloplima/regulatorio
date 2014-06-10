@@ -23,6 +23,7 @@
 		<ssi-kernel>1.0-SNAPSHOT</ssi-kernel>
 		<omnifaces-version>1.7</omnifaces-version>
 		<joda-time-version>2.3</joda-time-version>
+		<quartz-version>1.5.2</quartz-version>
 	</properties>
 
 	<modules>
@@ -76,6 +77,13 @@
 				<version>${javaee-api-version}</version>
 				<scope>provided</scope>
 			</dependency>
+
+			<dependency>
+				<groupId>quartz</groupId>
+				<artifactId>quartz</artifactId>
+				<version>${quartz-version}</version>
+			</dependency>
+
 
 			<dependency>
 				<groupId>joda-time</groupId>

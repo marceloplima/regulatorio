@@ -13,6 +13,14 @@
 		</navigation-case>		
 	</navigation-rule>
 	
+	<navigation-rule>
+		<from-view-id>/index_sistema.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>cadssi</from-outcome>
+			<to-view-id>/interno/cadssi.xhtml</to-view-id>
+		</navigation-case>		
+	</navigation-rule>
+	
     <application>   
 	    <!-- Arquivo properties com as mensagens do sistema -->   
 	    <message-bundle>mensagens</message-bundle>

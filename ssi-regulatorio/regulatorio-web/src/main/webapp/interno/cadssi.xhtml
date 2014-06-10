@@ -45,14 +45,9 @@
 								render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro" />								
 
 							<rich:menuItem label="#{msg['botao.cancelar']}" mode="ajax"
-								execute=":demandaform:prazoDemanda :demandaform:questaoDemanda :demandaform:observacaoDemanda"
-								action="#{classificacaoBean.cancelarDemanda()}"
-								rendered="#{permissoesMB.verificarCancelar()}"
-								render="@form infoDemanda :panelexibesucesso :panelexibeerro">
+								execute="@form"
+								rendered="#{permissoesMB.verificarCancelar()}">
 								<rich:componentControl target="cancelarDemanda" operation="show"
-									event="click" />
-								<f:ajax
-									render="@all :demandaform :panelexibesucesso :panelexibeerro"
 									event="click" />
 							</rich:menuItem>
 
@@ -156,14 +151,14 @@
 				</div>
 
 				<div class="area-input-30">
-					<h:graphicImage value="/imagens/vaiVencer.png"
-							rendered="#{demanda.estadoDemanda == 2}" />
-						<h:graphicImage value="/imagens/venceHoje.png"
-							rendered="#{demanda.estadoDemanda == 3}" />
-						<h:graphicImage value="/imagens/vencido.png"
-							rendered="#{demanda.estadoDemanda == 1}}" />
-						<h:graphicImage value="/imagens/naoVence.png"
-						 rendered="#{demanda.estadoDemanda == 4}"/>		
+					<h:graphicImage value="/imagens/vencido.png" rendered="#{demandasBean.demanda.estadoDemanda eq 1}"
+						style="margin-top:-32px;"/>
+					<h:graphicImage value="/imagens/naoVence.png"  rendered="#{demandasBean.demanda.estadoDemanda eq 4}"
+						style="margin-top:-32px;"/>
+					<h:graphicImage value="/imagens/vaiVencer.png" rendered="#{demandasBean.demanda.estadoDemanda eq 2}"
+						style="margin-top:-32px;"/>
+					<h:graphicImage value="/imagens/venceHoje.png"  rendered="#{demandasBean.demanda.estadoDemanda eq 3}"
+						style="margin-top:-32px;"/>
 				</div>
 			</h:panelGroup>
 
@@ -440,7 +435,11 @@
 										<rich:column style="text-align:left;">
 											<h:outputText value="#{msg['header.status']}" />
 										</rich:column>
-
+											
+										<rich:column style="text-align:left;">
+											<h:outputText value="#{msg['header.area']}" />
+										</rich:column>	
+											
 										<rich:column style="text-align:left;">
 											<h:outputText value="#{msg['header.responsavel.analise']}" />
 										</rich:column>
@@ -460,6 +459,10 @@
 								<rich:column style="text-align:left;">
 									<h:outputText
 										value="#{analise.movimento.demanda.status.descricao}" />
+								</rich:column>
+								
+								<rich:column style="text-align:left;">
+									<h:outputText value="#{analise.movimento.movimentosAreaOperacional.areaOperacional.cnmdescarea}" />
 								</rich:column>
 
 								<rich:column style="text-align:left;">
@@ -638,11 +641,10 @@
 				</div>
 				<div class="clear" />
 				<div class="alinhaBotao">
-					<h:commandButton action="#{demandasBean.salvaNovoEmail}"
-						value="#{msg['botao.salvar']}"
-						onclick="#{rich:component('adicionaEmail')}.hide(event);">
-						<f:ajax render="emailSolicitante botaoEmail"
-							execute="@this novoEmail" />
+					<h:commandButton value="#{msg['botao.salvar']}">
+						<a4j:ajax render="emailSolicitante botaoEmail"
+							execute="@this novoEmail" listener="#{demandasBean.salvaNovoEmail()}"
+							oncomplete="#{rich:component('adicionaEmail')}.hide(event);" event="click"/>
 					</h:commandButton>
 					<h:commandButton
 						onclick="#{rich:component('adicionaEmail')}.hide(event); return false;"
@@ -660,9 +662,10 @@
 				<div class="clear" />
 				<div class="alinhaBotao">
 					<h:commandButton action="#{classificacaoBean.cancelarDemanda()}"
-						value="#{msg['botao.sim']}"
-						onclick="#{rich:component('cancelarDemanda')}.hide(event);">
-						<f:ajax render="@form" execute="@this" />
+						value="#{msg['botao.sim']}">
+						<a4j:ajax execute="@this" listener="#{classificacaoBean.cancelarDemanda()}"
+						 render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro"
+						 oncomplete="#{rich:component('cancelarDemanda')}.hide(event);" event="click"/>						
 					</h:commandButton>
 					<h:commandButton
 						onclick="#{rich:component('cancelarDemanda')}.hide(event); return false;"

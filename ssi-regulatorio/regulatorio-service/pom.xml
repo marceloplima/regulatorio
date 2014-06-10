@@ -30,11 +30,14 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>ssi</groupId>
-			<artifactId>messaging</artifactId>
-		</dependency>-->
-		
+		<dependency>
+			<groupId>quartz</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
+
+		<!-- <dependency> <groupId>ssi</groupId> <artifactId>messaging</artifactId>
+			</dependency> -->
+
 		<dependency>
 			<groupId>ssi</groupId>
 			<artifactId>service</artifactId>

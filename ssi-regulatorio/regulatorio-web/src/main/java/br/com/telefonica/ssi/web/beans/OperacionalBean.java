@@ -5,10 +5,9 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.event.Observes;
-
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 
 import br.com.telefonica.ssi.faces.bean.AbstractManagedBean;
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
@@ -17,7 +16,7 @@ import br.com.telefonica.ssi.regulatorio.commom.interfaces.MovimentoFacade;
 import br.com.telefonica.ssi.web.utils.RecuperadorInstanciasBean;
 
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class OperacionalBean extends AbstractManagedBean{
 
 	/**
@@ -42,7 +41,7 @@ public class OperacionalBean extends AbstractManagedBean{
 	private DemandasBean demandasmb;
 
 	@PostConstruct
-	private void init(){
+	public void init(){
 
 		demandasmb = RecuperadorInstanciasBean.recuperarInstanciaDemandasBean();
 

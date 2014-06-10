@@ -7,9 +7,9 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Model;
-import javax.faces.bean.ViewScoped;
 
 import br.com.telefonica.ssi.faces.bean.AbstractManagedBean;
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
@@ -18,7 +18,7 @@ import br.com.telefonica.ssi.regulatorio.commom.interfaces.MovimentoFacade;
 import br.com.telefonica.ssi.web.datamodel.MovimentosDataModel;
 
 @Model
-@ViewScoped
+@SessionScoped
 public class MovimentosBean extends AbstractManagedBean{
 
 	/**

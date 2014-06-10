@@ -43,9 +43,8 @@
 		<div class="alinhaBotao">
 			<h:commandButton value="#{msg['botao.fechar']}">
 			
-					<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" 
-							event="click"
-							listener="#{operacionalBean.fecharTelaVisualizaAnaliseOperacional()}"/>			
+					<a4j:ajax event="click"
+							oncomplete="#{rich:component('popupveranalise')}.hide(event);"/>			
 			
 			</h:commandButton>
 		</div>
