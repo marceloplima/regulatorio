@@ -12,7 +12,7 @@
 	enctype="multipart/form-data">
 	<f:loadBundle var="msg" basename="mensagens" />
 	<rich:popupPanel id="popupanalisetecnica" domElementAttachment="form"
-		modal="true" width="500" height="500" zindex="2">
+		modal="true" width="550" height="550" zindex="2">
 		<f:facet name="header">
 			<h:outputText value="#{msg['header.analise.tecnica']}" />
 		</f:facet>
@@ -42,17 +42,18 @@
 						value="#{classificacaoBean.resultadoAnaliseService.buscarTodos()}"
 						var="resultado" itemLabel="#{resultado.descricao}"
 						itemValue="#{regional}" />
+					<a4j:ajax event="click" execute="@this"/>
 				</h:selectOneMenu>
-				<h:message for="resultadoanalise" style="font-weight:bold;color:#ff0000;" />
+				<h:message for="resultadoanalise" style="font-weight:bold;color:#ff0000;" id="messageResultado"/>
 				
 				<div class="clear"/>
 				
 				<h:outputText value="#{msg['label.complexidade']}" styleClass="label-campo"/>
-				<h:selectOneRadio value="#{classificacaoBean.complexidade}" immediate="true" styleClass="select-form" required="true" 
+				<h:selectOneRadio value="#{classificacaoBean.complexidade}" styleClass="select-form" required="true" 
 					converter="#{complexidadeConverter}"  requiredMessage="#{msg['campo.obrigatorio']}" id="complexidade">
 					<f:selectItems value="#{classificacaoBean.complexidadeService.buscarTodos()}" var="cmp" itemLabel="#{cmp.cnmDescricao}" itemValue="#{cmp}"/>
 				</h:selectOneRadio>
-				<h:message for="complexidade" style="font-weight:bold;color:#ff0000;" />
+				<h:message for="complexidade" style="font-weight:bold;color:#ff0000;" id="messageComplexidade"/>
 				
 				<div class="clear"/>
 				
@@ -60,41 +61,46 @@
 				<h:outputText value="#{msg['label.prazo']}"
 					styleClass="label-campo" />
 				<rich:calendar styleClass="calendar-form" datePattern="dd/MM/yyyy"
-					locale="pt_BR" popup="true" enableManualInput="true"
+					locale="pt_BR" popup="true" enableManualInput="false"
 					oninputkeypress="javascript: mascara(this, data_mask);"
-					maxlength="10" required="true"
+					maxlength="10" required="#{classificacaoBean.analise.descricao == 'Em Atendimento'}"
 					requiredMessage="#{msg['campo.obrigatorio']}"
 					value="#{classificacaoBean.novoPrazo}" id="prazoAnaliseTecnica" />
-				<h:message for="prazoAnaliseTecnica" style="font-weight:bold;color:#ff0000;" />
+				<div class="clear"/>
+				<h:message for="prazoAnaliseTecnica" style="font-weight:bold;color:#ff0000;" id="messagePrevisao"/>
 				
 				<div class="clear"/>	
 				
 				<h:outputText value="#{msg['label.execucao']}" styleClass="label-campo"/>
-				<h:selectOneRadio value="#{classificacaoBean.execucao}" immediate="true" styleClass="select-form" required="true" 
+				<h:selectOneRadio value="#{classificacaoBean.execucao}" styleClass="select-form" 
+					required="#{classificacaoBean.analise.descricao == 'Atendimento Concluído'}" 
 					 converter="#{execucaoConverter}" requiredMessage="#{msg['campo.obrigatorio']}" id="execucao">
 					<f:selectItems value="#{classificacaoBean.execucaoService.buscarTodos()}" var="exec" itemLabel="#{exec.descricao}" itemValue="#{exec}"/>
+					<a4j:ajax event="click" execute="@this"/>
 				</h:selectOneRadio>
-				<h:message for="execucao" style="font-weight:bold;color:#ff0000;" />
+				<h:message for="execucao" style="font-weight:bold;color:#ff0000;" id="messageExecucao"/>
 				
 				<div class="clear"/>
 	
 				<h:outputText value="#{msg['label.comentario']}" styleClass="label-campo"/>
 				<h:inputTextarea styleClass="input-form-textarea" rows="20"
-					value="#{classificacaoBean.comentario}" required="true"
+					value="#{classificacaoBean.comentario}" 
+					required="#{classificacaoBean.analise.descricao != 'Atendimento Concluído' and classificacaoBean.analise.descricao != 'Em Atendimento'}"
 					requiredMessage="#{msg['campo.questao.obrigatorio']}"
-					id="comentarioanalise" immediate="true" />
+					id="comentarioanalise" />
 				<h:message for="comentarioanalise"
-					style="font-weight:bold;color:#ff0000;" />
+					style="font-weight:bold;color:#ff0000;" id="messageComentario"/>
 			</div>
 	
 			<div class="clear" />
 			
 			<div class="alinhaBotao">
 				<h:commandButton value="#{msg['botao.analise.efetuar']}">
-					<a4j:ajax
-					render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro"
-					listener="#{classificacaoBean.realizarAnaliseTecnica()}"
-					onclick="#{rich:component('popupanalisetecnica')}.hide(event);" />
+					<a4j:ajax 
+						render=":demandaform infoDemanda :panelexibesucesso :panelexibeerro :formanalisetecnica:mensagemTecnico :formanalisetecnica:messageResultado :formanalisetecnica:messageComplexidade :formanalisetecnica:messagePrevisao :formanalisetecnica:messageExecucao :formanalisetecnica:messageComentario" 
+						execute=":formanalisetecnica:resultadoanalise :formanalisetecnica:complexidade :formanalisetecnica:prazoAnaliseTecnica :formanalisetecnica:execucao :formanalisetecnica:comentarioanalise :formanalisetecnica:mensagemTecnico :formanalisetecnica:messageResultado :formanalisetecnica:messageComplexidade :formanalisetecnica:messagePrevisao :formanalisetecnica:messageExecucao :formanalisetecnica:messageComentario"
+						listener="#{classificacaoBean.realizarAnaliseTecnica()}"
+						oncomplete="if (#{facesContext.maximumSeverity==null}) {#{rich:component('popupanalisetecnica')}.hide();}"/>
 				</h:commandButton>
 				<h:commandButton
 					onclick="#{rich:component('popupanalisetecnica')}.hide(event); return false;"

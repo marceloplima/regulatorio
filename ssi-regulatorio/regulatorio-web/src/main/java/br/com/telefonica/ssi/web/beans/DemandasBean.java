@@ -1,8 +1,8 @@
 
 package br.com.telefonica.ssi.web.beans;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -85,6 +85,8 @@ public class DemandasBean extends AbstractManagedBean {
 	public void salvarComoRascunho(){
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
 		List<String> mensagens = new ArrayList<String>();
 
 		if(demanda.getPrazo()==null){
@@ -93,7 +95,22 @@ public class DemandasBean extends AbstractManagedBean {
 			index.setPanelexibeerro(true);
 			return;
 		}
-		if(demanda.getPrazo().before(new Date())){
+
+		Date compare1 = null;
+		Date compare2 = null;
+
+		try{
+			compare1 = sdf.parse(sdf.format(demanda.getPrazo()));
+			compare2 = sdf.parse(sdf.format(new Date()));
+		}
+		catch(Exception e){
+			mensagens.add("Data inválida!");
+			index.setMsgspanel(mensagens);
+			index.setPanelexibeerro(true);
+			return;
+		}
+
+		if(compare1.compareTo(compare2)<0){
 			mensagens.add("Prazo anterior ou igual à data atual!");
 			index.setMsgspanel(mensagens);
 			index.setPanelexibeerro(true);
@@ -119,9 +136,26 @@ public class DemandasBean extends AbstractManagedBean {
 	public void encaminhar(){
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 
-		if(demanda.getPrazo() == null || demanda.getPrazo().before(Calendar.getInstance().getTime()) ||
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		List<String> messages = new ArrayList<String>();
+
+		Date compare1 = null;
+		Date compare2 = null;
+
+		try{
+			compare1 = sdf.parse(sdf.format(demanda.getPrazo()));
+			compare2 = sdf.parse(sdf.format(new Date()));
+		}
+		catch(Exception e){
+			messages.add("Data inválida!");
+			index.setMsgspanel(messages);
+			index.setPanelexibeerro(true);
+			return;
+		}
+
+		if((compare1.compareTo(compare2)<0) ||
 				demanda.getQuestao()==null || demanda.getQuestao().equals("")){
-			List<String> messages = new ArrayList<String>();
+
 			if(demanda.getPrazo() == null || demanda.getQuestao() == null){
 				messages.add("Os campos prazo, e questão são obrigatórios!");
 			}

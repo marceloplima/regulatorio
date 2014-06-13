@@ -58,6 +58,13 @@
 								<rich:componentControl target="assumirDemanda" operation="show"
 									event="click" />
 							</rich:menuItem>
+							
+							<rich:menuItem mode="ajax"
+								label="#{msg['botao.solicitar.revisao']}" 
+								rendered="#{permissoesMB.verificarRevisarPrazo()}">
+								<a4j:ajax listener="#{classificacaoBean.solicitarRevisaoPrazo()}" event="click" execute="@this"
+									render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro"/>
+							</rich:menuItem>
 
 							<!-- REVISAO PRAZO -->
 							<rich:menuItem mode="ajax" label="#{msg['botao.revisao.prazo']}"
@@ -71,12 +78,10 @@
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.definir.tecnico']}" execute="@form"
-								rendered="#{permissoesMB.verificarCancelar()}">
+								rendered="#{permissoesMB.verificarDefinirTecnico()}">
 								<rich:componentControl target="popupdefinirtecnico"
 									operation="show" event="click" />
-								<f:ajax
-									render="@form :demandaform infoDemanda :panelexibesucesso :panelexibeerro"
-									event="click" />
+								
 							</rich:menuItem>
 
 							<rich:menuItem mode="ajax"
@@ -190,7 +195,7 @@
 								styleClass="label-campo" />
 							<rich:calendar styleClass="calendar-form destaque"
 								datePattern="dd/MM/yyyy" locale="pt_BR" popup="true"
-								enableManualInput="true"
+								enableManualInput="false"
 								oninputkeypress="javascript: mascara(this, data_mask);"
 								maxlength="10" value="#{demandasBean.demanda.prazo}"
 								rendered="#{demandasBean.demanda.novaDemanda}" id="prazoDemanda" />
@@ -546,8 +551,6 @@
 										mode="ajax">
 										<rich:componentControl target="popupupload" operation="show"
 											event="click" />
-										<f:ajax render="tabAnexo" event="click" />
-
 									</rich:menuItem>
 
 								</rich:dropDownMenu>
@@ -592,8 +595,11 @@
 									<h:commandButton
 										image="${pageContext.request.contextPath}/imagens/remover_ok.png"
 										rendered="true" id="buttonremover" value="Remover">
-										<f:ajax listener="#{anexosMB.preRemover(anexo)}"
-											render="@form" immediate="true" />
+										<a4j:ajax event="click" 
+										render="@all @form :demandaform :demandaform:tabelaAnexos :panelexibesucesso :panelexibeerro"
+										listener="#{anexosMB.preRemover(anexo)}"
+										execute="@this"
+										immediate="true"/>
 									</h:commandButton>
 								</rich:column>
 								<f:facet name="footer">
@@ -673,83 +679,6 @@
 				</div>
 			</rich:popupPanel>
 
-			<!-- POPUP REVISAO PRAZO -->
-			<rich:popupPanel id="revisaoPrazo" modal="true" minWidth="600"
-				minHeight="450" resizeable="false" domElementAttachment="form"
-				header="#{msg['header.revisao.prazo']}">
-				<div class="area-input-100">
-					<h:outputText value="#{msg['label.autor']}"
-						styleClass="label-campo" />
-					<h:outputText
-						value="#{permissoesMB.recuperaPessoaLogada().cnmnome}"
-						styleClass="label-campo" />
-
-					<div class="clear" />
-
-					<h:outputText value="#{msg['label.dataHora']}"
-						styleClass="label-campo" />
-					<h:outputText value="#{session.lastAccessedTime}"
-						styleClass="label-campo">
-						<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
-					</h:outputText>
-
-					<div class="clear" />
-
-					<h:outputText value="#{msg['label.prazo.atual']}"
-						styleClass="label-campo" />
-					<h:outputText value="#{classificacaoBean.demanda.prazo}"
-						styleClass="label-campo">
-						<f:convertDateTime pattern="dd/MM/yyyy" />
-					</h:outputText>
-
-					<div class="clear" />
-
-					<h:outputText value="#{msg['label.prazo.proposto']}"
-						styleClass="label-campo" />
-
-				</div>
-
-				<div class="area-input-50">
-					<rich:calendar styleClass="calendar-form" datePattern="dd/MM/yyyy"
-						locale="pt_BR" popup="true" enableManualInput="true"
-						oninputkeypress="javascript: mascara(this, data_mask);"
-						maxlength="10" required="true"
-						requiredMessage="#{msg['campo.obrigatorio']}"
-						value="#{classificacaoBean.novoPrazo}" id="novoPrazo" />
-					<h:message for="novoPrazo" style="font-weight:bold;color:#ff0000;" />
-
-					<div class="clear" />
-
-				</div>
-
-				<div class="clear" />
-
-				<div class="area-input-100">
-					<h:outputText value="#{msg['label.comentario']}"
-						styleClass="label-campo" />
-					<h:inputTextarea styleClass="input-form-textarea" rows="20"
-						value="#{classificacaoBean.comentario}" required="true"
-						requiredMessage="#{msg['campo.questao.obrigatorio']}"
-						id="comentarioPrazo" />
-					<h:message for="comentarioPrazo"
-						style="font-weight:bold;color:#ff0000;" />
-				</div>
-
-				<div class="clear" />
-
-				<div class="alinhaBotao">
-					<h:commandButton value="#{msg['botao.analise.efetuar']}">
-						<a4j:ajax
-							render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro"
-							execute="@this :demandaform:comentarioPrazo :demandaform:novoPrazo" event="click"
-							oncomplete="#{rich:component('revisaoPrazo')}.hide(event);" listener="#{classificacaoBean.revisarPrazo}"/>
-					</h:commandButton>
-					<h:commandButton
-						onclick="#{rich:component('revisaoPrazo')}.hide(event); return false;"
-						value="#{msg['botao.fechar']}" />
-				</div>
-			</rich:popupPanel>
-
 			<!-- Confirmação de apagamento de anexo -->
 			<rich:popupPanel id="popupconfirmaapagaranexo"
 				domElementAttachment="form" modal="true" width="300" height="100"
@@ -773,6 +702,7 @@
 			<ui:include src="includes/popupAssumirDemanda.xhtml" />
 		</h:form>
 		<ui:include src="includes/popupVisualizarAnaliseOperacional.xhtml" />
+		<ui:include src="includes/popupRevisaoPrazo.xhtml"/>
 		<ui:include src="includes/popupAnaliseOperacional.xhtml" />
 		<ui:include src="includes/popupAcionamentoOperacional.xhtml" />
 		<ui:include src="includes/popupConclusaoDemanda.xhtml" />

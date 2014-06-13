@@ -46,11 +46,8 @@
 							listener="#{procedenciaBean.salvar()}"
 							execute="@form"/>
 				</h:commandButton>   
-				<h:commandButton value="Fechar">
-					<f:ajax render="@form" 
-							event="click"
-							onevent="#{rich:component('popupprocedencia')}.hide(event);"/>
-				</h:commandButton>	        
+				<h:commandButton value="Fechar" action="#{procedenciaBean.fecharTelaProcedencia()}" 
+				onclick="#{rich:component('popupprocedencia')}.hide(event);"/>
 			</h:panelGroup>		
 		
 	</rich:popupPanel>
@@ -64,7 +61,7 @@
 				<h:commandButton value="Sim">
 					<f:ajax 
 						event="click"
-						render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro :formprocedencialistagem:panelprocedencias" 
+						render="@form :panelexibesucesso :panelexibeerro :formprocedencialistagem:panelprocedencias" 
 						listener="#{procedenciaBean.desativar()}"/>
 				</h:commandButton>
 				
@@ -72,6 +69,7 @@
 					<f:ajax 
 						render="@form" 
 						event="click"
+						execute="@this"
 						listener="#{procedenciaBean.fecharTelaConfirmacaoDaDesativacao()}"/>
 				</h:commandButton>	
 			</h:panelGroup>	

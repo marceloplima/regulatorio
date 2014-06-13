@@ -38,8 +38,8 @@
 					itemValue="#{areaOp}"/>
 				<a4j:ajax execute="@this" immediate="true" />
 			</h:selectManyCheckbox>
-			<h:message for="ufs"
-								style="font-weight:bold;color:#ff0000;" />
+			<h:message for="areasop"
+								style="font-weight:bold;color:#ff0000;" id="messageAreaOperacional"/>
 
 			<div class="clear" />
 
@@ -53,9 +53,10 @@
 		<div class="clear" />
 		<div class="alinhaBotao">
 			<h:commandButton value="#{msg['botao.ok']}">
-				<a4j:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" event="click"
-					oncomplete="#{rich:component('popupacionamentooperacional')}.hide(event);" execute="@this areasop comentarioanaliseop"
-					listener="#{classificacaoBean.acionarAreasOperacionais()}"/>
+				<a4j:ajax render=":demandaform infoDemanda :panelexibesucesso :panelexibeerro :formanacionamentooperacional:messageAreaOperacional" 
+						execute=":formanacionamentooperacional:messageAreaOperacional :formanacionamentooperacional:areasop :formanacionamentooperacional:comentarioanaliseop"
+						listener="#{classificacaoBean.acionarAreasOperacionais()}"
+						oncomplete="if (#{facesContext.maximumSeverity==null}) {#{rich:component('popupacionamentooperacional')}.hide();}"/>
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupacionamentooperacional')}.hide(event); return false;"

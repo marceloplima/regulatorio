@@ -39,7 +39,7 @@
 				<rich:calendar styleClass="calendar-form" id="filtroinicioperiodo"
 					value="#{indexBean.dataInicial}" datePattern="dd/MM/yyyy"
 					locale="pt_BR" converter="dateToCalendarConverter"
-					enableManualInput="true"
+					enableManualInput="false"
 					oninputkeypress="javascript: mascara(this, data_mask);"
 					maxlength="10" />
 			</h:panelGroup>
@@ -49,7 +49,7 @@
 				<rich:calendar styleClass="calendar-form" id="filtrofimperiodo"
 					value="#{indexBean.dataFinal}" datePattern="dd/MM/yyyy"
 					locale="pt_BR" converter="dateToCalendarConverter"
-					enableManualInput="true"
+					enableManualInput="false"
 					oninputkeypress="javascript: mascara(this, data_mask);"
 					maxlength="10" />
 			</h:panelGroup>

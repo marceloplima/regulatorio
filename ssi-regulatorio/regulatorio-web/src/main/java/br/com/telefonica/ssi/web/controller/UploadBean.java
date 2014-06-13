@@ -92,7 +92,10 @@ public class UploadBean extends AbstractManagedBean{
 
 		anexosint.incluir(anexoincluir);
 
+		demanda.getAnexos().add(anexoincluir);
+
 		eventodemanda.fire(demanda);
+		anexoincluir = new AnexosRegulatorio();
 	}
 
 	public File getFile() {

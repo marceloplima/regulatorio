@@ -309,9 +309,9 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 			} else {
 				jpaQuery += ("and ");
 			}
-			jpaQuery += " d.dataHoraDemanda >= "
+			jpaQuery += " d.dataHoraDemanda >= '"
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
-							.get("dataInicial"));
+							.get("dataInicial"))+"'";
 		}
 		if (filtros.get("dataInicial") == null
 				&& filtros.get("dataFinal") != null) {
@@ -320,9 +320,9 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 			} else {
 				jpaQuery += ("and ");
 			}
-			jpaQuery += " d.dataHoraDemanda <= "
+			jpaQuery += " d.dataHoraDemanda <= '"
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
-							.get("dataFinal"));
+							.get("dataFinal"))+"'";
 		}
 		if (filtros.get("dataInicial") != null
 				&& filtros.get("dataFinal") != null) {
@@ -331,12 +331,11 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 			} else {
 				jpaQuery += ("and ");
 			}
-			jpaQuery += " d.dataHoraDemanda between "
+			jpaQuery += " d.dataHoraDemanda between '"
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
-							.get("dataInicial"))
-					+ " and "
+							.get("dataInicial"))+"'"+ " and '"
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
-							.get("dataFinal"));
+							.get("dataFinal"))+"'";
 		}
 		// === FIM OUTROS FILTROS ===
 
@@ -412,9 +411,9 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 			} else {
 				jpaQuery += ("and ");
 			}
-			jpaQuery += " d.dataHoraDemanda <= "
+			jpaQuery += " d.dataHoraDemanda <= '"
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
-							.get("dataFinal"));
+							.get("dataFinal"))+"'";
 		}
 		if (filtros.get("dataInicial") != null
 				&& filtros.get("dataFinal") != null) {
@@ -423,12 +422,12 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 			} else {
 				jpaQuery += ("and ");
 			}
-			jpaQuery += " d.dataHoraDemanda between "
+			jpaQuery += " d.dataHoraDemanda between '"
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
-							.get("dataInicial"))
-					+ " and "
+							.get("dataInicial"))+"'"
+					+ " and '"
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
-							.get("dataFinal"));
+							.get("dataFinal"))+"'";
 		}
 		// === FIM OUTROS FILTROS ===
 

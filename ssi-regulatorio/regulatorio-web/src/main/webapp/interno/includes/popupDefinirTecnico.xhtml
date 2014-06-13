@@ -12,7 +12,7 @@
 	enctype="multipart/form-data">
 	<f:loadBundle var="msg" basename="mensagens" />
 	<rich:popupPanel id="popupdefinirtecnico" domElementAttachment="form"
-		modal="true" width="500" height="330" zindex="2">
+		modal="true" width="500" height="335" zindex="2" >
 		<f:facet name="header">
 			<h:outputText value="#{msg['header.definir.tecnico']}" />
 		</f:facet>
@@ -34,14 +34,14 @@
 				styleClass="label-campo" />
 			<h:selectOneMenu value="#{classificacaoBean.responsavel}"
 				styleClass="select-form" id="tecnicoResponsavel"
-				converter="pessoaConv">
+				converter="pessoaConv" required="true" requiredMessage="É necessário definir um técnico para completar a ação.">
 				<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}"
 					itemValue="#{null}" />
 				<f:selectItems value="#{classificacaoBean.tecnicosResponsaveis}" var="resp"
 					itemLabel="#{resp.cnmnome}" itemValue="#{resp}" />
 			</h:selectOneMenu>
 			<h:message for="tecnicoResponsavel"
-						style="font-weight:bold;color:#ff0000;" />
+						style="font-weight:bold;color:#ff0000;" id="mensagemTecnico"/>
 
 			<div class="clear" />
 
@@ -50,18 +50,16 @@
 				<h:inputTextarea styleClass="input-form-textarea" rows="20"
 					value="#{classificacaoBean.comentario}" 
 					id="comentarioTecnico" />
-				<h:message for="comentarioTecnico"
-					style="font-weight:bold;color:#ff0000;" />
 			</div>
 
 			<div class="clear" />
 
 			<div class="alinhaBotao">
 				<h:commandButton value="#{msg['botao.definir.tecnico']}">
-					<a4j:ajax  render=":formdemanda infoDemanda :panelexibesucesso :panelexibeerro" 
-						execute=":formdefinirtecnico:tecnicoResponsavel :formdefinirtecnico:comentarioTecnico"
+					<a4j:ajax  render=":demandaform infoDemanda :panelexibesucesso :panelexibeerro :formdefinirtecnico:mensagemTecnico" 
+						execute=":formdefinirtecnico:tecnicoResponsavel :formdefinirtecnico:comentarioTecnico mensagemTecnico"
 						listener="#{classificacaoBean.definirTecnico()}"
-						oncomplete="#{rich:component('popupdefinirtecnico')}.hide(event);"/>
+						oncomplete="if (#{facesContext.maximumSeverity==null}) {#{rich:component('popupdefinirtecnico')}.hide();}"/>
 				</h:commandButton>
 				<h:commandButton
 					onclick="#{rich:component('popupdefinirtecnico')}.hide(event); return false;"

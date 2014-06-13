@@ -31,19 +31,17 @@
 
 			<div class="clear" />
 
-			<div class="clear" />
-
 			<h:outputText value="#{msg['label.complexidade']}"
 				styleClass="label-campo" />
 			<h:selectOneRadio value="#{classificacaoBean.complexidade}"
 				styleClass="select-form"
 				converter="#{complexidadeConverter}"
-				id="complexidade">
+				id="complexidade" required="true" requiredMessage="#{msg['campo.obrigatorio']}"> 
 				<f:selectItems
 					value="#{classificacaoBean.complexidadeService.buscarTodos()}"
 					var="cmp" itemLabel="#{cmp.cnmDescricao}" itemValue="#{cmp}" />
 			</h:selectOneRadio>
-			<h:message for="complexidade" style="font-weight:bold;color:#ff0000;" />
+			<h:message for="complexidade" style="font-weight:bold;color:#ff0000;" id="messageComplExecucao" />
 
 			<div class="clear" />
 
@@ -51,12 +49,12 @@
 				styleClass="label-campo" />
 			<h:selectOneRadio value="#{classificacaoBean.execucao}"
 				styleClass="select-form" 
-				converter="#{execucaoConverter}" id="execucao">
+				converter="#{execucaoConverter}" id="execucao" required="true" requiredMessage="#{msg['campo.obrigatorio']}">
 				<f:selectItems
 					value="#{classificacaoBean.execucaoService.buscarTodos()}"
 					var="exec" itemLabel="#{exec.descricao}" itemValue="#{exec}" />
 			</h:selectOneRadio>
-			<h:message for="execucao" style="font-weight:bold;color:#ff0000;" />
+			<h:message for="execucao" style="font-weight:bold;color:#ff0000;" id="messageExecucaoConcl"/>
 
 			<div class="clear" />
 
@@ -65,19 +63,16 @@
 			<h:inputTextarea styleClass="input-form-textarea" rows="20"
 				value="#{classificacaoBean.comentario}"
 				id="comentarioanalise"/>
-			<h:message for="comentarioanalise"
-				style="font-weight:bold;color:#ff0000;" />
 		</div>
 
 		<div class="clear" />
 
 		<div class="alinhaBotao">
 			<h:commandButton value="#{msg['botao.concluir.demanda']}">
-				<a4j:ajax
-					render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro"
-					execute="@this :formanconclusao:complexidade :formanconclusao:execucao :formanconclusao:comentarioanalise"
-					listener="#{classificacaoBean.concluirDemanda()}"
-					oncomplete="#{rich:component('popupconclusao')}.hide(event);"/>
+				<a4j:ajax render=":demandaform infoDemanda :panelexibesucesso :panelexibeerro :formanconclusao:messageExecucaoConcl :formanconclusao:messageComplExecucao" 
+						execute="@this :formanconclusao:messageExecucaoConcl :formanconclusao:messageComplExecucao :formanconclusao:execucao :formanconclusao:complexidade :formanconclusao:comentarioanalise"
+						listener="#{classificacaoBean.concluirDemanda()}"
+						oncomplete="if (#{facesContext.maximumSeverity==null}) {#{rich:component('popupconclusao')}.hide();}"/>
 			</h:commandButton>
 			<h:commandButton
 				onclick="#{rich:component('popupconclusao')}.hide(event); return false;"

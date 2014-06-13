@@ -34,11 +34,9 @@
 							listener="#{tipoDemandaBean.salvar()}"
 							execute="tipo"/>
 				</h:commandButton>   
-				<h:commandButton value="Fechar">
-					<f:ajax render="@form :demandaform :demandaform:infoDemanda :panelexibesucesso :panelexibeerro" 
-							event="click"
-							onevent="#{rich:component('popuptipodemanda')}.hide(event);" />
-				</h:commandButton>	        
+				<h:commandButton value="Fechar"
+				action="#{tipoDemandaBean.fecharTelaTipoDemanda()}" 
+				onclick="#{rich:component('popuptipodemanda')}.hide(event);"/>
 			</h:panelGroup>		
 		
 	</rich:popupPanel>

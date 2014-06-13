@@ -346,5 +346,7 @@ public abstract class AbstractManagedBean implements Serializable {
         return request.getRequestURL().toString().replace(request.getRequestURI().substring(0), "") + request.getContextPath();
 	}
 
-
+	public void devolveErroParaTela(String id, String mensagem) {
+		FacesContext.getCurrentInstance().addMessage(id,new FacesMessage(mensagem));
+	}
 }

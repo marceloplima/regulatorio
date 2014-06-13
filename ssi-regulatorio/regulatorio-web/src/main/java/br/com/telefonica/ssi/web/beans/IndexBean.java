@@ -72,10 +72,6 @@ public class IndexBean extends AbstractManagedBean{
 		}
 
 		Map<String, Object> filtros = new HashMap<String,Object>();
-		/*Pessoas pessoa = RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado();
-
-		filtros.put("autor", pessoa);
-		filtros.put("encarregado", pessoa);*/
 
 		dataModel = new DemandasRegulatorioDataModel(facadeDemanda, filtros, new DemandasRegulatorio());
 

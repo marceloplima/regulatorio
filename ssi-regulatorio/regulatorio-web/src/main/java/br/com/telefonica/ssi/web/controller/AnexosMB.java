@@ -13,6 +13,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 
+import br.com.telefonica.ssi.regulatorio.commom.cdi.qualifiers.NovoAnexo;
 import br.com.telefonica.ssi.regulatorio.commom.domain.AnexosRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.TipoAnexo;
@@ -30,7 +31,7 @@ public class AnexosMB implements Serializable{
 	@EJB
 	private AnexosInt anexoint;
 
-	@Inject
+	@Inject @NovoAnexo
 	Event<DemandasRegulatorio> eventoDemanda;
 
 	/*@EJB
@@ -66,8 +67,10 @@ public class AnexosMB implements Serializable{
 			File newfile = new File(parametrosistema.recuperaCaminhoUploads()+"/"+anexo.getCaminhoArquivo());
 			newfile.delete();
 			DemandasRegulatorio demandasRegulatorio = anexo.getDemanda();
+			demandasRegulatorio.getAnexos().remove(anexo);
 			anexoint.remover(anexo);
 			eventoDemanda.fire(demandasRegulatorio);
+			anexo = new AnexosRegulatorio();
 		}
 		catch(Exception e){
 			e.printStackTrace();

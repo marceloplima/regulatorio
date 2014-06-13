@@ -12,7 +12,7 @@
 	enctype="multipart/form-data">
 	<f:loadBundle var="msg" basename="mensagens" />
 	<rich:popupPanel id="popupfollowup" domElementAttachment="form"
-		modal="true" width="500" height="280" zindex="2">
+		modal="true" width="500" height="290" zindex="2">
 		<f:facet name="header">
 			<h:outputText value="#{msg['header.followup']}" />
 		</f:facet>
@@ -34,19 +34,20 @@
 				<h:outputText value="#{msg['label.comentario']}" styleClass="label-campo"/>
 				<h:inputTextarea styleClass="input-form-textarea" rows="20"
 					value="#{classificacaoBean.comentario}" required="true"
-					requiredMessage="#{msg['campo.questao.obrigatorio']}"
-					id="comentariofollowUp" immediate="true"/>
-				<h:message for="comentarioFollowUp"
-					style="font-weight:bold;color:#ff0000;" />
+					requiredMessage="Campo comentário é obrigatório."
+					id="comentariofollowUp"/>
+				<h:message for="comentariofollowUp"
+					style="font-weight:bold;color:#ff0000;" id="messageFollowUp"/>
 			</div>
 
 			<div class="clear" />
 
 			<div class="alinhaBotao">
 				<h:commandButton value="#{msg['botao.registrar.followup']}">
-					<a4j:ajax render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro"
+					<a4j:ajax render=":demandaform infoDemanda :panelexibesucesso :panelexibeerro :formfollowup:messageFollowUp"
 					listener="#{classificacaoBean.registraFollowUp()}"
-					oncomplete="#{rich:component('popupfollowup')}.hide(event);"/>
+					execute=":formfollowup:comentariofollowUp :formfollowup:messageFollowUp"
+					oncomplete="if (#{facesContext.maximumSeverity==null}) {#{rich:component('popupfollowup')}.hide();}"/>
 				</h:commandButton>
 				<h:commandButton
 					onclick="#{rich:component('popupfollowup')}.hide(event); return false;"

@@ -128,8 +128,7 @@ public class MovimentoFacadeServiceBean implements MovimentoFacade{
 	public List<Movimento> retornarPaginadoMovimentos(int firstRow,
 			int numberOfRows, Map<String, Object> filtros,
 			DemandasRegulatorio demanda, Pessoas pessoa) {
-		String jpaQuery = "Select m from Movimento m where m.demanda = :demanda AND (m.demanda.autor = :pessoa "
-				+ "OR m.demanda.encarregado = :pessoa OR m.demanda.solicitante = :pessoa) ";
+		String jpaQuery = "Select m from Movimento m where m.demanda = :demanda";
 
 		// === OUTROS FILTROS ===
 
@@ -139,14 +138,17 @@ public class MovimentoFacadeServiceBean implements MovimentoFacade{
 
 		TypedQuery<Movimento> q = em.createQuery(jpaQuery,Movimento.class);
 		q.setParameter("demanda", demanda);
-		q.setParameter("pessoa", pessoa);
+		//q.setParameter("pessoa", pessoa);
 
-		if(firstRow>0 && numberOfRows>0){
+		if(firstRow>-1 && numberOfRows>0){
 			q.setFirstResult(firstRow);
 			q.setMaxResults(numberOfRows);
 		}
 
 		try{
+			if(demanda==null || demanda.getId()==null){
+				return new ArrayList<Movimento>();
+			}
 			List<Movimento> result = q.getResultList();
 
 			return result;
@@ -159,8 +161,7 @@ public class MovimentoFacadeServiceBean implements MovimentoFacade{
 	@Override
 	public int getRowCountMovimentos(Map<String, Object> filtros,
 			DemandasRegulatorio demanda, Pessoas pessoa) {
-		String jpaQuery = "Select count(m.idMovimento) from Movimento m where m.demanda = :demanda AND (m.demanda.autor = :pessoa OR "
-				+ "m.demanda.encarregado = :pessoa OR m.demanda.solicitante = :pessoa) ";
+		String jpaQuery = "Select count(m) from Movimento m where m.demanda = :demanda";
 
 		// === OUTROS FILTROS ===
 
@@ -169,9 +170,12 @@ public class MovimentoFacadeServiceBean implements MovimentoFacade{
 		TypedQuery<Long> q = em.createQuery(jpaQuery,Long.class);
 
 		q.setParameter("demanda", demanda);
-		q.setParameter("pessoa", pessoa);
+		/*q.setParameter("pessoa", pessoa);*/
 
 		try{
+			if(demanda==null || demanda.getId()==null){
+				return 0;
+			}
 			Long result = q.getSingleResult();
 
 			return result.intValue();
