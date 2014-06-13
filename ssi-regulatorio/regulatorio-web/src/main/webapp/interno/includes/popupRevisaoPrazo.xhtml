@@ -8,57 +8,81 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:hh="http://balusc.net/jsf/html">
 
-<h:form id="formanacionamentooperacional" method="post"
+<h:form id="formrevisaoPrazo" method="post"
 	enctype="multipart/form-data">
 	<f:loadBundle var="msg" basename="mensagens" />
-	<rich:popupPanel id="popuprevisaopra"
-		domElementAttachment="form" modal="true" width="500" height="450"
-		zindex="2">
-		<f:facet name="header">
-			<h:outputText value="#{msg['header.acionamento.operacional']}" />
-		</f:facet>
+	<rich:popupPanel id="revisaoPrazo" modal="true" minWidth="600"
+		minHeight="450" resizeable="false" domElementAttachment="form"
+		header="#{msg['header.revisao.prazo']}">
 		<div class="area-input-100">
 			<h:outputText value="#{msg['label.autor']}" styleClass="label-campo" />
-			<h:outputText value="#{classificacaoBean.logado.cnmnome}" />
+			<h:outputText value="#{permissoesMB.recuperaPessoaLogada().cnmnome}"
+				styleClass="label-campo" />
 
 			<div class="clear" />
 
 			<h:outputText value="#{msg['label.dataHora']}"
 				styleClass="label-campo" />
-			<h:outputText value="#{session.lastAccessedTime}">
+			<h:outputText value="#{session.lastAccessedTime}"
+				styleClass="label-campo">
 				<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 			</h:outputText>
 
-			<div class="clear"/>
-			
-			<h:outputText value="#{msg['label.areas.operacionais']}" />
-			<h:selectOneMenu value="#{classificacaoBean.areaOperacional}" styleClass="select-form" immediate="true">
-				<f:selectItem itemLabel="#{msg['ordem.selecione.valor']}" noSelectionOption="true" itemValue="#{null}"/>
-			</h:selectOneMenu>
+			<div class="clear" />
+
+			<h:outputText value="#{msg['label.prazo.atual']}"
+				styleClass="label-campo" />
+			<h:outputText value="#{classificacaoBean.demanda.prazo}"
+				styleClass="label-campo">
+				<f:convertDateTime pattern="dd/MM/yyyy" />
+			</h:outputText>
 
 			<div class="clear" />
 
+			<h:outputText value="#{msg['label.prazo.proposto']}"
+				styleClass="label-campo" />
+
+		</div>
+
+		<div class="area-input-50">
+			<rich:calendar styleClass="calendar-form" datePattern="dd/MM/yyyy"
+				locale="pt_BR" popup="true" enableManualInput="false"
+				oninputkeypress="javascript: mascara(this, data_mask);"
+				maxlength="10" required="true"
+				requiredMessage="#{msg['campo.obrigatorio']}"
+				value="#{classificacaoBean.novoPrazo}" id="novoPrazo" >
+				<f:validator validatorId="DataDemanda"/>
+				<f:attribute name="dataDemanda" value="#{classificacaoBean.demanda.prazo}"/>
+			</rich:calendar>
+			<div class="clear"/>
+			<h:message for="novoPrazo" style="font-weight:bold;color:#ff0000;"
+				id="messageCalendario" />
+
+			<div class="clear" />
+
+		</div>
+
+		<div class="clear" />
+
+		<div class="area-input-100">
 			<h:outputText value="#{msg['label.comentario']}"
-				styleClass="label-campo"/>
+				styleClass="label-campo" />
 			<h:inputTextarea styleClass="input-form-textarea" rows="20"
-				value="#{classificacaoBean.comentario}" required="true"
-				requiredMessage="#{msg['campo.questao.obrigatorio']}"
-				id="comentarioanalise" immediate="true" />
-			<h:message for="comentarioanalise"
-				style="font-weight:bold;color:#ff0000;" />
+				value="#{classificacaoBean.comentario}" id="comentarioPrazo" />
 		</div>
 
 		<div class="clear" />
 
 		<div class="alinhaBotao">
-			<h:commandButton value="#{msg['botao.ok']}">
-				<a4j:ajax render="@form :demandaform demandaform :panelexibesucesso :panelexibeerro" 
-					listener="#{classificacaoBean.acionarAreasOperacionais()}"
-					oncomplete="#{rich:component('popupacionamentooperacional')}.hide(event);"
-				/>
+			<h:commandButton value="#{msg['botao.analise.efetuar']}">
+				<a4j:ajax
+					render=":demandaform infoDemanda :panelexibesucesso :panelexibeerro :formrevisaoPrazo:novoPrazo :formrevisaoPrazo:messageCalendario :formrevisaoPrazo:comentarioPrazo"
+					execute=":formrevisaoPrazo:novoPrazo :formrevisaoPrazo:messageCalendario :formrevisaoPrazo:comentarioPrazo"
+					listener="#{classificacaoBean.revisarPrazo()}"
+					oncomplete="if (#{facesContext.maximumSeverity==null}) {#{rich:component('revisaoPrazo')}.hide();}" />
 			</h:commandButton>
 			<h:commandButton
-				onclick="#{rich:component('popupacionamentooperacional')}.hide(event); return false;"
+				onclick="#{rich:component('revisaoPrazo')}.hide(event); return false;"
 				value="#{msg['botao.fechar']}" />
 		</div>
 	</rich:popupPanel>
