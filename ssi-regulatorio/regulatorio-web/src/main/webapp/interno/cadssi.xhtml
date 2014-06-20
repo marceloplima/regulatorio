@@ -24,12 +24,15 @@
 								</h:panelGroup>
 							</f:facet>
 
-							<rich:menuItem mode="ajax" label="#{msg['botao.salvar']}"
-								execute=":demandaform tipoRede assuntoDemanda documentoOrigem areaRegional ufs"
-								action="#{classificacaoBean.salvarDemanda}"
-								rendered="#{permissoesMB.verificarSalvar()}"
-								render="@all :demandaform :panelexibesucesso :panelexibeerro"
-								immediate="true"/>
+							<rich:menuItem mode="ajax" label="#{msg['botao.salvar']}">
+								<a4j:ajax
+									event="click"
+									execute=":demandaform tipoRede assuntoDemanda documentoOrigem areaRegional ufs"
+									listener="#{classificacaoBean.salvarDemanda}"
+									render="@all :demandaform :panelexibesucesso :panelexibeerro" 
+									immediate="true"
+									/>
+							</rich:menuItem>
 
 							<rich:menuItem mode="ajax"
 								label="#{msg['botao.salvar.rascunho']}"
@@ -212,8 +215,12 @@
 						<div class="area-input-30">
 							<h:outputText class="label-campo"
 								value="#{msg['label.categoria']}" />
-							<h:outputText styleClass="label-campo destaque" disabled="true"
-								value="#{msg['sistema.titulo']}" />
+								
+							<h:selectOneMenu value="#{demandasBean.demanda.categoria}" styleClass="select-form destaque"
+							disabled="#{!demandasBean.demanda.novaDemanda}">
+								<f:selectItems value="#{demandasBean.facadeDemanda.categoriaService.findAll()}"
+									var="categoria" itemLabel="#{categoria.descricao}" itemValue="#{categoria}"/>
+							</h:selectOneMenu>
 						</div>
 
 						<div class="area-input-30">

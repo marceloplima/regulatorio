@@ -4,7 +4,9 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
+import br.com.telefonica.ssi.core.application.exception.ApplicationException;
 import br.com.telefonica.ssi.regulatorio.commom.domain.CategoriaRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.CategoriaService;
 import br.com.telefonica.ssi.service.AbstractCrudServiceBean;
@@ -13,7 +15,7 @@ import br.com.telefonica.ssi.service.AbstractCrudServiceBean;
 public class CategoriaServiceBean extends AbstractCrudServiceBean<CategoriaRegulatorio, Integer> implements CategoriaService{
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -4382557983273618650L;
 
@@ -29,6 +31,11 @@ public class CategoriaServiceBean extends AbstractCrudServiceBean<CategoriaRegul
 		else{
 			return null;
 		}
-	} 
+	}
 
+	@Override
+	public List<CategoriaRegulatorio> findAll() throws ApplicationException {
+		TypedQuery<CategoriaRegulatorio> q = getEntityManager().createQuery("select c from CategoriaRegulatorio c order by c.descricao asc",CategoriaRegulatorio.class);
+		return q.getResultList();
+	}
 }

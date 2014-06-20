@@ -51,7 +51,7 @@ public class DemandasRegulatorio extends AbstractEntity<Integer> {
 	@JoinColumn(name = "idareaOrigem", referencedColumnName = "idarea")
 	private Areas origem;
 
-	@Column(name = "dataHoraDemanda")
+	@Column(name = "dataHoraDemanda",columnDefinition="datetime")
 	private Date dataHoraDemanda;
 
 	@Column(name = "cnmQuestao")

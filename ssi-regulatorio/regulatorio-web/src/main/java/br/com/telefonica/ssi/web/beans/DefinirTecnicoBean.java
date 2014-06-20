@@ -127,5 +127,8 @@ public class DefinirTecnicoBean extends AbstractManagedBean{
 		IndexMB index = RecuperadorInstanciasBean.recuperarInstanciaIndexBean();
 		index.setMsgpanel("Operacão realizada com sucesso!");
 		index.setPanelexibesucesso(true);
+
+		mailService.notificaSolicitante(mailService.getCorpo(demanda),mailService.getAssunto(demanda), demanda.getNumeroDemanda(), demanda);
+		mailService.notificaTecnicoEncarregado(mailService.getCorpo(demanda), mailService.getAssunto(demanda), demanda.getNumeroDemanda(), demanda);
 	}
 }

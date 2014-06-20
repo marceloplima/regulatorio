@@ -13,11 +13,17 @@ import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 
 import br.com.telefonica.ssi.faces.bean.AbstractManagedBean;
+import br.com.telefonica.ssi.regulatorio.commom.domain.CategoriaRegulatorio;
 import br.com.telefonica.ssi.regulatorio.commom.domain.DemandasRegulatorio;
+import br.com.telefonica.ssi.regulatorio.commom.domain.Procedencia;
 import br.com.telefonica.ssi.regulatorio.commom.domain.StatusRegulatorio;
+import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Areas;
 import br.com.telefonica.ssi.regulatorio.commom.domain.dbo.Pessoas;
+import br.com.telefonica.ssi.regulatorio.commom.interfaces.CategoriaService;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.DemandaService;
+import br.com.telefonica.ssi.regulatorio.commom.interfaces.ProcedenciaService;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.StatusRegulatorioService;
+import br.com.telefonica.ssi.regulatorio.commom.interfaces.dbo.AreasInt;
 import br.com.telefonica.ssi.regulatorio.commom.interfaces.facade.DemandaServiceFacade;
 import br.com.telefonica.ssi.web.datamodel.DemandasRegulatorioDataModel;
 import br.com.telefonica.ssi.web.utils.RecuperadorInstanciasBean;
@@ -45,7 +51,20 @@ public class IndexBean extends AbstractManagedBean{
 	private DemandaService demandaService;
 
 	@EJB
+	private CategoriaService categoriaService;
+
+	@EJB
+	private ProcedenciaService procedenciaService;
+
+	@EJB
 	private DemandaServiceFacade facadeDemanda;
+
+	@EJB
+	private AreasInt areasService;
+
+	private Areas area;
+
+	private String procedencia;
 
 	private String status;
 
@@ -56,6 +75,8 @@ public class IndexBean extends AbstractManagedBean{
 	private Date dataInicial;
 
 	private Date dataFinal;
+
+	private String categoria;
 
 	@PostConstruct
 	public void init(){
@@ -167,6 +188,15 @@ public class IndexBean extends AbstractManagedBean{
 		if(getDataFinal()!=null){
 			filtros.put("dataFinal", getDataFinal());
 		}
+		if(getCategoria()!=null){
+			filtros.put("categoria",getCategoria());
+		}
+		if(getProcedencia()!=null){
+			filtros.put("procedencia", getProcedencia());
+		}
+		if(getArea()!=null){
+			filtros.put("area", getArea().getCnmdescarea());
+		}
 
 		dataModel = new DemandasRegulatorioDataModel(facadeDemanda, filtros, new DemandasRegulatorio());
 	}
@@ -175,4 +205,39 @@ public class IndexBean extends AbstractManagedBean{
 		return status;
 	}
 
+	public List<CategoriaRegulatorio> getCategorias(){
+		return categoriaService.findAll();
+	}
+
+	public String getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
+	}
+
+	public List<Procedencia> getProcedencias(){
+		return procedenciaService.findAll();
+	}
+
+	public String getProcedencia() {
+		return procedencia;
+	}
+
+	public void setProcedencia(String procedencia) {
+		this.procedencia = procedencia;
+	}
+
+	public List<Areas> getAreas(){
+		return areasService.recuperar();
+	}
+
+	public Areas getArea() {
+		return area;
+	}
+
+	public void setArea(Areas area) {
+		this.area = area;
+	}
 }

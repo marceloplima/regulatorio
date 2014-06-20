@@ -201,8 +201,7 @@ public class DemandasBean extends AbstractManagedBean {
 			logger.salvarLog(demanda, RecuperadorInstanciasBean.recuperarInstanciaLoginBean().recuperarPessoaLogado(), "Demanda encaminhada para análise preliminiar.");
 
 
-			sendMail.notificarResponsavel("Nova demanda regulatória número"
-					+ " "+demanda.getNumeroDemanda()+" criada!", "Nova demanda regulatória criada.", demanda.getNumeroDemanda(), demanda);
+			sendMail.notificarResponsavel(sendMail.getCorpo(demanda), sendMail.getAssunto(demanda), demanda.getNumeroDemanda(), demanda);
 
 			eventoDemanda.fire(demanda);
 		}
@@ -266,5 +265,9 @@ public class DemandasBean extends AbstractManagedBean {
 
 	public void setTabselecionada(String tabselecionada) {
 		this.tabselecionada = tabselecionada;
+	}
+
+	public DemandaServiceFacade getFacadeDemanda() {
+		return facadeDemanda;
 	}
 }

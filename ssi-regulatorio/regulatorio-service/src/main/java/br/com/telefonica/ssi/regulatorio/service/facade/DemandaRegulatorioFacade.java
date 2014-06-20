@@ -337,6 +337,30 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
 							.get("dataFinal"))+"'";
 		}
+		if (filtros.get("categoria") != null  && !((String)filtros.get("categoria")).equals("")) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " upper(d.categoria.descricao) =  '"+((String)filtros.get("categoria")).toUpperCase()+"' ";
+		}
+		if (filtros.get("procedencia") != null && !((String)filtros.get("procedencia")).equals("")) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " upper(d.procedencia.descricao) =  '"+((String)filtros.get("procedencia")).toUpperCase()+"' ";
+		}
+		if (filtros.get("area") != null  && !((String)filtros.get("area")).equals("")) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " upper(d.origem.cnmdescarea) =  '"+((String)filtros.get("area")).toUpperCase()+"' ";
+		}
 		// === FIM OUTROS FILTROS ===
 
 		jpaQuery += " order by d.dataHoraDemanda desc";
@@ -400,9 +424,9 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 			} else {
 				jpaQuery += ("and ");
 			}
-			jpaQuery += " d.dataHoraDemanda >= "
+			jpaQuery += " d.dataHoraDemanda >= '"
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
-							.get("dataInicial"));
+							.get("dataInicial"))+"'";
 		}
 		if (filtros.get("dataInicial") == null
 				&& filtros.get("dataFinal") != null) {
@@ -424,10 +448,33 @@ public class DemandaRegulatorioFacade implements DemandaServiceFacade {
 			}
 			jpaQuery += " d.dataHoraDemanda between '"
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
-							.get("dataInicial"))+"'"
-					+ " and '"
+							.get("dataInicial"))+"'"+ " and '"
 					+ new SimpleDateFormat("yyyy-MMdd").format(filtros
 							.get("dataFinal"))+"'";
+		}
+		if (filtros.get("categoria") != null  && !((String)filtros.get("categoria")).equals("")) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " upper(d.categoria.descricao) =  '"+((String)filtros.get("categoria")).toUpperCase()+"' ";
+		}
+		if (filtros.get("procedencia") != null && !((String)filtros.get("procedencia")).equals("")) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " upper(d.procedencia.descricao) =  '"+((String)filtros.get("procedencia")).toUpperCase()+"' ";
+		}
+		if (filtros.get("area") != null  && !((String)filtros.get("area")).equals("")) {
+			if (jpaQuery.indexOf("where") == -1) {
+				jpaQuery += "where ";
+			} else {
+				jpaQuery += ("and ");
+			}
+			jpaQuery += " upper(d.origem.cnmdescarea) =  '"+((String)filtros.get("area")).toUpperCase()+"' ";
 		}
 		// === FIM OUTROS FILTROS ===
 
